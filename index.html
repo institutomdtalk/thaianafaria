@@ -353,6 +353,27 @@ html, body {
 }
 .event-item:hover .event-delete { opacity: 1; }
 .event-delete:hover { color: var(--wine); }
+/* Google Calendar events */
+.event-item.type-google { border-left-color: #4A7BAE; }
+.event-item.type-google .event-time { color: #4A7BAE; }
+.gcal-badge {
+  font-size: 8.5px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+  color: #4A7BAE; background: #F0F5FA; border: 1px solid #AACCE0;
+  padding: 1px 6px; border-radius: 2px; white-space: nowrap; align-self: flex-start; margin-top: 2px;
+}
+.cal-day.has-gcal-event::after {
+  content: ''; display: block; width: 4px; height: 4px; border-radius: 50%;
+  background: #4A7BAE; margin: 2px auto 0;
+}
+.cal-day.has-event.has-gcal-event::after {
+  background: linear-gradient(90deg, var(--wine) 50%, #4A7BAE 50%);
+}
+/* gcal sync status */
+.gcal-status {
+  font-size: 10px; font-weight: 300; color: var(--dust); margin-top: 6px; font-style: italic;
+}
+.gcal-status.ok    { color: var(--sage); }
+.gcal-status.error { color: var(--amber); }
 .empty-state {
   font-size: 13px; font-weight: 300; color: var(--faint); font-style: italic;
   padding: 24px 0;
@@ -637,7 +658,7 @@ html, body {
    SCREEN 7 — CONFIGURAÇÕES
 ══════════════════════════════════════ */
 #s7 .slide-body { padding: 28px 48px; justify-content: flex-start; overflow-y: auto; }
-.config-layout { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 760px; }
+.config-layout { width: 100%; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; max-width: 1000px; }
 .config-section {
   background: var(--white); border: 1px solid var(--rule); border-radius: 3px; padding: 20px 22px;
 }
@@ -1001,7 +1022,23 @@ html, body {
         <button class="config-save" onclick="saveConfig()">Salvar</button>
       </div>
       <div class="config-section">
-        <div class="config-section-title">Dados</div>
+        <div class="config-section-title">Google Calendar</div>
+        <div class="config-hint">Para vincular sua agenda, siga os passos:<br>
+          <strong style="color:var(--ink);">1.</strong> Abra o Google Calendar no computador<br>
+          <strong style="color:var(--ink);">2.</strong> Clique nos três pontos da sua agenda → <em>Configurações</em><br>
+          <strong style="color:var(--ink);">3.</strong> Role até <em>"Endereço secreto no formato iCal"</em><br>
+          <strong style="color:var(--ink);">4.</strong> Copie a URL e cole abaixo
+        </div>
+        <div class="config-field" style="margin-top:12px;">
+          <label class="config-label">URL iCal (secreta)</label>
+          <input class="config-input" id="cfg-ical" placeholder="https://calendar.google.com/calendar/ical/..." />
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap;">
+          <button class="config-save" onclick="saveIcalAndSync()">Salvar e sincronizar</button>
+          <button class="btn-clear-data" onclick="clearGcal()">Remover</button>
+        </div>
+        <div class="gcal-status" id="gcal-status"></div>
+      </div>
         <div class="config-hint">Todos os seus dados (tarefas, notas, agenda, métricas) são salvos localmente no seu navegador.</div>
         <div class="config-hint" style="margin-top:10px;">Para transferir para outro dispositivo, exporte os dados abaixo.</div>
         <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
@@ -1102,6 +1139,8 @@ let state = {
   ]),
   metrics: DB.get('metrics', { medicos:'500+', ativos:'', aulas:'', fat:'', nota:'' }),
   config:  DB.get('config', { name:'Thaiana', city:'Ourinhos, SP', footer:'Instituto MD Talk' }),
+  gcalEvents: DB.get('gcalEvents', []),   // cached Google Calendar events
+  icalUrl:    DB.get('icalUrl', ''),
   activeNote: null,
   calDate: new Date(),
   selectedDay: new Date()
@@ -1215,7 +1254,8 @@ function updateHomeCounters() {
   const todo = state.tasks.todo.length + state.tasks.doing.length;
   document.getElementById('qs-tasks').textContent = todo;
   const today = dateKey(new Date());
-  const evToday = state.events.filter(e => e.date === today).length;
+  const evToday = state.events.filter(e => e.date === today).length
+                + state.gcalEvents.filter(e => e.date === today).length;
   document.getElementById('qs-events').textContent = evToday;
 }
 
@@ -1239,7 +1279,8 @@ function renderCalendar() {
   const today = new Date(); const todayKey = dateKey(today);
   const selKey = dateKey(state.selectedDay);
 
-  const eventDates = new Set(state.events.map(e => e.date));
+  const eventDates    = new Set(state.events.map(e => e.date));
+  const gcalDates     = new Set(state.gcalEvents.map(e => e.date));
 
   const grid = document.getElementById('cal-grid');
   grid.innerHTML = '';
@@ -1258,6 +1299,7 @@ function renderCalendar() {
     if (dk === todayKey) el.classList.add('today');
     if (dk === selKey) el.classList.add('selected');
     if (eventDates.has(dk)) el.classList.add('has-event');
+    if (gcalDates.has(dk))  el.classList.add('has-gcal-event');
     el.onclick = () => selectDay(new Date(d.getFullYear(), d.getMonth(), i));
     grid.appendChild(el);
   }
@@ -1271,7 +1313,9 @@ function selectDay(d) {
 
 function renderEventsList() {
   const key = dateKey(state.selectedDay);
-  const evs = state.events.filter(e => e.date === key).sort((a,b) => a.time.localeCompare(b.time));
+  const localEvs = state.events.filter(e => e.date === key);
+  const gcalEvs  = state.gcalEvents.filter(e => e.date === key);
+  const evs = [...localEvs, ...gcalEvs].sort((a,b) => (a.time||'').localeCompare(b.time||''));
   const today = dateKey(new Date());
 
   const label = document.getElementById('events-date-label');
@@ -1286,19 +1330,21 @@ function renderEventsList() {
   list.innerHTML = '';
   if (evs.length === 0) {
     list.innerHTML = '<div class="empty-state">Nenhum evento neste dia.</div>';
-    return;
+    updateHomeCounters(); return;
   }
   evs.forEach(ev => {
-    const typeClass = ev.type === 'pessoal' ? 'type-pessoal' : ev.type === 'md' ? 'type-md' : '';
+    const isGoogle = ev.source === 'google';
+    const typeClass = isGoogle ? 'type-google' : ev.type === 'pessoal' ? 'type-pessoal' : ev.type === 'md' ? 'type-md' : '';
     const el = document.createElement('div');
     el.className = `event-item ${typeClass}`;
     el.innerHTML = `
-      <div class="event-time">${ev.time || '—'}</div>
-      <div>
+      <div class="event-time">${ev.allDay ? 'dia todo' : (ev.time || '—')}</div>
+      <div style="flex:1;">
         <div class="event-title">${ev.title}</div>
         ${ev.desc ? `<div class="event-sub">${ev.desc}</div>` : ''}
+        ${isGoogle ? '<span class="gcal-badge">Google</span>' : ''}
       </div>
-      <button class="event-delete" onclick="deleteEvent('${ev.id}')">✕</button>
+      ${!isGoogle ? `<button class="event-delete" onclick="deleteEvent('${ev.id}')">✕</button>` : ''}
     `;
     list.appendChild(el);
   });
@@ -1589,12 +1635,101 @@ function loadMetrics() {
 });
 
 /* ═══════════════════════════════
+   GOOGLE CALENDAR — iCal SYNC
+═══════════════════════════════ */
+function parseIcal(text) {
+  const events = [];
+  const vevents = text.split('BEGIN:VEVENT');
+  vevents.slice(1).forEach(block => {
+    const get = key => {
+      const rx = new RegExp(key + '[^:]*:([^\r\n]+)', 'i');
+      const m = block.match(rx);
+      return m ? m[1].replace(/\\n/g,'\n').replace(/\\,/g,',').replace(/\r/g,'').trim() : '';
+    };
+    const dtstart = get('DTSTART');
+    const dtend   = get('DTEND');
+    const summary = get('SUMMARY');
+    const desc    = get('DESCRIPTION');
+    if (!summary || !dtstart) return;
+
+    // Parse date — handles YYYYMMDD and YYYYMMDDTHHmmssZ
+    function parseDt(s) {
+      s = s.replace(/[TZ]/g,'');
+      const y = s.substring(0,4), mo = s.substring(4,6), d = s.substring(6,8);
+      const h = s.substring(8,10)||'00', mi = s.substring(10,12)||'00';
+      return { dateKey: `${y}-${mo}-${d}`, time: `${h}:${mi}` };
+    }
+    const start = parseDt(dtstart);
+    const isAllDay = dtstart.length <= 8;
+    events.push({
+      id: 'gcal_' + btoa(summary + dtstart).replace(/=/g,''),
+      date: start.dateKey,
+      time: isAllDay ? '00:00' : start.time,
+      allDay: isAllDay,
+      title: summary,
+      desc: desc.substring(0, 120),
+      type: 'google',
+      source: 'google'
+    });
+  });
+  return events;
+}
+
+async function syncGcal(url, silent=false) {
+  const statusEl = document.getElementById('gcal-status');
+  if (statusEl) { statusEl.className = 'gcal-status'; statusEl.textContent = 'Sincronizando...'; }
+  try {
+    // Use allorigins proxy to bypass CORS
+    const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+    const res = await fetch(proxy, { signal: AbortSignal.timeout(12000) });
+    if (!res.ok) throw new Error('Erro de rede');
+    const data = await res.json();
+    const ical = data.contents;
+    if (!ical || !ical.includes('BEGIN:VCALENDAR')) throw new Error('Resposta inválida — verifique a URL');
+    state.gcalEvents = parseIcal(ical);
+    DB.set('gcalEvents', state.gcalEvents);
+    DB.set('icalUrl', url);
+    state.icalUrl = url;
+    const count = state.gcalEvents.length;
+    if (statusEl) { statusEl.className = 'gcal-status ok'; statusEl.textContent = `✓ ${count} evento(s) sincronizado(s)`; }
+    renderCalendar();
+  } catch(e) {
+    if (statusEl) { statusEl.className = 'gcal-status error'; statusEl.textContent = `Erro: ${e.message}`; }
+    if (!silent) console.error('iCal sync error:', e);
+  }
+}
+
+function saveIcalAndSync() {
+  const url = document.getElementById('cfg-ical').value.trim();
+  if (!url) return;
+  syncGcal(url);
+}
+
+function clearGcal() {
+  state.gcalEvents = []; state.icalUrl = '';
+  DB.set('gcalEvents', []); DB.set('icalUrl', '');
+  document.getElementById('cfg-ical').value = '';
+  const statusEl = document.getElementById('gcal-status');
+  if (statusEl) { statusEl.className = 'gcal-status'; statusEl.textContent = 'Agenda Google removida.'; }
+  renderCalendar();
+}
+
+// Auto-sync on load if URL saved
+if (state.icalUrl) setTimeout(() => syncGcal(state.icalUrl, true), 800);
+
+/* ═══════════════════════════════
    CONFIG
 ═══════════════════════════════ */
 function loadConfig() {
   document.getElementById('cfg-name').value   = state.config.name   || '';
   document.getElementById('cfg-city').value   = state.config.city   || '';
   document.getElementById('cfg-footer').value = state.config.footer || '';
+  document.getElementById('cfg-ical').value   = state.icalUrl       || '';
+  const statusEl = document.getElementById('gcal-status');
+  if (statusEl && state.icalUrl) {
+    statusEl.className = 'gcal-status ok';
+    statusEl.textContent = `✓ ${state.gcalEvents.length} evento(s) em cache`;
+  }
 }
 function saveConfig() {
   state.config.name   = document.getElementById('cfg-name').value.trim()   || 'Thaiana';
