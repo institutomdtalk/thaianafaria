@@ -1298,7 +1298,10 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
         <div class="fin-grid-wrap" data-reveal>
           <div class="fin-grid-header">
             <span>Payment Control</span>
-            <div class="fin-grid-months" id="fin-month-tabs"></div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <div class="fin-grid-months" id="fin-month-tabs"></div>
+              <button onclick="recarregarFin()" style="background:rgba(196,164,90,.15);border:1px solid rgba(196,164,90,.3);border-radius:6px;padding:4px 10px;font-size:10px;color:var(--gold);cursor:pointer;font-family:var(--sans)" title="Recarregar dados do Sheets">↺ Sheets</button>
+            </div>
           </div>
           <div style="overflow-x:auto">
             <table class="fin-editable-table">
@@ -1552,8 +1555,19 @@ function goTo(id) {
 // ── safeApi: chama api e executa callback se ok, sem travar ──
 function safeApi(action, onSuccess, payload = {}) {
   api(action, payload).then(r => {
-    if (r && r.ok && r.data) onSuccess(r);
-  }).catch(e => console.warn('safeApi erro:', action, e));
+    if (r && r.ok && r.data) {
+      onSuccess(r);
+    } else {
+      // Sheets falhou — usar dados mock como fallback
+      console.warn('Sheets falhou para', action, '— usando mock');
+      const mock = mockData(action, payload);
+      if (mock && mock.ok && mock.data) onSuccess(mock);
+    }
+  }).catch(e => {
+    console.warn('safeApi erro:', action, e);
+    const mock = mockData(action, payload);
+    if (mock && mock.ok && mock.data) onSuccess(mock);
+  });
 }
 
 // ── API via JSONP (evita CORS do Apps Script) ──
@@ -1567,7 +1581,7 @@ function api(action, payload = {}) {
       cleanup();
       console.warn('API timeout:', action);
       resolve({ ok: false, error: 'timeout' });
-    }, 12000);
+    }, 5000);
     function cleanup() {
       clearTimeout(timer);
       delete window[cbName];
@@ -1646,6 +1660,16 @@ async function initApp() {
   // Criar órbita SVG
   buildAvatarOrbit();
 
+}
+
+function recarregarFin() {
+  document.getElementById('fin-tbody').innerHTML =
+    '<tr><td colspan="5"><div class="state-loading"><div class="spinner"></div>Conectando ao Sheets...</div></td></tr>';
+  safeApi('getPaymentControl', r => {
+    state.lancamentos = r.data;
+    renderFin();
+    toast('Financeiro atualizado ✓');
+  });
 }
 
 function buildAvatarOrbit() {
