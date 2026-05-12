@@ -126,7 +126,7 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 /* ══════════════════════════════════════
    SHELL (SIDEBAR + MAIN)
 ══════════════════════════════════════ */
-#shell { display: none; height: 100%; }
+#shell { display: none; height: 100%; width: 100%; overflow: hidden; }
 
 /* SIDEBAR — recolhível */
 :root { --sidebar-collapsed: 0px; }
@@ -135,7 +135,7 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
   position: fixed; top: 0; left: 0;
   width: var(--sidebar-collapsed);
   height: 100%;
-  background: var(--navy);
+  background: #0a0a0a;
   display: flex; flex-direction: column;
   z-index: 100;
   border-right: 1px solid rgba(196,164,90,.0);
@@ -147,8 +147,8 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 .sidebar:hover,
 .sidebar.open {
   width: var(--sidebar);
-  border-right-color: rgba(196,164,90,.1);
-  box-shadow: 4px 0 32px rgba(0,0,0,.35);
+  border-right-color: rgba(196,164,90,.15);
+  box-shadow: 6px 0 40px rgba(0,0,0,.6);
 }
 /* Gatilho invisível na margem esquerda */
 .sidebar-trigger {
@@ -186,7 +186,7 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 }
 .sidebar-brand {
   padding: 24px 22px 20px;
-  border-bottom: 1px solid rgba(196,164,90,.1);
+  border-bottom: 1px solid rgba(196,164,90,.08);
 }
 .sidebar-overline {
   font-size: 8px; letter-spacing: .2em; text-transform: uppercase;
@@ -227,7 +227,7 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 .nav-item.active svg { opacity: 1; }
 .sidebar-footer {
   padding: 16px 22px;
-  border-top: 1px solid rgba(196,164,90,.1);
+  border-top: 1px solid rgba(196,164,90,.08);
 }
 .btn-logout {
   display: flex; align-items: center; gap: 8px;
@@ -243,6 +243,8 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 .main {
   margin-left: 0;
   min-height: 100%;
+  flex: 1;
+  width: 100%;
   display: flex; flex-direction: column;
   transition: margin-left .35s cubic-bezier(.4,0,.2,1);
 }
