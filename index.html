@@ -1513,47 +1513,51 @@ function doLogin() {
 }
 
 function enterApp() {
-  // Esconder login e loading, mostrar shell
   document.getElementById('page-login').style.display = 'none';
-  const ld = document.getElementById('page-loading');
-  ld.style.opacity = '0';
-  setTimeout(() => { ld.style.display = 'none'; }, 500);
   const shell = document.getElementById('shell');
   shell.style.display = 'flex';
   shell.style.height = '100%';
-  initApp();
+  // Mostrar shell IMEDIATAMENTE, depois carregar dados em background
+  hideLoading();
+  initApp(); // fire-and-forget — não bloqueia
 }
 
 function doLogout() {
   sessionStorage.removeItem(SESSION_KEY);
   document.getElementById('shell').style.display = 'none';
-  document.getElementById('page-login').style.display = 'flex';
-  document.getElementById('page-login').style.opacity = '0';
+  const pg = document.getElementById('page-login');
+  pg.style.display = 'flex';
+  pg.style.opacity = '0';
   document.getElementById('inp-user').value = '';
   document.getElementById('inp-pass').value = '';
-  setTimeout(() => { document.getElementById('page-login').style.opacity = '1'; }, 10);
+  setTimeout(() => { pg.style.opacity = '1'; }, 10);
 }
 
-// ── Verificar sessão ao carregar a página ──
-document.addEventListener('DOMContentLoaded', () => {
-  const ld   = document.getElementById('page-loading');
+function hideLoading() {
+  const ld = document.getElementById('page-loading');
+  if (!ld) return;
+  ld.style.transition = 'opacity .4s ease';
+  ld.style.opacity = '0';
+  setTimeout(() => { ld.style.display = 'none'; }, 420);
+}
+
+function showLogin() {
+  const pg = document.getElementById('page-login');
+  pg.style.display = 'flex';
+  pg.style.opacity = '0';
+  setTimeout(() => { pg.style.opacity = '1'; }, 10);
+}
+
+// ── Verificar sessão ao carregar ──
+window.addEventListener('load', () => {
   const sess = sessionStorage.getItem(SESSION_KEY);
   if (sess) {
-    // Sessão válida — pular login, ir direto para o app
-    document.getElementById('page-login').style.display = 'none';
-    // Loading aparece enquanto o app inicializa
-    ld.style.display = 'flex';
-    setTimeout(() => { enterApp(); }, 400); // pequeno delay para o loading aparecer
+    // Tem sessão — fechar loading e abrir app direto
+    enterApp();
   } else {
-    // Sem sessão — mostrar login, esconder loading
-    ld.style.opacity = '0';
-    setTimeout(() => {
-      ld.style.display = 'none';
-      const pg = document.getElementById('page-login');
-      pg.style.display = 'flex';
-      pg.style.opacity = '0';
-      setTimeout(() => { pg.style.opacity = '1'; }, 10);
-    }, 300);
+    // Sem sessão — fechar loading e mostrar login
+    hideLoading();
+    showLogin();
   }
 });
 
@@ -1661,7 +1665,7 @@ function mockData(action, payload) {
 // ══════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════
-async function initApp() {
+async function initApp() { // retorna Promise implícita via async
   // data e saudação geridos por renderDashboard()
 
   // carregar todos os dados em paralelo
