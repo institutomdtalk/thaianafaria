@@ -701,7 +701,7 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 /* ══════════════════════════════════════
    PAINEL: FINANCEIRO
 ══════════════════════════════════════ */
-.fin-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 20px; }
+.fin-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 20px; }
 .fin-kpi {
   background: var(--bg-card); border: 1px solid var(--border);
   border-radius: var(--radius); padding: 20px 22px;
@@ -1266,11 +1266,7 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
             <div class="fin-kpi-value" id="fin-receita">R$ —</div>
             <div class="fin-kpi-sub" id="fin-receita-sub">— confirmados</div>
           </div>
-          <div class="fin-kpi" style="border-top:3px solid #b91c1c">
-            <div class="fin-kpi-label">Atrasado / Não Pago</div>
-            <div class="fin-kpi-value" id="fin-pendente" style="color:#b91c1c">R$ —</div>
-            <div class="fin-kpi-sub" id="fin-pendente-sub">— alunos</div>
-          </div>
+
           <div class="fin-kpi" style="border-top:3px solid #b91c1c">
             <div class="fin-kpi-label">Falta Entrar</div>
             <div class="fin-kpi-value" id="fin-naopago" style="color:#b91c1c">R$ —</div>
@@ -2167,26 +2163,21 @@ function renderFin() {
   const mesAnterior = mesAtual > 0 ? mesAtual - 1 : null;
   dados.forEach(row => {
     if (!row.nome) return;
-    const val = row.valor || 0;
+    const val    = row.valor || 0;
     totalPrevisto += val;
     const st     = (row.meses[mesAtual] || '').toLowerCase().trim();
     const stAnt  = mesAnterior !== null ? (row.meses[mesAnterior] || '').toLowerCase().trim() : '';
-    // Verificar se estava atrasado no mês anterior e ainda não pagou no atual
-    const atrasadoAnterior = stAnt === 'atrasado' && st !== 'pago';
-    if (st === 'suspenso' || st === 'null' || st === 'não paga' || st === 'nao paga') {
-      // Mesmo isento no atual, se estava atrasado antes conta o débito anterior
-      if (atrasadoAnterior) { faltaEntrar += val; ctFalta++; }
-      return;
-    }
-    ctAtivos++;
     if (st === 'pago') {
       recebido += val; ctPago++;
-      // Se estava atrasado no mês anterior e pagou agora, não acumula
     } else {
+      // Tudo que não é pago entra no falta entrar (suspenso, null, não paga, atrasado, vazio)
       faltaEntrar += val; ctFalta++;
-      // Se estava atrasado no mês anterior E não pagou ainda, soma o mês anterior também
-      if (atrasadoAnterior) { faltaEntrar += val; ctFalta++; }
     }
+    // Acumular débito do mês anterior se estava atrasado e não pagou agora
+    if (stAnt === 'atrasado' && st !== 'pago') {
+      faltaEntrar += val; // soma o valor do mês anterior em aberto
+    }
+    ctAtivos++;
   });
   const pct = totalPrevisto > 0 ? Math.round(recebido/totalPrevisto*100) : 0;
   document.getElementById('fin-receita').textContent      = 'R$\u00a0' + recebido.toLocaleString('pt-BR');
@@ -2290,19 +2281,15 @@ function renderFinKpis() {
   let totalPrevisto=0;
   const mesAntK = mesAtualK > 0 ? mesAtualK - 1 : null;
   state.lancamentos.forEach(row => {
-    if (!row.nome) return;
+    if(!row.nome) return;
     const val=row.valor||0;
     totalPrevisto+=val;
     const st=(row.meses[mesAtualK]||'').toLowerCase().trim();
     const stA=mesAntK!==null?(row.meses[mesAntK]||'').toLowerCase().trim():'';
-    const atrasadoAnt = stA==='atrasado' && st!=='pago';
-    if(st==='suspenso'||st==='null'||st==='não paga'||st==='nao paga'){
-      if(atrasadoAnt){faltaEntrar+=val;ctFalta++;}
-      return;
-    }
     ctAtivos++;
     if(st==='pago'){recebido+=val;ctPago++;}
-    else{faltaEntrar+=val;ctFalta++;if(atrasadoAnt){faltaEntrar+=val;ctFalta++;}}
+    else{faltaEntrar+=val;ctFalta++;}
+    if(stA==='atrasado'&&st!=='pago'){faltaEntrar+=val;}
   });
   const pct=totalPrevisto>0?Math.round(recebido/totalPrevisto*100):0;
   document.getElementById('fin-receita').textContent='R$\u00a0'+recebido.toLocaleString('pt-BR');
