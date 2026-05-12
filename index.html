@@ -613,44 +613,110 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 .fin-kpi-value { font-family: var(--serif); font-size: 1.7rem; color: var(--navy); }
 .fin-kpi-sub { font-size: 10px; color: var(--text-muted); margin-top: 3px; }
 
-.fin-table-wrap {
+/* tabela editável */
+.fin-grid-wrap {
   background: var(--bg-card); border: 1px solid var(--border);
   border-radius: var(--radius); overflow: hidden;
   box-shadow: var(--shadow); margin-bottom: 24px;
 }
-.fin-table-header {
+.fin-grid-header {
   background: var(--navy); padding: 12px 18px;
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
 }
-.fin-table-header span {
+.fin-grid-header span {
   font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
   color: rgba(255,255,255,.6);
 }
-.fin-table { width: 100%; border-collapse: collapse; }
-.fin-table th {
-  padding: 10px 16px; text-align: left;
-  font-size: 9px; letter-spacing: .14em; text-transform: uppercase;
-  color: var(--text-muted); background: var(--bg-soft);
-  font-weight: 500;
+.fin-grid-months {
+  display: flex; gap: 6px; align-items: center;
 }
-.fin-table td {
-  padding: 12px 16px; font-size: 12px; color: var(--text-mid);
+.fin-month-btn {
+  background: rgba(255,255,255,.08); border: 1px solid rgba(196,164,90,.2);
+  border-radius: 5px; padding: 4px 10px;
+  font-size: 10px; color: rgba(255,255,255,.55); cursor: pointer;
+  transition: all .2s; white-space: nowrap;
+}
+.fin-month-btn.active {
+  background: var(--gold); border-color: var(--gold);
+  color: var(--navy); font-weight: 700;
+}
+.fin-editable-table { width: 100%; border-collapse: collapse; }
+.fin-editable-table th {
+  padding: 10px 14px; text-align: left;
+  font-size: 9px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--text-muted); background: var(--bg-soft); font-weight: 500;
+  position: sticky; top: 0; z-index: 2;
+  border-bottom: 2px solid var(--border);
+}
+.fin-editable-table th.th-mes {
+  text-align: center; min-width: 110px;
+}
+.fin-editable-table td {
+  padding: 0; font-size: 12px; color: var(--text-mid);
   border-bottom: 1px solid var(--border);
 }
-.fin-table tr:last-child td { border-bottom: none; }
-.fin-table tr:hover td { background: var(--bg-soft); }
+.fin-editable-table tr:last-child td { border-bottom: none; }
+.fin-editable-table tr:hover td { background: rgba(196,164,90,.03); }
+
+/* células editáveis */
+.cell-nome, .cell-valor {
+  width: 100%; height: 100%;
+  background: none; border: none; outline: none;
+  font-family: var(--sans); font-size: 12px; color: var(--text);
+  padding: 11px 14px; cursor: text;
+  transition: background .2s;
+}
+.cell-nome { font-weight: 600; color: var(--navy); min-width: 160px; }
+.cell-valor { min-width: 100px; }
+.cell-nome:focus, .cell-valor:focus {
+  background: rgba(196,164,90,.08);
+  box-shadow: inset 0 0 0 2px rgba(196,164,90,.35);
+}
+
+/* célula de status — clique para ciclar */
+.cell-status {
+  display: flex; align-items: center; justify-content: center;
+  padding: 11px 8px; cursor: pointer; user-select: none;
+  transition: background .15s;
+}
+.cell-status:hover { background: rgba(196,164,90,.06); }
+.status-pill {
+  display: inline-block; padding: 3px 10px; border-radius: 20px;
+  font-size: 10px; font-weight: 700; letter-spacing: .04em;
+  white-space: nowrap; transition: all .2s;
+}
+.sp-pago      { background: rgba(34,197,94,.12); color: #166534; }
+.sp-atrasado  { background: rgba(185,28,28,.10); color: #b91c1c; }
+.sp-naopaga   { background: rgba(217,119,6,.12); color: #d97706; }
+.sp-suspenso  { background: rgba(107,114,128,.12); color: #6b7280; }
+.sp-null      { background: rgba(0,0,0,.04); color: var(--text-muted); }
+.sp-saving    { background: rgba(196,164,90,.15); color: var(--gold); }
+
+/* linha de novo aluno */
+.fin-new-row td { background: rgba(196,164,90,.04); }
+.fin-new-row .cell-nome { color: var(--text-muted); }
+.btn-add-row {
+  display: flex; align-items: center; gap: 6px;
+  width: 100%; padding: 11px 14px;
+  background: none; border: none;
+  font-family: var(--sans); font-size: 11px; color: var(--gold);
+  cursor: pointer; transition: background .2s;
+}
+.btn-add-row:hover { background: rgba(196,164,90,.06); }
+
+/* legenda */
+.fin-legend {
+  display: flex; gap: 12px; flex-wrap: wrap; padding: 10px 18px;
+  border-top: 1px solid var(--border); background: var(--bg-soft);
+}
+.fin-legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--text-muted); }
+
 .fin-status-pago      { color: #166534; font-weight: 600; }
 .fin-status-pendente  { color: #92400E; font-weight: 600; }
 .fin-status-atrasado  { color: #b91c1c; font-weight: 600; }
 .fin-status-suspenso  { color: #6b7280; font-weight: 600; }
 .fin-status-naopaga   { color: #d97706; font-weight: 600; }
 .fin-status-null      { color: var(--text-muted); }
-.fin-add-form {
-  background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 20px;
-  box-shadow: var(--shadow);
-}
-.fin-form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 12px; align-items: end; }
 
 /* ══════════════════════════════════════
    MODAL GENÉRICO
@@ -991,16 +1057,18 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
           <div class="section-overline">Controle</div>
           <div class="section-title">Financeiro</div>
         </div>
+
+        <!-- KPIs -->
         <div class="fin-row" data-reveal>
           <div class="fin-kpi accent">
             <div class="fin-kpi-label">Já Entrou</div>
             <div class="fin-kpi-value" id="fin-receita">R$ —</div>
-            <div class="fin-kpi-sub" id="fin-receita-sub">— pagamentos confirmados</div>
+            <div class="fin-kpi-sub" id="fin-receita-sub">— confirmados</div>
           </div>
           <div class="fin-kpi" style="border-top:3px solid #b91c1c">
-            <div class="fin-kpi-label">Falta Entrar</div>
+            <div class="fin-kpi-label">Atrasado</div>
             <div class="fin-kpi-value" id="fin-pendente" style="color:#b91c1c">R$ —</div>
-            <div class="fin-kpi-sub" id="fin-pendente-sub">— em atraso</div>
+            <div class="fin-kpi-sub" id="fin-pendente-sub">— alunos</div>
           </div>
           <div class="fin-kpi" style="border-top:3px solid #d97706">
             <div class="fin-kpi-label">Não Pago / Suspenso</div>
@@ -1008,19 +1076,20 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
             <div class="fin-kpi-sub" id="fin-naopago-sub">— alunos</div>
           </div>
           <div class="fin-kpi">
-            <div class="fin-kpi-label">Total Previsto do Mês</div>
+            <div class="fin-kpi-label">Total Previsto</div>
             <div class="fin-kpi-value" id="fin-total">R$ —</div>
             <div class="fin-kpi-sub" id="fin-total-sub">— alunos ativos</div>
           </div>
         </div>
+
         <!-- Barra de progresso -->
         <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;box-shadow:var(--shadow)" data-reveal>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted)">Progresso de Recebimento</span>
+            <span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted)">Progresso do mês atual</span>
             <span style="font-family:var(--serif);font-size:1.1rem;color:var(--navy)" id="fin-pct">—%</span>
           </div>
           <div style="height:8px;background:var(--bg-soft);border-radius:4px;overflow:hidden">
-            <div id="fin-bar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:4px;transition:width 1s ease"></div>
+            <div id="fin-bar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:4px;transition:width 1.2s ease"></div>
           </div>
           <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:var(--text-muted)">
             <span id="fin-bar-left">R$ 0 recebido</span>
@@ -1028,39 +1097,37 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
           </div>
         </div>
 
-        <div class="fin-table-wrap" data-reveal>
-          <div class="fin-table-header">
-            <span>Lançamentos</span>
-            <span style="font-size:10px;color:rgba(255,255,255,.4)">Dados da planilha Payment_Control</span>
+        <!-- Tabela editável -->
+        <div class="fin-grid-wrap" data-reveal>
+          <div class="fin-grid-header">
+            <span>Payment Control</span>
+            <div class="fin-grid-months" id="fin-month-tabs"></div>
           </div>
-          <table class="fin-table">
-            <thead>
-              <tr>
-                <th colspan="4" style="padding-bottom:6px">
-                  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-                    <span>Mês:</span>
-                    <select id="fin-mes-sel" onchange="renderFin()" style="background:rgba(255,255,255,.08);border:1px solid rgba(196,164,90,.2);border-radius:5px;padding:4px 8px;font-size:11px;color:rgba(255,255,255,.8);font-family:var(--sans)">
-                      <option value="0">Janeiro</option><option value="1">Fevereiro</option>
-                      <option value="2">Março</option><option value="3">Abril</option>
-                      <option value="4">Maio</option><option value="5">Junho</option>
-                      <option value="6">Julho</option><option value="7">Agosto</option>
-                      <option value="8">Setembro</option><option value="9">Outubro</option>
-                      <option value="10">Novembro</option><option value="11">Dezembro</option>
-                    </select>
-                  </div>
-                </th>
-              </tr>
-              <tr>
-                <th>Aluno</th>
-                <th>Valor Mensal</th>
-                <th>Status</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody id="fin-tbody">
-              <tr><td colspan="6"><div class="state-loading"><div class="spinner"></div>Carregando...</div></td></tr>
-            </tbody>
-          </table>
+          <div style="overflow-x:auto">
+            <table class="fin-editable-table">
+              <thead>
+                <tr>
+                  <th style="min-width:180px">Aluno</th>
+                  <th style="min-width:110px">Valor/mês</th>
+                  <th class="th-mes" id="fin-th-m1">—</th>
+                  <th class="th-mes" id="fin-th-m2">—</th>
+                  <th class="th-mes" id="fin-th-m3">—</th>
+                </tr>
+              </thead>
+              <tbody id="fin-tbody">
+                <tr><td colspan="5"><div class="state-loading"><div class="spinner"></div>Carregando...</div></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- legenda -->
+          <div class="fin-legend">
+            <div class="fin-legend-item"><span class="status-pill sp-pago">Pago</span></div>
+            <div class="fin-legend-item"><span class="status-pill sp-atrasado">Atrasado</span></div>
+            <div class="fin-legend-item"><span class="status-pill sp-naopaga">Não paga</span></div>
+            <div class="fin-legend-item"><span class="status-pill sp-suspenso">Suspenso</span></div>
+            <div class="fin-legend-item"><span class="status-pill sp-null">—</span> sem registro</div>
+            <div class="fin-legend-item" style="margin-left:auto;color:var(--gold);font-size:10px">← clique no status para alterar · clique no nome/valor para editar</div>
+          </div>
         </div>
       </div>
 
@@ -1657,103 +1724,226 @@ function renderLinks() {
 // ══════════════════════════════════════════════
 // FINANCEIRO — leitura da planilha Payment_Control
 // ══════════════════════════════════════════════
-const MESES_NUM = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+// ══════════════════════════════════════════════
+// FINANCEIRO — tabela editável 3 meses
+// ══════════════════════════════════════════════
 const MESES_NOME = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const MESES_FULL = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const STATUS_CICLO = ['Pago','Atrasado','Não paga','Suspenso','Null'];
 
-// mesIdx = 0-based (0=jan, 1=fev...)
-function getMesAtual() { return new Date().getMonth(); } // 0-based
+function getMesAtual() { return new Date().getMonth(); }
+
+// mês central exibido na tabela (0-based); padrão = mês atual
+let finMesFoco = getMesAtual();
+
+function finGetVisibleMonths() {
+  // sempre mostra 3 meses: foco-1, foco, foco+1 (limitado a 0-11)
+  const meses = [];
+  for (let d = -1; d <= 1; d++) {
+    const m = finMesFoco + d;
+    if (m >= 0 && m <= 11) meses.push(m);
+  }
+  return meses;
+}
+
+function renderFinTabs() {
+  const tabs = document.getElementById('fin-month-tabs');
+  if (!tabs) return;
+  const prev = finMesFoco > 0  ? `<button class="fin-month-btn" onclick="finNavMes(-1)">&#8592; ${MESES_NOME[finMesFoco-1]}</button>` : '';
+  const next = finMesFoco < 11 ? `<button class="fin-month-btn" onclick="finNavMes(+1)">${MESES_NOME[finMesFoco+1]} &#8594;</button>` : '';
+  tabs.innerHTML = prev +
+    `<button class="fin-month-btn active">${MESES_FULL[finMesFoco]}</button>` +
+    next;
+}
+
+function finNavMes(dir) {
+  finMesFoco = Math.max(0, Math.min(11, finMesFoco + dir));
+  renderFin();
+}
+
+function statusPill(st) {
+  const s = (st || '').trim();
+  const sl = s.toLowerCase();
+  if (sl === 'pago')     return `<span class="status-pill sp-pago">Pago</span>`;
+  if (sl === 'atrasado') return `<span class="status-pill sp-atrasado">Atrasado</span>`;
+  if (sl === 'não paga' || sl === 'nao paga') return `<span class="status-pill sp-naopaga">Não paga</span>`;
+  if (sl === 'suspenso') return `<span class="status-pill sp-suspenso">Suspenso</span>`;
+  return `<span class="status-pill sp-null">—</span>`;
+}
 
 function renderFin() {
-  const dados = state.lancamentos; // aqui vem do Payment_Control
+  renderFinTabs();
+  const meses = finGetVisibleMonths();
+  const mesAtual = getMesAtual();
+
+  // Cabeçalhos das colunas de mês
+  meses.forEach((m, i) => {
+    const el = document.getElementById('fin-th-m' + (i+1));
+    if (el) el.textContent = MESES_FULL[m];
+  });
+  // Esconder coluna 3 se só tiver 2 meses visíveis
+  const th3 = document.getElementById('fin-th-m3');
+  if (th3) th3.style.display = meses.length < 3 ? 'none' : '';
+
+  const dados = state.lancamentos;
   if (!dados.length) {
     document.getElementById('fin-tbody').innerHTML =
-      '<tr><td colspan="5"><div class="state-empty">Nenhum dado encontrado na planilha.</div></td></tr>';
+      '<tr><td colspan="5"><div class="state-empty">Carregando dados...</div></td></tr>';
     return;
   }
 
-  const mesIdx = getMesAtual(); // 0-based
-
-  // KPIs: calcular sobre o mês atual (não o filtro de tabela)
-  let recebido = 0, atrasado = 0, naoPago = 0, suspenso = 0;
-  let ctPago = 0, ctAtrasado = 0, ctNaoPago = 0, ctAtivos = 0;
-  let totalPrevisto = 0;
-
+  // ── KPIs (sempre sobre mês atual) ──
+  let recebido=0, atrasado=0, naoPago=0, suspenso=0;
+  let ctPago=0, ctAtrasado=0, ctNaoPago=0, ctAtivos=0, totalPrevisto=0;
   dados.forEach(row => {
     if (!row.nome) return;
-    // Ativo = tem nome + valor numérico (mesmo que ainda sem status lançado)
-    ctAtivos++; // qualquer linha com nome conta como aluno ativo
-    const st  = (row.meses[mesIdx] || 'null').toLowerCase().trim();
-    const val = row.valor || 0; // 0 se valor ainda indefinido
+    ctAtivos++;
+    const st  = (row.meses[mesAtual] || 'null').toLowerCase().trim();
+    const val = row.valor || 0;
     if (val > 0) totalPrevisto += val;
-    if (st === 'pago')                                { recebido += val; ctPago++; }
-    else if (st === 'atrasado')                       { atrasado += val; ctAtrasado++; }
-    else if (st === 'não paga' || st === 'nao paga') { naoPago  += val; ctNaoPago++; }
-    else if (st === 'suspenso')                       { suspenso += val; }
+    if (st === 'pago')                              { recebido += val; ctPago++; }
+    else if (st === 'atrasado')                     { atrasado += val; ctAtrasado++; }
+    else if (st === 'não paga'||st === 'nao paga') { naoPago  += val; ctNaoPago++; }
+    else if (st === 'suspenso')                     { suspenso += val; }
   });
-
-  const pct = totalPrevisto > 0 ? Math.round(recebido / totalPrevisto * 100) : 0;
-
-  // KPI cards
+  const pct = totalPrevisto > 0 ? Math.round(recebido/totalPrevisto*100) : 0;
   document.getElementById('fin-receita').textContent      = 'R$\u00a0' + recebido.toLocaleString('pt-BR');
-  document.getElementById('fin-receita-sub').textContent  = ctPago + (ctPago === 1 ? ' pagamento confirmado' : ' pagamentos confirmados');
+  document.getElementById('fin-receita-sub').textContent  = ctPago + ' confirmado' + (ctPago!==1?'s':'');
   document.getElementById('fin-pendente').textContent     = 'R$\u00a0' + atrasado.toLocaleString('pt-BR');
-  document.getElementById('fin-pendente-sub').textContent = ctAtrasado + (ctAtrasado === 1 ? ' aluno em atraso' : ' alunos em atraso');
-  document.getElementById('fin-naopago').textContent      = 'R$\u00a0' + (naoPago + suspenso).toLocaleString('pt-BR');
-  document.getElementById('fin-naopago-sub').textContent  = ctNaoPago + (ctNaoPago === 1 ? ' aluno não pagou' : ' alunos não pagaram');
+  document.getElementById('fin-pendente-sub').textContent = ctAtrasado + ' aluno' + (ctAtrasado!==1?'s':'');
+  document.getElementById('fin-naopago').textContent      = 'R$\u00a0' + (naoPago+suspenso).toLocaleString('pt-BR');
+  document.getElementById('fin-naopago-sub').textContent  = ctNaoPago + ' aluno' + (ctNaoPago!==1?'s':'');
   document.getElementById('fin-total').textContent        = 'R$\u00a0' + totalPrevisto.toLocaleString('pt-BR');
   document.getElementById('fin-total-sub').textContent    = ctAtivos + ' alunos ativos';
   document.getElementById('kpi-receita').textContent      = 'R$\u00a0' + recebido.toLocaleString('pt-BR');
-
-  // Barra de progresso
-  document.getElementById('fin-pct').textContent      = pct + '%';
-  document.getElementById('fin-bar-right').textContent = 'meta: R$\u00a0' + totalPrevisto.toLocaleString('pt-BR');
-  document.getElementById('fin-bar-left').textContent  = 'R$\u00a0' + recebido.toLocaleString('pt-BR') + ' recebido';
+  document.getElementById('fin-pct').textContent          = pct + '%';
+  document.getElementById('fin-bar-right').textContent    = 'meta: R$\u00a0' + totalPrevisto.toLocaleString('pt-BR');
+  document.getElementById('fin-bar-left').textContent     = 'R$\u00a0' + recebido.toLocaleString('pt-BR') + ' recebido';
   setTimeout(() => { document.getElementById('fin-bar').style.width = pct + '%'; }, 100);
 
-  // Filtro de mês selecionado
-  const filtroMes = parseInt(document.getElementById('fin-mes-sel')?.value ?? mesIdx);
-
-  // Tabela: uma linha por aluno, mostrando status do mês filtrado
+  // ── Tabela ──
   const tbody = document.getElementById('fin-tbody');
-  const alunosFiltrados = dados.filter(r => r.nome);
+  const alunos = dados.filter(r => r.nome);
 
-  tbody.innerHTML = alunosFiltrados.map(row => {
-    const st = (row.meses[filtroMes] || 'null').trim();
-    const stLow = st.toLowerCase();
-    const cls = stLow === 'pago' ? 'fin-status-pago'
-               : stLow === 'atrasado' ? 'fin-status-atrasado'
-               : stLow === 'suspenso' ? 'fin-status-suspenso'
-               : stLow === 'não paga' || stLow === 'nao paga' ? 'fin-status-naopaga'
-               : 'fin-status-null';
-    const valFmt = row.valor ? 'R$\u00a0' + row.valor.toLocaleString('pt-BR') : '—';
-    return `<tr>
-      <td style="font-weight:600;color:var(--navy)">${row.nome}</td>
-      <td>${valFmt}</td>
-      <td class="${cls}">${st === 'null' || st === 'Null' ? '—' : st}</td>
+  tbody.innerHTML = alunos.map((row, rowIdx) => {
+    const valFmt = row.valor > 0 ? row.valor.toLocaleString('pt-BR', {minimumFractionDigits:2}) : '';
+    const mesCols = meses.map((m, ci) => `
       <td>
-        <button class="btn-cancel" style="padding:4px 10px;font-size:10px"
-          onclick="updateStatusFin('${row.nome.replace(/'/g,"\\'")}', ${filtroMes}, this)">
-          Atualizar Status
-        </button>
-      </td>
+        <div class="cell-status" onclick="finCycleStatus(${rowIdx}, ${m}, this)">
+          ${statusPill(row.meses[m])}
+        </div>
+      </td>`).join('');
+    // padding col 3 se só 2 meses
+    const pad = meses.length < 3 ? '<td style="display:none"></td>' : '';
+    return `<tr data-row="${rowIdx}">
+      <td><input class="cell-nome" value="${row.nome.replace(/"/g,'&quot;')}"
+        onblur="finSaveNome(${rowIdx}, this.value)"
+        onkeydown="if(event.key==='Enter')this.blur()"></td>
+      <td><input class="cell-valor" value="${valFmt}" placeholder="0,00"
+        onblur="finSaveValor(${rowIdx}, this.value)"
+        onkeydown="if(event.key==='Enter')this.blur()"></td>
+      ${mesCols}${pad}
     </tr>`;
-  }).join('');
+  }).join('') +
+  // Linha "+ novo aluno"
+  `<tr class="fin-new-row">
+    <td colspan="5">
+      <button class="btn-add-row" onclick="finAddAluno()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Adicionar aluno
+      </button>
+    </td>
+  </tr>`;
 }
 
-async function updateStatusFin(nome, mesIdx, btn) {
-  const opcoes = ['Pago','Não paga','Atrasado','Suspenso','Null'];
-  const row = state.lancamentos.find(r => r.nome === nome);
+// ── Ciclar status ao clicar ──
+async function finCycleStatus(rowIdx, mesIdx, cell) {
+  const row = state.lancamentos[rowIdx];
   if (!row) return;
-  const atual = row.meses[mesIdx] || 'Null';
-  const novoIdx = (opcoes.indexOf(atual) + 1) % opcoes.length;
-  const novo = opcoes[novoIdx];
+  const atual = (row.meses[mesIdx] || 'Null').trim();
+  const idx   = STATUS_CICLO.findIndex(s => s.toLowerCase() === atual.toLowerCase());
+  const novo  = STATUS_CICLO[(idx + 1) % STATUS_CICLO.length];
   row.meses[mesIdx] = novo;
+  cell.innerHTML = '<span class="status-pill sp-saving">...</span>';
+  renderFinKpis();
+  const r = await api('updatePaymentStatus', {
+    nome: encodeURIComponent(row.nome), mesIdx, status: encodeURIComponent(novo)
+  });
+  cell.innerHTML = statusPill(novo);
+  toast(row.nome.split(' ')[0] + ' · ' + MESES_NOME[mesIdx] + ': ' + novo);
+}
+
+// ── Editar nome inline ──
+let finNomeSaveTimer = {};
+async function finSaveNome(rowIdx, novoNome) {
+  novoNome = novoNome.trim();
+  const row = state.lancamentos[rowIdx];
+  if (!row || novoNome === row.nome || !novoNome) return;
+  const nomeAntigo = row.nome;
+  row.nome = novoNome;
+  await api('updatePaymentNome', {
+    nomeAntigo: encodeURIComponent(nomeAntigo),
+    nomeNovo:   encodeURIComponent(novoNome),
+    rowIdx
+  });
+  toast('Nome atualizado.');
+}
+
+// ── Editar valor inline ──
+async function finSaveValor(rowIdx, rawVal) {
+  const num = parseFloat(rawVal.replace(/\./g,'').replace(',','.')) || 0;
+  const row = state.lancamentos[rowIdx];
+  if (!row || num === row.valor) return;
+  row.valor = num;
+  renderFinKpis();
+  await api('updatePaymentValor', { rowIdx, valor: num });
+  toast('Valor atualizado.');
+}
+
+function renderFinKpis() {
+  // recalcular só os KPIs sem rerender a tabela toda
+  const mesAtual = getMesAtual();
+  let recebido=0,atrasado=0,naoPago=0,suspenso=0,ctPago=0,ctAtrasado=0,ctNaoPago=0,ctAtivos=0,totalPrevisto=0;
+  state.lancamentos.forEach(row => {
+    if (!row.nome) return;
+    ctAtivos++;
+    const st=(row.meses[mesAtual]||'null').toLowerCase().trim();
+    const val=row.valor||0;
+    if(val>0) totalPrevisto+=val;
+    if(st==='pago'){recebido+=val;ctPago++;}
+    else if(st==='atrasado'){atrasado+=val;ctAtrasado++;}
+    else if(st==='não paga'||st==='nao paga'){naoPago+=val;ctNaoPago++;}
+    else if(st==='suspenso') suspenso+=val;
+  });
+  const pct=totalPrevisto>0?Math.round(recebido/totalPrevisto*100):0;
+  document.getElementById('fin-receita').textContent='R$\u00a0'+recebido.toLocaleString('pt-BR');
+  document.getElementById('fin-pendente').textContent='R$\u00a0'+atrasado.toLocaleString('pt-BR');
+  document.getElementById('fin-naopago').textContent='R$\u00a0'+(naoPago+suspenso).toLocaleString('pt-BR');
+  document.getElementById('fin-total').textContent='R$\u00a0'+totalPrevisto.toLocaleString('pt-BR');
+  document.getElementById('fin-total-sub').textContent=ctAtivos+' alunos ativos';
+  document.getElementById('kpi-receita').textContent='R$\u00a0'+recebido.toLocaleString('pt-BR');
+  document.getElementById('fin-pct').textContent=pct+'%';
+  document.getElementById('fin-bar').style.width=pct+'%';
+}
+
+// ── Adicionar novo aluno ──
+async function finAddAluno() {
+  const nome = prompt('Nome do novo aluno:');
+  if (!nome || !nome.trim()) return;
+  const valorStr = prompt('Valor mensal (ex: 900):');
+  const valor = parseFloat((valorStr||'0').replace(',','.')) || 0;
+  const novoAluno = {
+    nome: nome.trim(),
+    valor: valor,
+    meses: Array(12).fill('Null')
+  };
+  state.lancamentos.push(novoAluno);
   renderFin();
-  const oldText = btn.textContent;
-  btn.textContent = '...';
-  const r = await api('updatePaymentStatus', { nome: encodeURIComponent(nome), mesIdx, status: encodeURIComponent(novo) });
-  btn.textContent = oldText;
-  toast(nome.split(' ').slice(0,2).join(' ') + ' — ' + MESES_NOME[mesIdx] + ': ' + novo);
+  const r = await api('addPaymentAluno', {
+    nome: encodeURIComponent(novoAluno.nome),
+    valor: valor
+  });
+  toast('Aluno adicionado: ' + novoAluno.nome.split(' ')[0]);
 }
 
 // ══════════════════════════════════════════════
