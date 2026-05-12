@@ -2562,6 +2562,93 @@ function renderFinKpis() {
   document.getElementById('fin-bar').style.width=pct+'%';
 }
 
+// ── Ordenação ──
+let finSortKey = null;
+let finSortDir = 'asc';
+const STATUS_ORDER = { 'pago':0,'atrasado':1,'não paga':2,'nao paga':2,'suspenso':3,'null':4,'':5 };
+
+function finSort(key) {
+  if (finSortKey === key) {
+    finSortDir = finSortDir === 'asc' ? 'desc' : 'asc';
+  } else {
+    finSortKey = key;
+    finSortDir = 'asc';
+  }
+  ['th-nome','th-valor','fin-th-m1','fin-th-m2','fin-th-m3'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('sort-asc','sort-desc');
+  });
+  const keyToId = { 'nome':'th-nome','valor':'th-valor','m0':'fin-th-m1','m1':'fin-th-m2','m2':'fin-th-m3' };
+  const thEl = document.getElementById(keyToId[key]);
+  if (thEl) thEl.classList.add(finSortDir === 'asc' ? 'sort-asc' : 'sort-desc');
+  renderFin();
+}
+
+function finGetSortedData(dados) {
+  if (!finSortKey) return [...dados];
+  const meses = finGetVisibleMonths();
+  return [...dados].sort((a, b) => {
+    let va, vb;
+    if (finSortKey === 'nome') {
+      va = (a.nome || '').toLowerCase();
+      vb = (b.nome || '').toLowerCase();
+    } else if (finSortKey === 'valor') {
+      va = a.valor || 0;
+      vb = b.valor || 0;
+    } else {
+      const mi = parseInt(finSortKey.replace('m',''));
+      const mesIdx = meses[mi] ?? getMesAtual();
+      va = STATUS_ORDER[(a.meses[mesIdx]||'').toLowerCase().trim()] ?? 5;
+      vb = STATUS_ORDER[(b.meses[mesIdx]||'').toLowerCase().trim()] ?? 5;
+    }
+    if (va < vb) return finSortDir === 'asc' ? -1 : 1;
+    if (va > vb) return finSortDir === 'asc' ?  1 : -1;
+    return 0;
+  });
+}
+
+// ── Alterar status via select ──
+async function finChangeStatus(rowIdx, mesIdx, sel) {
+  const row = state.lancamentos[rowIdx];
+  if (!row) return;
+  const novo = sel.value;
+  row.meses[mesIdx] = novo;
+  sel.className = 'status-select ' + statusClass(novo);
+  renderFinKpis();
+  sel.disabled = true;
+  await api('updatePaymentStatus', {
+    nome: encodeURIComponent(row.nome), mesIdx, status: encodeURIComponent(novo)
+  });
+  sel.disabled = false;
+  toast(row.nome.split(' ')[0] + ' · ' + MESES_NOME[mesIdx] + ': ' + (novo === 'Null' ? '—' : novo));
+}
+
+// ── Editar nome inline ──
+async function finSaveNome(rowIdx, novoNome) {
+  novoNome = novoNome.trim();
+  const row = state.lancamentos[rowIdx];
+  if (!row || novoNome === row.nome || !novoNome) return;
+  const nomeAntigo = row.nome;
+  row.nome = novoNome;
+  await api('updatePaymentNome', {
+    nomeAntigo: encodeURIComponent(nomeAntigo),
+    nomeNovo:   encodeURIComponent(novoNome),
+    rowIdx
+  });
+  toast('Nome atualizado.');
+}
+
+// ── Editar valor inline ──
+async function finSaveValor(rowIdx, rawVal) {
+  const num = parseFloat(rawVal.replace(/\./g,'').replace(',','.')) || 0;
+  const row = state.lancamentos[rowIdx];
+  if (!row || num === row.valor) return;
+  row.valor = num;
+  renderFinKpis();
+  await api('updatePaymentValor', { rowIdx, valor: num });
+  toast('Valor atualizado.');
+}
+
 // ── Adicionar novo aluno ──
 async function finAddAluno() {
   const nome = prompt('Nome do novo aluno:');
