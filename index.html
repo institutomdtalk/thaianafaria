@@ -1080,42 +1080,13 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
       <div class="sidebar-role">CEO · Linguista · Professora</div>
     </div>
     <nav class="sidebar-nav">
-      <div class="nav-section-label">Principal</div>
       <div class="nav-item active" data-panel="dashboard" onclick="goTo('dashboard')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
         <span>Dashboard</span>
       </div>
-      <div class="nav-item" data-panel="agenda" onclick="goTo('agenda')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        <span>Agenda</span>
-      </div>
-      <div class="nav-item" data-panel="alunos" onclick="goTo('alunos')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        <span>Alunos</span>
-      </div>
-
-      <div class="nav-section-label">Produtividade</div>
-      <div class="nav-item" data-panel="tarefas" onclick="goTo('tarefas')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-        <span>Tarefas</span>
-      </div>
-      <div class="nav-item" data-panel="notas" onclick="goTo('notas')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        <span>Anotações</span>
-      </div>
-      <div class="nav-item" data-panel="links" onclick="goTo('links')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-        <span>Links Úteis</span>
-      </div>
-
-      <div class="nav-section-label">Negócio</div>
       <div class="nav-item" data-panel="financeiro" onclick="goTo('financeiro')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         <span>Financeiro</span>
-      </div>
-      <div class="nav-item" data-panel="engajamento" onclick="goTo('engajamento')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="4" height="18" rx="1"/><rect x="10" y="8" width="4" height="13" rx="1"/><rect x="18" y="13" width="4" height="8" rx="1"/></svg>
-        <span>Engajamento</span>
       </div>
     </nav>
     <div class="sidebar-footer">
@@ -1264,166 +1235,6 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
         </div>
       </div>
 
-      <!-- ── AGENDA ── -->
-      <div id="panel-agenda" class="panel">
-        <div class="section-header" data-reveal>
-          <div class="section-overline">Google Calendar</div>
-          <div class="section-title">Aulas de Hoje</div>
-        </div>
-
-        <div style="display:flex;gap:40px;align-items:flex-start;flex-wrap:wrap" data-reveal>
-
-          <!-- Checklist -->
-          <div style="flex:1;min-width:280px">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-              <div id="agenda-data-label" style="font-size:12px;color:var(--text-muted);letter-spacing:.04em"></div>
-              <button class="btn-gold btn-sm" id="btn-sync-cal" onclick="syncCalendar()">&#8635; Sincronizar</button>
-            </div>
-            <div id="agenda-checklist"></div>
-          </div>
-
-          <!-- Botão Google Calendar orbital -->
-          <div style="display:flex;flex-direction:column;align-items:center;gap:14px;padding-top:8px;flex-shrink:0">
-            <div style="position:relative;width:100px;height:100px;cursor:pointer"
-              onclick="window.open('https://calendar.google.com','_blank')"
-              title="Abrir Google Calendar">
-              <svg id="gcal-orbit-svg" viewBox="0 0 100 100"
-                style="position:absolute;inset:0;width:100px;height:100px;pointer-events:none"></svg>
-              <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2">
-                <div style="width:58px;height:58px;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.15)">
-                  <svg width="34" height="34" viewBox="0 0 24 24">
-                    <rect x="3" y="4" width="18" height="17" rx="2" fill="white" stroke="#DADCE0" stroke-width="1"/>
-                    <rect x="3" y="9" width="18" height="1.5" fill="#DADCE0"/>
-                    <rect x="8" y="2" width="2" height="4" rx="1" fill="#4285F4"/>
-                    <rect x="14" y="2" width="2" height="4" rx="1" fill="#4285F4"/>
-                    <text x="12" y="20" font-size="7" font-weight="bold" fill="#4285F4" text-anchor="middle" font-family="Arial">CAL</text>
-                  </svg>
-                </div>
-              </div>
-            </div>
-            <span style="font-size:10px;color:var(--text-muted);letter-spacing:.06em">Google Calendar</span>
-          </div>
-
-        </div>
-
-        <!-- Modal de cor do evento -->
-        <div class="modal-overlay" id="modal-event-color">
-          <div class="modal-box" style="width:340px">
-            <div class="modal-title" id="modal-event-title">Alterar cor</div>
-            <div style="font-size:11px;color:var(--text-muted);margin-bottom:16px" id="modal-event-time"></div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-              <button class="cal-color-btn" data-color-id="5"  data-label="Aula ocorreu"   onclick="setEventColor(this)">&#128993; Aula ocorreu</button>
-              <button class="cal-color-btn" data-color-id="1"  data-label="Programado"     onclick="setEventColor(this)">&#128994; Programado</button>
-              <button class="cal-color-btn" data-color-id="11" data-label="Reposição"      onclick="setEventColor(this)">&#128308; Reposição</button>
-              <button class="cal-color-btn" data-color-id="3"  data-label="Aluno faltou"   onclick="setEventColor(this)">&#128995; Aluno faltou</button>
-              <button class="cal-color-btn" data-color-id="10" data-label="Eu faltei"      onclick="setEventColor(this)">&#128992; Eu faltei</button>
-              <button class="cal-color-btn" data-color-id="6"  data-label="Aula estendida" onclick="setEventColor(this)">&#129001; Aula estendida</button>
-            </div>
-            <div class="modal-actions">
-              <button class="btn-cancel" onclick="closeModal('modal-event-color')">Fechar</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-      <!-- ── ALUNOS ── -->
-      <div id="panel-alunos" class="panel">
-        <div class="section-header" data-reveal>
-          <div class="section-overline">Lista</div>
-          <div class="section-title">Alunos Ativos</div>
-        </div>
-        <div class="alunos-toolbar" data-reveal>
-          <input class="search-input" placeholder="Buscar aluno..." oninput="filtrarAlunos(this.value)" id="aluno-search">
-          <button class="btn-gold" onclick="openModalAluno()">+ Novo Aluno</button>
-        </div>
-        <table class="alunos-table" data-reveal>
-          <thead class="table-head">
-            <tr>
-              <th>Nome</th>
-              <th>Especialidade</th>
-              <th>Nível</th>
-              <th>Status</th>
-              <th>Plano</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody id="alunos-tbody">
-            <tr><td colspan="6"><div class="state-loading"><div class="spinner"></div>Carregando...</div></td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- ── TAREFAS ── -->
-      <div id="panel-tarefas" class="panel">
-        <div class="section-header" data-reveal>
-          <div class="section-overline">To-do</div>
-          <div class="section-title">Tarefas</div>
-        </div>
-        <div class="tasks-layout" data-reveal>
-          <div class="task-list" id="task-list">
-            <div class="state-loading"><div class="spinner"></div>Carregando...</div>
-          </div>
-          <div class="task-add-form">
-            <div class="task-add-title">Nova Tarefa</div>
-            <div class="form-row">
-              <label class="form-label">Descrição</label>
-              <input class="form-input" id="task-texto" placeholder="O que precisa ser feito?">
-            </div>
-            <div class="form-row">
-              <label class="form-label">Categoria</label>
-              <select class="form-select" id="task-cat">
-                <option>Administrativo</option>
-                <option>Pedagógico</option>
-                <option>Conteúdo</option>
-                <option>Financeiro</option>
-                <option>Pessoal</option>
-              </select>
-            </div>
-            <div class="form-row">
-              <label class="form-label">Prazo</label>
-              <input class="form-input" type="date" id="task-prazo">
-            </div>
-            <button class="btn-gold" style="width:100%" onclick="addTask()">Adicionar</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── NOTAS ── -->
-      <div id="panel-notas" class="panel">
-        <div class="section-header" data-reveal>
-          <div class="section-overline">Diário</div>
-          <div class="section-title">Anotações</div>
-        </div>
-        <div class="notes-layout" data-reveal>
-          <div class="notes-list">
-            <div class="notes-list-header">
-              <span>Notas</span>
-              <button class="btn-gold btn-sm" onclick="newNote()">+</button>
-            </div>
-            <div id="notes-list-body">
-              <div class="state-loading"><div class="spinner"></div>Carregando...</div>
-            </div>
-          </div>
-          <div class="note-editor">
-            <div class="note-editor-toolbar">
-              <input class="note-title-input" id="note-title-inp" placeholder="Título da nota...">
-              <button class="btn-save" onclick="saveNote()">Salvar</button>
-              <button class="btn-cancel" onclick="deleteNote()" title="Apagar nota">&#10006;</button>
-            </div>
-            <div class="note-body" id="note-body" contenteditable="true" spellcheck="false"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── LINKS ── -->
-      <div id="panel-links" class="panel">
-        <div class="section-header" data-reveal>
-          <div class="section-overline">Atalhos</div>
-          <div class="section-title">Links Úteis</div>
-        </div>
-        <div class="links-grid" data-reveal id="links-grid"></div>
-      </div>
 
       <!-- ── FINANCEIRO ── -->
       <div id="panel-financeiro" class="panel">
@@ -1501,67 +1312,8 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
         </div>
       </div>
 
-      <!-- ── ENGAJAMENTO ── -->
-      <div id="panel-engajamento" class="panel">
-        <div class="section-header" data-reveal>
-          <div class="section-overline">Análise</div>
-          <div class="section-title">Engajamento</div>
-        </div>
 
-        <!-- Tabs dia/semana/mês -->
-        <div class="eng-tabs" data-reveal>
-          <button class="eng-tab active" onclick="engTab('dia',this)">Hoje</button>
-          <button class="eng-tab" onclick="engTab('semana',this)">Semana</button>
-          <button class="eng-tab" onclick="engTab('mes',this)">Mês</button>
-        </div>
-
-        <!-- KPIs -->
-        <div class="eng-kpi-row" data-reveal>
-          <div class="eng-kpi">
-            <div class="eng-kpi-num" id="eng-k-ocorreu" style="color:#34A853">—</div>
-            <div class="eng-kpi-label">Aula ocorreu</div>
-          </div>
-          <div class="eng-kpi">
-            <div class="eng-kpi-num" id="eng-k-faltou" style="color:#EA4335">—</div>
-            <div class="eng-kpi-label">Aluno faltou</div>
-          </div>
-          <div class="eng-kpi">
-            <div class="eng-kpi-num" id="eng-k-desmarcei" style="color:#FF6D00">—</div>
-            <div class="eng-kpi-label">Eu desmarcei</div>
-          </div>
-          <div class="eng-kpi">
-            <div class="eng-kpi-num" id="eng-k-gravada" style="color:#4285F4">—</div>
-            <div class="eng-kpi-label">Aula gravada</div>
-          </div>
-          <div class="eng-kpi">
-            <div class="eng-kpi-num" id="eng-k-reposicao" style="color:#9C27B0">—</div>
-            <div class="eng-kpi-label">Reposição</div>
-          </div>
-        </div>
-
-        <!-- Heatmap -->
-        <div class="heatmap-wrap" data-reveal>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-            <span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted)" id="eng-hm-label">Calendário de engajamento</span>
-            <div style="display:flex;gap:10px;align-items:center;font-size:10px;color:var(--text-muted)">
-              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:2px;background:#34A853;display:inline-block"></span>Ocorreu</span>
-              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:2px;background:#EA4335;display:inline-block"></span>Faltou</span>
-              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:2px;background:#FF6D00;display:inline-block"></span>Desmarcei</span>
-              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:2px;background:#4285F4;display:inline-block"></span>Gravada</span>
-              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:2px;background:#9C27B0;display:inline-block"></span>Reposição</span>
-            </div>
-          </div>
-          <div id="eng-heatmap"></div>
-        </div>
-
-        <!-- Lista de registros -->
-        <div style="margin-top:20px" data-reveal>
-          <div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px">Registros do período</div>
-          <div id="eng-lista"></div>
-        </div>
-      </div>
-
-    </div><!-- /main-content -->
+          </div><!-- /main-content -->
   </main>
 </div><!-- /shell -->
 
@@ -1690,8 +1442,8 @@ let state = {
   tasks: [],
   notas: [],
   lancamentos: [],
-  agendaOffset: 0,    // semanas em relação a hoje
-  notaAtual: null,    // índice da nota aberta
+  agendaOffset: 0,
+  notaAtual: null,
 };
 
 // ══════════════════════════════════════════════
@@ -1766,14 +1518,8 @@ document.addEventListener('keydown', e => {
 // NAVEGAÇÃO
 // ══════════════════════════════════════════════
 const PANEL_TITLES = {
-  dashboard: 'Dashboard',
-  agenda: 'Agenda',
-  alunos: 'Alunos',
-  tarefas: 'Tarefas',
-  notas: 'Anotações',
-  links: 'Links Úteis',
-  financeiro: 'Financeiro',
-  engajamento: 'Engajamento'
+  dashboard:  'Dashboard',
+  financeiro: 'Financeiro'
 };
 
 function goTo(id) {
@@ -1788,9 +1534,7 @@ function goTo(id) {
   if (header) header.style.display = id === 'dashboard' ? 'none' : 'flex';
 
   // lazy render
-  if (id === 'agenda') { syncCalendar(); }
-  if (id === 'engajamento') renderEngajamento();
-  if (id === 'links')  renderLinks();
+  if (id === 'financeiro') renderFin();
 
   // scroll reveal
   requestAnimationFrame(() => {
