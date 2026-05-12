@@ -1217,19 +1217,28 @@ function goTo(id) {
 // ══════════════════════════════════════════════
 // API (Google Apps Script)
 // ══════════════════════════════════════════════
-async function api(action, payload = {}) {
-  if (!SCRIPT_URL) return mockData(action, payload);
-  try {
-    const resp = await fetch(SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action, ...payload })
-    });
-    return await resp.json();
-  } catch (e) {
-    console.error('API error', e);
-    return { ok: false };
-  }
+// ── API via JSONP (evita CORS do Apps Script) ──
+function api(action, payload = {}) {
+  if (!SCRIPT_URL) return Promise.resolve(mockData(action, payload));
+  return new Promise((resolve) => {
+    const cbName = 'cb_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+    const params = new URLSearchParams({ action, callback: cbName, ...payload });
+    const script = document.createElement('script');
+    const timer = setTimeout(() => {
+      cleanup();
+      console.warn('API timeout:', action);
+      resolve({ ok: false, error: 'timeout' });
+    }, 12000);
+    function cleanup() {
+      clearTimeout(timer);
+      delete window[cbName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+    window[cbName] = (data) => { cleanup(); resolve(data); };
+    script.src = SCRIPT_URL + '?' + params.toString();
+    script.onerror = () => { cleanup(); resolve({ ok: false, error: 'script error' }); };
+    document.head.appendChild(script);
+  });
 }
 
 // Dados mock para uso offline / antes de conectar o Sheets
@@ -1672,9 +1681,11 @@ async function updateStatusFin(nome, mesIdx, btn) {
   const novo = opcoes[novoIdx];
   row.meses[mesIdx] = novo;
   renderFin();
-  btn.textContent = 'Salvando...';
-  await api('updatePaymentStatus', { nome, mesIdx, status: novo });
-  toast(`${nome} — ${MESES_NOME[mesIdx]}: ${novo}`);
+  const oldText = btn.textContent;
+  btn.textContent = '...';
+  const r = await api('updatePaymentStatus', { nome: encodeURIComponent(nome), mesIdx, status: encodeURIComponent(novo) });
+  btn.textContent = oldText;
+  toast(nome.split(' ').slice(0,2).join(' ') + ' — ' + MESES_NOME[mesIdx] + ': ' + novo);
 }
 
 // ══════════════════════════════════════════════
