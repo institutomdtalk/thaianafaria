@@ -133,57 +133,20 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 
 .sidebar {
   position: fixed; top: 0; left: 0;
-  width: var(--sidebar-collapsed);
+  width: var(--sidebar);
   height: 100%;
-  background: #0a0a0a;
+  background: rgba(12, 10, 8, 0.72);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   display: flex; flex-direction: column;
   z-index: 100;
-  border-right: 1px solid rgba(196,164,90,.0);
-  overflow: hidden;
-  transition: width .35s cubic-bezier(.4,0,.2,1),
-              border-color .35s ease,
-              box-shadow .35s ease;
-}
-.sidebar:hover,
-.sidebar.open {
-  width: var(--sidebar);
-  border-right-color: rgba(196,164,90,.15);
-  box-shadow: 6px 0 40px rgba(0,0,0,.6);
-}
-/* Gatilho invisível na margem esquerda */
-.sidebar-trigger {
-  position: fixed; top: 0; left: 0;
-  width: 18px; height: 100%;
-  z-index: 99;
-  cursor: pointer;
+  border-right: 1px solid rgba(196,164,90,.08);
+  box-shadow: 4px 0 32px rgba(0,0,0,.35);
 }
 
+
 /* Quando colapsada, esconder textos mas manter layout */
-.sidebar-overline,
-.sidebar-name,
-.sidebar-role,
-.nav-section-label,
-.nav-item span,
-.btn-logout span {
-  opacity: 0;
-  transition: opacity .2s ease .05s;
-  white-space: nowrap;
-}
-.sidebar:hover .sidebar-overline,
-.sidebar:hover .sidebar-name,
-.sidebar:hover .sidebar-role,
-.sidebar:hover .nav-section-label,
-.sidebar:hover .nav-item span,
-.sidebar:hover .btn-logout span,
-.sidebar.open .sidebar-overline,
-.sidebar.open .sidebar-name,
-.sidebar.open .sidebar-role,
-.sidebar.open .nav-section-label,
-.sidebar.open .nav-item span,
-.sidebar.open .btn-logout span {
-  opacity: 1;
-  transition: opacity .25s ease .15s;
-}
+
 .sidebar-brand {
   padding: 24px 22px 20px;
   border-bottom: 1px solid rgba(196,164,90,.08);
@@ -218,7 +181,7 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
   user-select: none;
 }
 .nav-item svg { width: 15px; height: 15px; opacity: .7; flex-shrink: 0; min-width: 15px; }
-.nav-item { min-width: var(--sidebar); } /* evitar quebra de linha */
+
 .nav-item:hover { color: rgba(255,255,255,.75); background: rgba(255,255,255,.04); }
 .nav-item.active {
   color: var(--gold); border-left-color: var(--gold);
@@ -241,13 +204,11 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 
 /* MAIN */
 .main {
-  margin-left: 0;
+  margin-left: var(--sidebar);
   height: 100%;
   flex: 1;
-  width: 100%;
   display: flex; flex-direction: column;
   overflow-y: auto;
-  transition: margin-left .35s cubic-bezier(.4,0,.2,1);
 }
 .main-header {
   height: var(--header);
@@ -985,7 +946,6 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 <div id="shell">
 
   <!-- SIDEBAR -->
-  <div class="sidebar-trigger" id="sidebar-trigger"></div>
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
       <div class="sidebar-overline">MD Talk</div>
@@ -1696,13 +1656,7 @@ async function initApp() { // retorna Promise implícita via async
   if (header) header.style.display = 'none';
   // Criar órbita SVG
   buildAvatarOrbit();
-  // Sidebar: hover via trigger para touch/iOS
-  const trigger = document.getElementById('sidebar-trigger');
-  const sb = document.getElementById('sidebar');
-  if (trigger && sb) {
-    trigger.addEventListener('mouseenter', () => sb.classList.add('open'));
-    sb.addEventListener('mouseleave', () => sb.classList.remove('open'));
-  }
+
 }
 
 function buildAvatarOrbit() {
