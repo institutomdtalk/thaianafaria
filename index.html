@@ -40,7 +40,7 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 #page-login {
   position: fixed; inset: 0; z-index: 9999;
   background: var(--navy-deep);
-  display: flex; align-items: center; justify-content: center;
+  display: none; align-items: center; justify-content: center;
   transition: opacity .5s ease;
 }
 #page-login::before {
@@ -716,6 +716,40 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 <body>
 
 <!-- ══ LOGIN ══════════════════════════════ -->
+<!-- ══ LOADING ══════════════════════════════ -->
+<div id="page-loading" style="
+  position:fixed;inset:0;z-index:99999;
+  background:var(--navy-deep);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity .5s ease;
+">
+  <div style="position:absolute;inset:0;background-image:radial-gradient(circle,rgba(196,164,90,.12) 1px,transparent 1px);background-size:28px 28px;pointer-events:none"></div>
+  <div style="position:relative;z-index:1;text-align:center">
+    <div style="font-family:var(--serif);font-size:2rem;font-weight:300;color:rgba(255,255,255,.9);margin-bottom:6px">
+      Thaiana <em style="color:var(--gold);font-style:italic">Workspace</em>
+    </div>
+    <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:40px">Instituto MD Talk</div>
+    <div style="display:flex;gap:8px;justify-content:center;align-items:center">
+      <div class="ld-dot" style="animation-delay:0s"></div>
+      <div class="ld-dot" style="animation-delay:.18s"></div>
+      <div class="ld-dot" style="animation-delay:.36s"></div>
+    </div>
+  </div>
+</div>
+
+<style>
+.ld-dot {
+  width:8px;height:8px;border-radius:50%;
+  background:var(--gold);opacity:.3;
+  animation:ldPulse 1.1s ease-in-out infinite;
+}
+@keyframes ldPulse {
+  0%,100%{opacity:.2;transform:scale(.8)}
+  50%{opacity:1;transform:scale(1.2)}
+}
+</style>
+
+<!-- ══ LOGIN ══════════════════════════════ -->
 <div id="page-login">
   <div class="login-box">
     <div class="login-overline">Área Restrita</div>
@@ -1147,6 +1181,9 @@ let state = {
 // ══════════════════════════════════════════════
 // LOGIN / LOGOUT
 // ══════════════════════════════════════════════
+// ── Chave de sessão no sessionStorage ──
+const SESSION_KEY = 'ws_thaiana_auth';
+
 function doLogin() {
   const user = document.getElementById('inp-user').value.trim().toLowerCase();
   const pass = document.getElementById('inp-pass').value;
@@ -1154,29 +1191,59 @@ function doLogin() {
 
   if (CREDENCIAIS[user] && CREDENCIAIS[user] === pass) {
     err.textContent = '';
-    const pg = document.getElementById('page-login');
-    pg.style.opacity = '0';
-    setTimeout(() => {
-      pg.style.display = 'none';
-      document.getElementById('shell').style.display = 'flex';
-      document.getElementById('shell').style.height = '100%';
-      initApp();
-    }, 500);
+    // Salvar sessão (persiste até fechar o navegador; use localStorage para persistir mais)
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ user, ts: Date.now() }));
+    enterApp();
   } else {
     err.textContent = 'Usuário ou senha incorretos.';
     document.getElementById('inp-pass').value = '';
   }
 }
 
+function enterApp() {
+  // Esconder login e loading, mostrar shell
+  document.getElementById('page-login').style.display = 'none';
+  const ld = document.getElementById('page-loading');
+  ld.style.opacity = '0';
+  setTimeout(() => { ld.style.display = 'none'; }, 500);
+  const shell = document.getElementById('shell');
+  shell.style.display = 'flex';
+  shell.style.height = '100%';
+  initApp();
+}
+
 function doLogout() {
+  sessionStorage.removeItem(SESSION_KEY);
   document.getElementById('shell').style.display = 'none';
-  const pg = document.getElementById('page-login');
-  pg.style.opacity = '0';
-  pg.style.display = 'flex';
-  setTimeout(() => { pg.style.opacity = '1'; }, 10);
+  document.getElementById('page-login').style.display = 'flex';
+  document.getElementById('page-login').style.opacity = '0';
   document.getElementById('inp-user').value = '';
   document.getElementById('inp-pass').value = '';
+  setTimeout(() => { document.getElementById('page-login').style.opacity = '1'; }, 10);
 }
+
+// ── Verificar sessão ao carregar a página ──
+document.addEventListener('DOMContentLoaded', () => {
+  const ld   = document.getElementById('page-loading');
+  const sess = sessionStorage.getItem(SESSION_KEY);
+  if (sess) {
+    // Sessão válida — pular login, ir direto para o app
+    document.getElementById('page-login').style.display = 'none';
+    // Loading aparece enquanto o app inicializa
+    ld.style.display = 'flex';
+    setTimeout(() => { enterApp(); }, 400); // pequeno delay para o loading aparecer
+  } else {
+    // Sem sessão — mostrar login, esconder loading
+    ld.style.opacity = '0';
+    setTimeout(() => {
+      ld.style.display = 'none';
+      const pg = document.getElementById('page-login');
+      pg.style.display = 'flex';
+      pg.style.opacity = '0';
+      setTimeout(() => { pg.style.opacity = '1'; }, 10);
+    }, 300);
+  }
+});
 
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && document.getElementById('page-login').style.display !== 'none') doLogin();
