@@ -1335,6 +1335,9 @@ function mockData(action, payload) {
     { nome: 'Dr. Paulo Mendes',     valor: 600,  meses: ['Null','Null','Pago','Pago','Atrasado','Null','Null','Null','Null','Null','Null','Null'] },
     { nome: 'Dra. Ana Costa',       valor: 900,  meses: ['Pago','Pago','Pago','Pago','Não paga','Null','Null','Null','Null','Null','Null','Null'] },
     { nome: 'Dr. Carlos Fonseca',   valor: 1400, meses: ['Pago','Pago','Pago','Pago','Pago',   'Null','Null','Null','Null','Null','Null','Null'] },
+    { nome: 'Bruna Pitanga',        valor: 900,  meses: ['Null','Null','Null','Null','Null',   'Null','Null','Null','Null','Null','Null','Null'] },
+    { nome: 'César Salce',          valor: 1800, meses: ['Null','Null','Null','Null','Null',   'Null','Null','Null','Null','Null','Null','Null'] },
+    { nome: 'Carlos e Amiga',       valor: 1400, meses: ['Null','Null','Null','Null','Null',   'Null','Null','Null','Null','Null','Null','Null'] },
   ]};
   return { ok: true };
 }
@@ -1677,13 +1680,11 @@ function renderFin() {
 
   dados.forEach(row => {
     if (!row.nome) return;
+    // Ativo = tem nome + valor numérico (mesmo que ainda sem status lançado)
+    ctAtivos++; // qualquer linha com nome conta como aluno ativo
     const st  = (row.meses[mesIdx] || 'null').toLowerCase().trim();
-    const val = row.valor || 0;
-    // Só conta no total previsto quem tem qualquer registro no mês (não é puro Null)
-    const hasActivity = row.meses.some(m => m && m.toLowerCase() !== 'null' && m.trim() !== '');
-    if (!hasActivity) return; // aluno inativo (sem registros em nenhum mês)
-    ctAtivos++;
-    totalPrevisto += val;
+    const val = row.valor || 0; // 0 se valor ainda indefinido
+    if (val > 0) totalPrevisto += val;
     if (st === 'pago')                                { recebido += val; ctPago++; }
     else if (st === 'atrasado')                       { atrasado += val; ctAtrasado++; }
     else if (st === 'não paga' || st === 'nao paga') { naoPago  += val; ctNaoPago++; }
