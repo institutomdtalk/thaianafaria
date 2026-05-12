@@ -750,6 +750,77 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 .link-desc { font-size: 10px; color: var(--text-muted); line-height: 1.4; }
 
 /* ══════════════════════════════════════
+   HEATMAP DE ENGAJAMENTO
+══════════════════════════════════════ */
+.eng-tabs {
+  display: flex; gap: 4px;
+  background: var(--bg-soft); border-radius: 8px; padding: 4px;
+  margin-bottom: 24px; width: fit-content;
+}
+.eng-tab {
+  padding: 7px 18px; border-radius: 6px;
+  font-size: 11px; font-weight: 600; letter-spacing: .06em;
+  cursor: pointer; border: none; background: none;
+  color: var(--text-muted); font-family: var(--sans);
+  transition: all .2s;
+}
+.eng-tab.active {
+  background: var(--bg-card); color: var(--navy);
+  box-shadow: 0 1px 4px rgba(0,0,0,.08);
+}
+.eng-kpi-row {
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  gap: 12px; margin-bottom: 28px;
+}
+.eng-kpi {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px;
+  text-align: center; box-shadow: var(--shadow);
+}
+.eng-kpi-num {
+  font-family: var(--serif); font-size: 2rem; font-weight: 400;
+  line-height: 1;
+}
+.eng-kpi-label {
+  font-size: 9px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--text-muted); margin-top: 6px;
+}
+/* heatmap grid */
+.heatmap-wrap {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+  box-shadow: var(--shadow); overflow-x: auto;
+}
+.heatmap-grid {
+  display: grid; gap: 3px;
+}
+.hm-cell {
+  width: 28px; height: 28px; border-radius: 4px;
+  cursor: pointer; position: relative;
+  transition: transform .15s;
+  border: 1px solid rgba(0,0,0,.04);
+}
+.hm-cell:hover { transform: scale(1.15); z-index: 2; }
+.hm-cell-label {
+  font-size: 9px; color: var(--text-muted);
+  text-align: center; margin-bottom: 4px;
+  letter-spacing: .06em;
+}
+/* status pill na checklist */
+.ci-status-btn {
+  font-size: 9px; padding: 3px 8px; border-radius: 12px;
+  border: 1px solid; cursor: pointer; font-family: var(--sans);
+  font-weight: 600; letter-spacing: .04em; white-space: nowrap;
+  background: none; transition: all .2s;
+}
+.ci-status-btn:hover { opacity: .8; }
+.status-picker {
+  display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;
+  padding: 10px; background: var(--bg-soft);
+  border-radius: 8px; border: 1px solid var(--border);
+}
+
+/* ══════════════════════════════════════
    PAINEL: FINANCEIRO
 ══════════════════════════════════════ */
 .fin-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 20px; }
@@ -1042,6 +1113,10 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         <span>Financeiro</span>
       </div>
+      <div class="nav-item" data-panel="engajamento" onclick="goTo('engajamento')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="4" height="18" rx="1"/><rect x="10" y="8" width="4" height="13" rx="1"/><rect x="18" y="13" width="4" height="8" rx="1"/></svg>
+        <span>Engajamento</span>
+      </div>
     </nav>
     <div class="sidebar-footer">
       <button class="btn-logout" onclick="doLogout()">
@@ -1248,6 +1323,66 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
               <button class="btn-cancel" onclick="closeModal('modal-event-color')">Fechar</button>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- ── ENGAJAMENTO ── -->
+      <div id="panel-engajamento" class="panel">
+        <div class="section-header" data-reveal>
+          <div class="section-overline">Análise</div>
+          <div class="section-title">Engajamento</div>
+        </div>
+
+        <!-- Tabs dia/semana/mês -->
+        <div class="eng-tabs" data-reveal>
+          <button class="eng-tab active" onclick="engTab('dia',this)">Hoje</button>
+          <button class="eng-tab" onclick="engTab('semana',this)">Semana</button>
+          <button class="eng-tab" onclick="engTab('mes',this)">Mês</button>
+        </div>
+
+        <!-- KPIs -->
+        <div class="eng-kpi-row" data-reveal>
+          <div class="eng-kpi">
+            <div class="eng-kpi-num" id="eng-k-ocorreu" style="color:#34A853">—</div>
+            <div class="eng-kpi-label">Aula ocorreu</div>
+          </div>
+          <div class="eng-kpi">
+            <div class="eng-kpi-num" id="eng-k-faltou" style="color:#EA4335">—</div>
+            <div class="eng-kpi-label">Aluno faltou</div>
+          </div>
+          <div class="eng-kpi">
+            <div class="eng-kpi-num" id="eng-k-desmarcei" style="color:#FF6D00">—</div>
+            <div class="eng-kpi-label">Eu desmarcei</div>
+          </div>
+          <div class="eng-kpi">
+            <div class="eng-kpi-num" id="eng-k-gravada" style="color:#4285F4">—</div>
+            <div class="eng-kpi-label">Aula gravada</div>
+          </div>
+          <div class="eng-kpi">
+            <div class="eng-kpi-num" id="eng-k-reposicao" style="color:#9C27B0">—</div>
+            <div class="eng-kpi-label">Reposição</div>
+          </div>
+        </div>
+
+        <!-- Heatmap -->
+        <div class="heatmap-wrap" data-reveal>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+            <span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted)" id="eng-hm-label">Calendário de engajamento</span>
+            <div style="display:flex;gap:10px;align-items:center;font-size:10px;color:var(--text-muted)">
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:2px;background:#34A853;display:inline-block"></span>Ocorreu</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:2px;background:#EA4335;display:inline-block"></span>Faltou</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:2px;background:#FF6D00;display:inline-block"></span>Desmarcei</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:2px;background:#4285F4;display:inline-block"></span>Gravada</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:2px;background:#9C27B0;display:inline-block"></span>Reposição</span>
+            </div>
+          </div>
+          <div id="eng-heatmap"></div>
+        </div>
+
+        <!-- Lista de registros -->
+        <div style="margin-top:20px" data-reveal>
+          <div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px">Registros do período</div>
+          <div id="eng-lista"></div>
         </div>
       </div>
 
@@ -1462,7 +1597,8 @@ const PANEL_TITLES = {
   tarefas: 'Tarefas',
   notas: 'Anotações',
   links: 'Links Úteis',
-  financeiro: 'Financeiro'
+  financeiro: 'Financeiro',
+  engajamento: 'Engajamento'
 };
 
 function goTo(id) {
@@ -1478,6 +1614,7 @@ function goTo(id) {
 
   // lazy render
   if (id === 'agenda') { syncCalendar(); }
+  if (id === 'engajamento') renderEngajamento();
   if (id === 'links')  renderLinks();
 
   // scroll reveal
@@ -1927,6 +2064,22 @@ function renderAgenda() {
     const done = !!checks[ev.id];
     const temWa = !!getContatoByNome(nome);
 
+    const STATUS_CONF = {
+      'ocorreu':   { label: 'Ocorreu',    color: '#34A853' },
+      'faltou':    { label: 'Faltou',     color: '#EA4335' },
+      'desmarcei': { label: 'Desmarcei',  color: '#FF6D00' },
+      'gravada':   { label: 'Gravada',    color: '#4285F4' },
+      'reposicao': { label: 'Reposição',  color: '#9C27B0' },
+    };
+    const statusKey = 'ws_status_' + hoje;
+    let statusMap = {};
+    try { statusMap = JSON.parse(localStorage.getItem(statusKey) || '{}'); } catch(e) {}
+    const evStatus = statusMap[ev.id] || null;
+    const statusInfo = evStatus ? STATUS_CONF[evStatus] : null;
+    const statusPillHtml = statusInfo
+      ? `<button class="ci-status-btn" style="color:${statusInfo.color};border-color:${statusInfo.color}" onclick="abrirStatusPicker('${ev.id}','${hoje}',event)">${statusInfo.label}</button>`
+      : `<button class="ci-status-btn" style="color:var(--text-muted);border-color:var(--border)" onclick="abrirStatusPicker('${ev.id}','${hoje}',event)">+ Registrar</button>`;
+
     return `<div class="checklist-item ${done ? 'done' : ''}" id="ci-${ev.id}">
       <div class="ci-check" style="color:${hex};border-color:${hex}" onclick="toggleCheck('${ev.id}','${hoje}')">
         <svg viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1935,7 +2088,10 @@ function renderAgenda() {
       </div>
       <div class="ci-body" onclick="toggleCheck('${ev.id}','${hoje}')">
         <div class="ci-nome" style="color:${hex}">${nome}</div>
-        <div class="ci-hora">${hora}</div>
+        <div class="ci-hora" style="display:flex;align-items:center;gap:8px">
+          <span>${hora}</span>
+          ${statusPillHtml}
+        </div>
       </div>
       <button class="ci-wa" onclick="abrirWhatsApp('${nome.replace(/'/g,"\\'")}','${hora}')" title="Confirmar via WhatsApp">
         <svg viewBox="0 0 24 24" fill="currentColor">
@@ -2659,6 +2815,238 @@ function salvarContato() {
   if (hora) abrirWhatsApp(nome, hora);
   toast('Número salvo para ' + nome.split(' ')[0]);
   renderProximaAula();
+}
+
+// ══════════════════════════════════════════════
+// ENGAJAMENTO — heatmap e registro
+// ══════════════════════════════════════════════
+const ENG_STATUS = {
+  ocorreu:   { label: 'Ocorreu',   color: '#34A853', emoji: '✓' },
+  faltou:    { label: 'Faltou',    color: '#EA4335', emoji: '✗' },
+  desmarcei: { label: 'Desmarcei', color: '#FF6D00', emoji: '–' },
+  gravada:   { label: 'Gravada',   color: '#4285F4', emoji: '▶' },
+  reposicao: { label: 'Reposição', color: '#9C27B0', emoji: '↩' },
+};
+
+let _engPeriodo = 'dia';
+
+function engTab(periodo, btn) {
+  _engPeriodo = periodo;
+  document.querySelectorAll('.eng-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderEngajamento();
+}
+
+function getEngRegistros() {
+  try { return JSON.parse(localStorage.getItem('ws_eng_registros') || '[]'); } catch(e) { return []; }
+}
+function saveEngRegistro(data, nome, hora, status) {
+  const registros = getEngRegistros();
+  // Evitar duplicata — atualizar se já existe
+  const idx = registros.findIndex(r => r.data === data && r.nome === nome && r.hora === hora);
+  const reg = { data, nome, hora, status, ts: Date.now() };
+  if (idx >= 0) registros[idx] = reg;
+  else registros.push(reg);
+  localStorage.setItem('ws_eng_registros', JSON.stringify(registros));
+  // Sincronizar com Sheets
+  safeApi('saveEngajamento', () => {}, { data, nome, hora, status });
+}
+
+function abrirStatusPicker(evId, hoje, event) {
+  event.stopPropagation();
+  // Remover picker existente
+  document.querySelectorAll('.status-picker').forEach(el => el.remove());
+
+  const ci = document.getElementById('ci-' + evId);
+  if (!ci) return;
+
+  const picker = document.createElement('div');
+  picker.className = 'status-picker';
+  picker.innerHTML = Object.entries(ENG_STATUS).map(([key, s]) =>
+    `<button class="ci-status-btn" style="color:${s.color};border-color:${s.color}"
+      onclick="registrarStatus('${evId}','${hoje}','${key}',event)">
+      ${s.emoji} ${s.label}
+    </button>`
+  ).join('') +
+  `<button class="ci-status-btn" style="color:var(--text-muted);border-color:var(--border)"
+    onclick="this.closest('.status-picker').remove()">✕ Fechar</button>`;
+
+  ci.appendChild(picker);
+
+  // Fechar ao clicar fora
+  setTimeout(() => {
+    document.addEventListener('click', function closePicker(e) {
+      if (!picker.contains(e.target)) {
+        picker.remove();
+        document.removeEventListener('click', closePicker);
+      }
+    });
+  }, 100);
+}
+
+function registrarStatus(evId, hoje, status, event) {
+  event.stopPropagation();
+  // Salvar status local
+  const statusKey = 'ws_status_' + hoje;
+  let statusMap = {};
+  try { statusMap = JSON.parse(localStorage.getItem(statusKey) || '{}'); } catch(e) {}
+  statusMap[evId] = status;
+  localStorage.setItem(statusKey, JSON.stringify(statusMap));
+
+  // Buscar nome e hora do evento
+  const ev = (state.aulas || []).find(e => e.id === evId);
+  if (ev) {
+    const nome = (ev.summary || '').split('|')[0].trim();
+    const hora = (ev.start || '').slice(11, 16);
+    saveEngRegistro(hoje, nome, hora, status);
+  }
+
+  // Remover picker e re-renderizar
+  document.querySelectorAll('.status-picker').forEach(el => el.remove());
+  renderAgenda();
+  renderEngajamento();
+  toast(ENG_STATUS[status]?.label + ' registrado ✓');
+}
+
+function renderEngajamento() {
+  const hoje = fmtISO(new Date());
+  const now  = new Date();
+  const registros = getEngRegistros();
+
+  // Filtrar por período
+  let periodoRegistros = [];
+  let labelPeriodo = '';
+  if (_engPeriodo === 'dia') {
+    periodoRegistros = registros.filter(r => r.data === hoje);
+    labelPeriodo = 'Hoje';
+  } else if (_engPeriodo === 'semana') {
+    const semana = getWeekDates(0);
+    periodoRegistros = registros.filter(r => r.data >= semana[0] && r.data <= semana[6]);
+    labelPeriodo = 'Esta semana';
+  } else {
+    const mesStr = hoje.slice(0, 7);
+    periodoRegistros = registros.filter(r => r.data.startsWith(mesStr));
+    labelPeriodo = 'Este mês';
+  }
+
+  document.getElementById('eng-hm-label').textContent = labelPeriodo;
+
+  // KPIs
+  const contar = (s) => periodoRegistros.filter(r => r.status === s).length;
+  document.getElementById('eng-k-ocorreu').textContent   = contar('ocorreu');
+  document.getElementById('eng-k-faltou').textContent    = contar('faltou');
+  document.getElementById('eng-k-desmarcei').textContent = contar('desmarcei');
+  document.getElementById('eng-k-gravada').textContent   = contar('gravada');
+  document.getElementById('eng-k-reposicao').textContent = contar('reposicao');
+
+  // Heatmap
+  renderHeatmap(periodoRegistros, _engPeriodo);
+
+  // Lista
+  const lista = document.getElementById('eng-lista');
+  if (!periodoRegistros.length) {
+    lista.innerHTML = '<div class="state-empty">Nenhum registro no período.</div>';
+    return;
+  }
+  const sorted = [...periodoRegistros].sort((a, b) => b.ts - a.ts);
+  lista.innerHTML = sorted.slice(0, 30).map(r => {
+    const s = ENG_STATUS[r.status] || { label: r.status, color: '#888', emoji: '?' };
+    return `<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;
+      background:var(--bg-card);border:1px solid var(--border);border-radius:8px;
+      margin-bottom:6px;box-shadow:var(--shadow)">
+      <span style="width:28px;height:28px;border-radius:50%;background:${s.color}22;
+        color:${s.color};display:flex;align-items:center;justify-content:center;
+        font-size:14px;flex-shrink:0">${s.emoji}</span>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600;color:var(--navy)">${r.nome}</div>
+        <div style="font-size:11px;color:var(--text-muted)">${r.hora} · ${fmtDate(r.data)}</div>
+      </div>
+      <span style="font-size:11px;font-weight:700;color:${s.color}">${s.label}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderHeatmap(registros, periodo) {
+  const el = document.getElementById('eng-heatmap');
+  if (!el) return;
+  const hoje = fmtISO(new Date());
+
+  if (periodo === 'dia') {
+    // Heatmap de horas do dia: 6h-23h
+    const porHora = {};
+    registros.forEach(r => {
+      const h = parseInt(r.hora.split(':')[0]) || 0;
+      if (!porHora[h]) porHora[h] = [];
+      porHora[h].push(r.status);
+    });
+    const horas = Array.from({length: 18}, (_, i) => i + 6);
+    el.innerHTML = `<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:flex-end">
+      ${horas.map(h => {
+        const aulas = porHora[h] || [];
+        const altura = Math.max(24, aulas.length * 20 + 24);
+        const cor = aulas.length === 0 ? 'var(--bg-soft)' :
+          aulas[0] === 'ocorreu' ? '#34A853' :
+          aulas[0] === 'faltou' ? '#EA4335' :
+          aulas[0] === 'desmarcei' ? '#FF6D00' :
+          aulas[0] === 'gravada' ? '#4285F4' : '#9C27B0';
+        return `<div style="text-align:center">
+          <div style="width:32px;height:${altura}px;background:${cor}${aulas.length ? '' : ''};
+            border-radius:4px;opacity:${aulas.length ? 1 : 0.3};
+            border:1px solid ${aulas.length ? cor : 'var(--border)'};"
+            title="${h}h: ${aulas.length} aula(s)"></div>
+          <div style="font-size:9px;color:var(--text-muted);margin-top:3px">${h}h</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+    return;
+  }
+
+  // Heatmap de dias (semana ou mês)
+  const now = new Date();
+  let dias = [];
+  if (periodo === 'semana') {
+    dias = getWeekDates(0);
+  } else {
+    const ano = now.getFullYear(), mes = now.getMonth();
+    const totalDias = new Date(ano, mes + 1, 0).getDate();
+    for (let d = 1; d <= totalDias; d++) {
+      const dd = new Date(ano, mes, d);
+      dias.push(fmtISO(dd));
+    }
+  }
+
+  const porDia = {};
+  registros.forEach(r => {
+    if (!porDia[r.data]) porDia[r.data] = [];
+    porDia[r.data].push(r.status);
+  });
+
+  const DIAS_PT = ['D','S','T','Q','Q','S','S'];
+  const meses3 = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+
+  el.innerHTML = `<div style="display:flex;gap:4px;flex-wrap:wrap">
+    ${dias.map(d => {
+      const dd = new Date(d + 'T12:00:00');
+      const aulas = porDia[d] || [];
+      const isHoje = d === hoje;
+      const total = aulas.length;
+      const ocorreram = aulas.filter(s => s === 'ocorreu').length;
+      const faltaram = aulas.filter(s => s === 'faltou').length;
+      const perc = total > 0 ? ocorreram / total : 0;
+      const cor = total === 0 ? 'var(--bg-soft)' :
+        perc >= 0.8 ? '#34A853' :
+        perc >= 0.5 ? '#FBBC05' :
+        faltaram > ocorreram ? '#EA4335' : '#FF6D00';
+      return `<div style="text-align:center">
+        <div class="hm-cell" style="background:${cor};opacity:${total ? 1 : 0.25};
+          ${isHoje ? 'box-shadow:0 0 0 2px var(--gold)' : ''}"
+          title="${d}: ${total} aula(s) — ${ocorreram} ocorreram, ${faltaram} faltaram"></div>
+        <div style="font-size:8px;color:var(--text-muted);margin-top:2px">
+          ${periodo === 'semana' ? DIAS_PT[dd.getDay()] : dd.getDate()}
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
 }
 
 // ══════════════════════════════════════════════
