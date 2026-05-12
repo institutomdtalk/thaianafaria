@@ -1987,6 +1987,7 @@ function renderAgenda() {
     const dd = new Date(d + 'T12:00:00');
     const isToday = d === hoje;
     const eventosDia = (state.aulas || []).filter(ev => {
+      // Usar os primeiros 10 chars do ISO já em BRT (ex: "2026-05-16T10:20:00-03:00")
       const evDate = (ev.start || '').slice(0, 10);
       return evDate === d;
     }).sort((a, b) => (a.start || '') > (b.start || '') ? 1 : -1);
@@ -1994,7 +1995,8 @@ function renderAgenda() {
     const chips = eventosDia.map(ev => {
       const cor = CAL_COLOR_MAP[ev.colorId || null];
       const hex = cor ? cor.hex : '#7986CB';
-      const hora = ev.start ? new Date(ev.start).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
+      // Extrair hora diretamente do string ISO (já em BRT), sem converter
+      const hora = ev.start ? ev.start.slice(11, 16) : '';
       const nome = (ev.summary || '').split('|')[0].trim();
       return `<div class="cal-event-chip"
         style="background:${hex}22;border-left-color:${hex}"
