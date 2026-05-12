@@ -409,6 +409,32 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 /* ══════════════════════════════════════
    PAINEL: AGENDA
 ══════════════════════════════════════ */
+.cal-legend-item {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; color: var(--text-mid);
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 20px; padding: 4px 12px;
+}
+.cal-legend-item::before {
+  content: ''; width: 10px; height: 10px; border-radius: 50%;
+  background: var(--c); flex-shrink: 0;
+}
+.cal-color-btn {
+  background: var(--bg-soft); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 12px;
+  font-family: var(--sans); font-size: 12px; color: var(--text);
+  cursor: pointer; text-align: left;
+  transition: background .2s, border-color .2s;
+}
+.cal-color-btn:hover { background: var(--bg-card); border-color: var(--gold); }
+.cal-event-chip {
+  border-radius: 6px; padding: 6px 8px; margin-bottom: 4px;
+  cursor: pointer; transition: opacity .2s, transform .15s;
+  border-left: 3px solid transparent;
+}
+.cal-event-chip:hover { opacity: .85; transform: translateX(2px); }
+.cal-event-nome { font-size: 11px; font-weight: 600; line-height: 1.2; }
+.cal-event-hora { font-size: 10px; opacity: .75; margin-top: 1px; }
 .agenda-controls {
   display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
 }
@@ -1141,16 +1167,46 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
       <!-- ── AGENDA ── -->
       <div id="panel-agenda" class="panel">
         <div class="section-header" data-reveal>
-          <div class="section-overline">Calendário</div>
+          <div class="section-overline">Google Calendar</div>
           <div class="section-title">Agenda de Aulas</div>
         </div>
+
+        <!-- Legenda de cores -->
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px" data-reveal>
+          <div class="cal-legend-item" style="--c:#F6BF26">Amarelo — aula ocorreu</div>
+          <div class="cal-legend-item" style="--c:#7986CB">Lavanda — programado</div>
+          <div class="cal-legend-item" style="--c:#D50000">Vermelho — reposição</div>
+          <div class="cal-legend-item" style="--c:#8E24AA">Roxo — aluno faltou</div>
+          <div class="cal-legend-item" style="--c:#0B8043">Verde — eu faltei</div>
+          <div class="cal-legend-item" style="--c:#E67C73">Laranja — aula estendida</div>
+        </div>
+
         <div class="agenda-controls" data-reveal>
           <button class="agenda-nav-btn" onclick="agendaWeek(-1)">&#8592;</button>
           <div class="agenda-week-label" id="agenda-week-label">Semana de...</div>
           <button class="agenda-nav-btn" onclick="agendaWeek(+1)">&#8594;</button>
-          <button class="btn-gold btn-sm" onclick="openModalAula()">+ Nova Aula</button>
+          <button class="btn-gold btn-sm" id="btn-sync-cal" onclick="syncCalendar()">↺ Sincronizar</button>
         </div>
         <div class="week-grid" id="week-grid" data-reveal></div>
+
+        <!-- Modal de cor do evento -->
+        <div class="modal-overlay" id="modal-event-color">
+          <div class="modal-box" style="width:340px">
+            <div class="modal-title" id="modal-event-title">Alterar cor</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:16px" id="modal-event-time"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <button class="cal-color-btn" data-color-id="5"  data-hex="#F6BF26" data-label="🟡 Aula ocorreu" onclick="setEventColor(this)">🟡 Aula ocorreu</button>
+              <button class="cal-color-btn" data-color-id="1"  data-hex="#7986CB" data-label="🟣 Programado" onclick="setEventColor(this)">🟣 Programado</button>
+              <button class="cal-color-btn" data-color-id="11" data-hex="#D50000" data-label="🔴 Reposição" onclick="setEventColor(this)">🔴 Reposição</button>
+              <button class="cal-color-btn" data-color-id="3"  data-hex="#8E24AA" data-label="🟣 Aluno faltou" onclick="setEventColor(this)">🟣 Aluno faltou</button>
+              <button class="cal-color-btn" data-color-id="10" data-hex="#0B8043" data-label="🟢 Eu faltei" onclick="setEventColor(this)">🟢 Eu faltei</button>
+              <button class="cal-color-btn" data-color-id="6"  data-hex="#E67C73" data-label="🟠 Aula estendida" onclick="setEventColor(this)">🟠 Aula estendida</button>
+            </div>
+            <div class="modal-actions">
+              <button class="btn-cancel" onclick="closeModal('modal-event-color')">Fechar</button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- ── ALUNOS ── -->
@@ -1661,7 +1717,7 @@ async function initApp() {
 
   });
   safeApi('getAlunos',  r => { state.alunos = r.data; renderAlunos(); });
-  safeApi('getAulas',   r => { state.aulas  = r.data; renderDashboard(); });
+  syncCalendar(); // carrega eventos do Google Calendar
   safeApi('getTasks',   r => { state.tasks  = r.data; renderTasks(); renderDashboard(); });
   safeApi('getNotas',   r => { state.notas  = r.data; renderNotes(); });
 
@@ -1854,10 +1910,26 @@ function renderDashboard() {
 }
 
 // ══════════════════════════════════════════════
-// AGENDA
+// AGENDA — Google Calendar integrado
 // ══════════════════════════════════════════════
 const DIAS_SEMANA = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const MESES_ABREV = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+
+// Mapa de colorId → hex visual
+const CAL_COLOR_MAP = {
+  '1':  { hex: '#7986CB', label: 'Programado' },       // Lavanda
+  '2':  { hex: '#33B679', label: '' },                  // Sage
+  '3':  { hex: '#8E24AA', label: 'Aluno faltou' },      // Grape
+  '4':  { hex: '#E67C73', label: 'Aula estendida' },    // Flamingo (uso como laranja)
+  '5':  { hex: '#F6BF26', label: 'Aula ocorreu' },      // Banana
+  '6':  { hex: '#F4511E', label: 'Aula estendida' },    // Tangerine
+  '7':  { hex: '#039BE5', label: '' },                  // Peacock
+  '8':  { hex: '#616161', label: '' },                  // Graphite
+  '9':  { hex: '#3F51B5', label: '' },                  // Blueberry
+  '10': { hex: '#0B8043', label: 'Eu faltei' },         // Basil
+  '11': { hex: '#D50000', label: 'Reposição' },         // Tomato
+  null: { hex: '#7986CB', label: 'Programado' },        // sem cor = lavanda
+};
 
 function getWeekDates(offset) {
   const today = new Date();
@@ -1873,13 +1945,29 @@ function getWeekDates(offset) {
 
 function agendaWeek(dir) {
   state.agendaOffset += dir;
-  renderAgenda();
+  syncCalendar();
+}
+
+function syncCalendar() {
+  const btn = document.getElementById('btn-sync-cal');
+  if (btn) btn.textContent = '↻ Sincronizando...';
+  const dates = getWeekDates(state.agendaOffset);
+  const start = dates[0] + 'T00:00:00-03:00';
+  const end   = dates[6] + 'T23:59:59-03:00';
+
+  // Chamar Google Calendar via Apps Script (proxy)
+  safeApi('getCalendarEvents', r => {
+    state.aulas = r.data;
+    renderAgenda();
+    if (btn) btn.textContent = '↺ Sincronizar';
+    toast('Agenda sincronizada — ' + r.data.length + ' eventos');
+  }, { start, end });
 }
 
 function renderAgenda() {
   const dates = getWeekDates(state.agendaOffset);
-  const firstD = new Date(dates[0]);
-  const lastD  = new Date(dates[6]);
+  const firstD = new Date(dates[0] + 'T12:00:00');
+  const lastD  = new Date(dates[6] + 'T12:00:00');
   document.getElementById('agenda-week-label').textContent =
     `${firstD.getDate()} ${MESES_ABREV[firstD.getMonth()]} — ${lastD.getDate()} ${MESES_ABREV[lastD.getMonth()]} ${lastD.getFullYear()}`;
 
@@ -1887,23 +1975,68 @@ function renderAgenda() {
   const grid = document.getElementById('week-grid');
   grid.innerHTML = dates.map(d => {
     const dd = new Date(d + 'T12:00:00');
-    const aulasDia = state.aulas.filter(a => a.data === d);
     const isToday = d === hoje;
+    const eventosDia = (state.aulas || []).filter(ev => {
+      const evDate = (ev.start || '').slice(0, 10);
+      return evDate === d;
+    }).sort((a, b) => (a.start || '') > (b.start || '') ? 1 : -1);
+
+    const chips = eventosDia.map(ev => {
+      const cor = CAL_COLOR_MAP[ev.colorId || null];
+      const hex = cor ? cor.hex : '#7986CB';
+      const hora = ev.start ? new Date(ev.start).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
+      const nome = (ev.summary || '').split('|')[0].trim();
+      return `<div class="cal-event-chip"
+        style="background:${hex}22;border-left-color:${hex}"
+        onclick="openColorModal('${ev.id}','${nome.replace(/'/g,"\\'")}','${hora}','${ev.colorId||''}')">
+        <div class="cal-event-nome" style="color:${hex}">${nome}</div>
+        <div class="cal-event-hora">${hora}</div>
+      </div>`;
+    }).join('');
+
     return `<div class="day-col">
       <div class="day-header ${isToday ? 'today' : ''}">
         ${DIAS_SEMANA[dd.getDay()]}
         <span class="day-num">${dd.getDate()}</span>
       </div>
-      <div class="day-aulas">
-        ${aulasDia.map(a => `
-          <div class="aula-chip">
-            <span class="chip-nome">${a.aluno.split(' ').slice(0,2).join(' ')}</span>
-            <span class="chip-hora">${a.hora}</span>
-          </div>`).join('')}
-        <button class="btn-add-aula" onclick="openModalAulaData('${d}')">+ aula</button>
+      <div class="day-aulas" style="padding:6px">
+        ${chips || '<div style="font-size:10px;color:var(--text-muted);padding:8px 4px;text-align:center">—</div>'}
       </div>
     </div>`;
   }).join('');
+}
+
+// ── Modal de cor ──
+let _eventEditing = null;
+function openColorModal(id, nome, hora, colorId) {
+  _eventEditing = { id, colorId };
+  document.getElementById('modal-event-title').textContent = nome;
+  document.getElementById('modal-event-time').textContent = hora;
+  // Highlight botão atual
+  document.querySelectorAll('.cal-color-btn').forEach(b => {
+    b.style.outline = b.dataset.colorId === (colorId||'') ? '2px solid var(--gold)' : 'none';
+  });
+  openModal('modal-event-color');
+}
+
+async function setEventColor(btn) {
+  if (!_eventEditing) return;
+  const colorId = btn.dataset.colorId;
+  btn.textContent = btn.textContent.split(' ')[0] + ' Salvando...';
+  btn.disabled = true;
+
+  // Atualizar via Apps Script
+  safeApi('updateEventColor', r => {
+    // Atualizar estado local
+    const ev = state.aulas.find(e => e.id === _eventEditing.id);
+    if (ev) ev.colorId = colorId;
+    renderAgenda();
+    closeModal('modal-event-color');
+    // Restaurar botão
+    btn.disabled = false;
+    btn.textContent = btn.dataset.label || btn.textContent;
+    toast('Cor atualizada no Google Calendar ✓');
+  }, { eventId: _eventEditing.id, colorId });
 }
 
 // ══════════════════════════════════════════════
