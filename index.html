@@ -1558,39 +1558,51 @@ function safeApi(action, onSuccess, payload = {}) {
     if (r && r.ok && r.data) {
       onSuccess(r);
     } else {
-      // Sheets falhou — usar dados mock como fallback
-      console.warn('Sheets falhou para', action, '— usando mock');
-      const mock = mockData(action, payload);
-      if (mock && mock.ok && mock.data) onSuccess(mock);
     }
   }).catch(e => {
     console.warn('safeApi erro:', action, e);
-    const mock = mockData(action, payload);
-    if (mock && mock.ok && mock.data) onSuccess(mock);
   });
 }
 
-// ── API via JSONP (evita CORS do Apps Script) ──
-function api(action, payload = {}) {
-  if (!SCRIPT_URL) return Promise.resolve(mockData(action, payload));
-  return new Promise((resolve) => {
-    const cbName = 'cb_' + Date.now() + '_' + Math.random().toString(36).slice(2);
-    const params = new URLSearchParams({ action, callback: cbName, ...payload });
-    const script = document.createElement('script');
-    const timer = setTimeout(() => {
-      cleanup();
-      console.warn('API timeout:', action);
+// ── API via JSONP ──
+var _apiSeq = 0;
+function api(action, payload) {
+  if (!SCRIPT_URL) return Promise.resolve(mockData(action, payload || {}));
+  return new Promise(function(resolve) {
+    var cbName = 'wsApi' + (++_apiSeq);
+    var url = SCRIPT_URL + '?action=' + encodeURIComponent(action) + '&callback=' + cbName;
+    if (payload) {
+      Object.keys(payload).forEach(function(k) {
+        url += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(payload[k]);
+      });
+    }
+    var done = false;
+    var timer = setTimeout(function() {
+      if (done) return;
+      done = true;
+      delete window[cbName];
+      if (s.parentNode) s.parentNode.removeChild(s);
+      console.warn('JSONP timeout:', action);
       resolve({ ok: false, error: 'timeout' });
-    }, 5000);
-    function cleanup() {
+    }, 15000);
+    window[cbName] = function(data) {
+      if (done) return;
+      done = true;
       clearTimeout(timer);
       delete window[cbName];
-      if (script.parentNode) script.parentNode.removeChild(script);
-    }
-    window[cbName] = (data) => { cleanup(); resolve(data); };
-    script.src = SCRIPT_URL + '?' + params.toString();
-    script.onerror = () => { cleanup(); resolve({ ok: false, error: 'script error' }); };
-    document.head.appendChild(script);
+      if (s.parentNode) s.parentNode.removeChild(s);
+      resolve(data);
+    };
+    var s = document.createElement('script');
+    s.onerror = function() {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      delete window[cbName];
+      resolve({ ok: false, error: 'script error' });
+    };
+    s.src = url;
+    document.head.appendChild(s);
   });
 }
 
@@ -1642,9 +1654,11 @@ async function initApp() {
   // Carregar cada fonte de dados de forma independente
   // Se uma falhar, as outras continuam
   safeApi('getPaymentControl', r => {
+    console.log('Payment Control carregado:', r.data.length, 'alunos');
     state.lancamentos = r.data;
     renderFin();
     renderDashboard();
+
   });
   safeApi('getAlunos',  r => { state.alunos = r.data; renderAlunos(); });
   safeApi('getAulas',   r => { state.aulas  = r.data; renderDashboard(); });
