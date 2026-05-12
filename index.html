@@ -409,16 +409,7 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 /* ══════════════════════════════════════
    PAINEL: AGENDA
 ══════════════════════════════════════ */
-.cal-legend-item {
-  display: flex; align-items: center; gap: 6px;
-  font-size: 11px; color: var(--text-mid);
-  background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: 20px; padding: 4px 12px;
-}
-.cal-legend-item::before {
-  content: ''; width: 10px; height: 10px; border-radius: 50%;
-  background: var(--c); flex-shrink: 0;
-}
+
 .cal-color-btn {
   background: var(--bg-soft); border: 1px solid var(--border);
   border-radius: 8px; padding: 10px 12px;
@@ -1171,17 +1162,8 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
           <div class="section-title">Agenda de Aulas</div>
         </div>
 
-        <!-- Legenda de cores -->
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px" data-reveal>
-          <div class="cal-legend-item" style="--c:#F6BF26">Amarelo — aula ocorreu</div>
-          <div class="cal-legend-item" style="--c:#7986CB">Lavanda — programado</div>
-          <div class="cal-legend-item" style="--c:#D50000">Vermelho — reposição</div>
-          <div class="cal-legend-item" style="--c:#8E24AA">Roxo — aluno faltou</div>
-          <div class="cal-legend-item" style="--c:#0B8043">Verde — eu faltei</div>
-          <div class="cal-legend-item" style="--c:#E67C73">Laranja — aula estendida</div>
-        </div>
 
-        <div class="agenda-controls" data-reveal>
+                <div class="agenda-controls" data-reveal>
           <button class="agenda-nav-btn" onclick="agendaWeek(-1)">&#8592;</button>
           <div class="agenda-week-label" id="agenda-week-label">Semana de...</div>
           <button class="agenda-nav-btn" onclick="agendaWeek(+1)">&#8594;</button>
@@ -1928,7 +1910,8 @@ const CAL_COLOR_MAP = {
   '9':  { hex: '#3F51B5', label: '' },                  // Blueberry
   '10': { hex: '#0B8043', label: 'Eu faltei' },         // Basil
   '11': { hex: '#D50000', label: 'Reposição' },         // Tomato
-  null: { hex: '#7986CB', label: 'Programado' },        // sem cor = lavanda
+  '':   { hex: '#7986CB', label: 'Programado' },        // sem cor = lavanda
+  null:  { hex: '#7986CB', label: 'Programado' },
 };
 
 function getWeekDates(offset) {
