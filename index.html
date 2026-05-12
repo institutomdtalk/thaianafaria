@@ -1549,6 +1549,13 @@ function goTo(id) {
 // ══════════════════════════════════════════════
 // API (Google Apps Script)
 // ══════════════════════════════════════════════
+// ── safeApi: chama api e executa callback se ok, sem travar ──
+function safeApi(action, onSuccess, payload = {}) {
+  api(action, payload).then(r => {
+    if (r && r.ok && r.data) onSuccess(r);
+  }).catch(e => console.warn('safeApi erro:', action, e));
+}
+
 // ── API via JSONP (evita CORS do Apps Script) ──
 function api(action, payload = {}) {
   if (!SCRIPT_URL) return Promise.resolve(mockData(action, payload));
@@ -1610,27 +1617,25 @@ function mockData(action, payload) {
 // ══════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════
-async function initApp() { // retorna Promise implícita via async
-  // data e saudação geridos por renderDashboard()
+async function initApp() {
+  // Renderizar imediatamente com dados vazios (UI aparece na hora)
+  renderDashboard();
+  renderAlunos();
+  renderTasks();
+  renderNotes();
+  renderFin();
 
-  // carregar todos os dados em paralelo
-  const [ra, ras, rt, rn, rl] = await Promise.all([
-    api('getAlunos'),
-    api('getAulas'),
-    api('getTasks'),
-    api('getNotas'),
-    api('getPaymentControl'),
-  ]);
-
-  if (ra.ok)  { state.alunos = ra.data; renderAlunos(); }
-  if (ras.ok) { state.aulas  = ras.data; }
-  if (rt.ok)  { state.tasks  = rt.data; renderTasks(); }
-  if (rn.ok)  { state.notas  = rn.data; renderNotes(); }
-  if (rl.ok)  { state.lancamentos = rl.data; renderFin(); }
-
-  // Selecionar mês atual no dropdown
-  const sel = document.getElementById('fin-mes-sel');
-  if (sel) sel.value = new Date().getMonth();
+  // Carregar cada fonte de dados de forma independente
+  // Se uma falhar, as outras continuam
+  safeApi('getPaymentControl', r => {
+    state.lancamentos = r.data;
+    renderFin();
+    renderDashboard();
+  });
+  safeApi('getAlunos',  r => { state.alunos = r.data; renderAlunos(); });
+  safeApi('getAulas',   r => { state.aulas  = r.data; renderDashboard(); });
+  safeApi('getTasks',   r => { state.tasks  = r.data; renderTasks(); renderDashboard(); });
+  safeApi('getNotas',   r => { state.notas  = r.data; renderNotes(); });
 
   renderDashboard();
   renderLinks();
