@@ -675,11 +675,23 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 
 /* célula de status — clique para ciclar */
 .cell-status {
-  display: flex; align-items: center; justify-content: center;
-  padding: 11px 8px; cursor: pointer; user-select: none;
-  transition: background .15s;
+  padding: 7px 8px;
 }
-.cell-status:hover { background: rgba(196,164,90,.06); }
+.status-select {
+  width: 100%;
+  border: none; outline: none;
+  font-family: var(--sans); font-size: 11px; font-weight: 700;
+  border-radius: 20px; padding: 4px 10px;
+  cursor: pointer; appearance: none; -webkit-appearance: none;
+  text-align: center;
+  transition: opacity .2s;
+}
+.status-select:hover { opacity: .85; }
+.status-select.sp-pago    { background: rgba(34,197,94,.15);  color: #166534; }
+.status-select.sp-atrasado{ background: rgba(185,28,28,.12);  color: #b91c1c; }
+.status-select.sp-naopaga { background: rgba(217,119,6,.14);  color: #d97706; }
+.status-select.sp-suspenso{ background: rgba(107,114,128,.14);color: #6b7280; }
+.status-select.sp-null    { background: rgba(0,0,0,.05);      color: var(--text-muted); }
 .status-pill {
   display: inline-block; padding: 3px 10px; border-radius: 20px;
   font-size: 10px; font-weight: 700; letter-spacing: .04em;
@@ -1761,6 +1773,15 @@ function finNavMes(dir) {
   renderFin();
 }
 
+function statusClass(st) {
+  const sl = (st || '').toLowerCase().trim();
+  if (sl === 'pago')     return 'sp-pago';
+  if (sl === 'atrasado') return 'sp-atrasado';
+  if (sl === 'não paga' || sl === 'nao paga') return 'sp-naopaga';
+  if (sl === 'suspenso') return 'sp-suspenso';
+  return 'sp-null';
+}
+
 function statusPill(st) {
   const s = (st || '').trim();
   const sl = s.toLowerCase();
@@ -1769,6 +1790,22 @@ function statusPill(st) {
   if (sl === 'não paga' || sl === 'nao paga') return `<span class="status-pill sp-naopaga">Não paga</span>`;
   if (sl === 'suspenso') return `<span class="status-pill sp-suspenso">Suspenso</span>`;
   return `<span class="status-pill sp-null">—</span>`;
+}
+
+function statusSelect(rowIdx, mesIdx, stAtual) {
+  const opts = ['Pago','Atrasado','Não paga','Suspenso','Null'];
+  const stNorm = (stAtual||'Null').trim();
+  const cls = statusClass(stNorm);
+  const options = opts.map(o => {
+    const sel = o.toLowerCase() === stNorm.toLowerCase() ||
+                (o === 'Null' && (stNorm === '' || stNorm === 'Null')) ? 'selected' : '';
+    return `<option value="${o}" ${sel}>${o === 'Null' ? '—' : o}</option>`;
+  }).join('');
+  return `<select class="status-select ${cls}"
+    onchange="finChangeStatus(${rowIdx}, ${mesIdx}, this)"
+    title="Clique para alterar">
+    ${options}
+  </select>`;
 }
 
 function renderFin() {
@@ -1829,8 +1866,8 @@ function renderFin() {
     const valFmt = row.valor > 0 ? row.valor.toLocaleString('pt-BR', {minimumFractionDigits:2}) : '';
     const mesCols = meses.map((m, ci) => `
       <td>
-        <div class="cell-status" onclick="finCycleStatus(${rowIdx}, ${m}, this)">
-          ${statusPill(row.meses[m])}
+        <div class="cell-status">
+          ${statusSelect(rowIdx, m, row.meses[m])}
         </div>
       </td>`).join('');
     // padding col 3 se só 2 meses
@@ -1856,21 +1893,21 @@ function renderFin() {
   </tr>`;
 }
 
-// ── Ciclar status ao clicar ──
-async function finCycleStatus(rowIdx, mesIdx, cell) {
+// ── Alterar status via select ──
+async function finChangeStatus(rowIdx, mesIdx, sel) {
   const row = state.lancamentos[rowIdx];
   if (!row) return;
-  const atual = (row.meses[mesIdx] || 'Null').trim();
-  const idx   = STATUS_CICLO.findIndex(s => s.toLowerCase() === atual.toLowerCase());
-  const novo  = STATUS_CICLO[(idx + 1) % STATUS_CICLO.length];
+  const novo = sel.value;
   row.meses[mesIdx] = novo;
-  cell.innerHTML = '<span class="status-pill sp-saving">...</span>';
+  // Atualizar cor do select imediatamente
+  sel.className = 'status-select ' + statusClass(novo);
   renderFinKpis();
-  const r = await api('updatePaymentStatus', {
+  sel.disabled = true;
+  await api('updatePaymentStatus', {
     nome: encodeURIComponent(row.nome), mesIdx, status: encodeURIComponent(novo)
   });
-  cell.innerHTML = statusPill(novo);
-  toast(row.nome.split(' ')[0] + ' · ' + MESES_NOME[mesIdx] + ': ' + novo);
+  sel.disabled = false;
+  toast(row.nome.split(' ')[0] + ' · ' + MESES_NOME[mesIdx] + ': ' + (novo === 'Null' ? '—' : novo));
 }
 
 // ── Editar nome inline ──
