@@ -129,15 +129,13 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 #shell { display: none; height: 100%; width: 100%; overflow: hidden; position: relative; }
 
 /* SIDEBAR — recolhível */
-:root { --sidebar-collapsed: 0px; }
-
 .sidebar {
   position: fixed; top: 0; left: 0;
   width: var(--sidebar);
   height: 100%;
-  background: rgba(12, 10, 8, 0.72);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  background: rgba(30, 25, 18, 0.45);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   display: flex; flex-direction: column;
   z-index: 100;
   border-right: 1px solid rgba(196,164,90,.08);
@@ -1115,29 +1113,6 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 
             <!-- Spotify + Aulas de hoje -->
             <div style="margin-top:24px;display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap">
-
-              <!-- Player Spotify -->
-              <div style="
-                background:rgba(0,0,0,.35);
-                border:1px solid rgba(255,255,255,.1);
-                border-radius:14px;
-                overflow:hidden;
-                backdrop-filter:blur(12px);
-                flex-shrink:0;
-                box-shadow:0 8px 32px rgba(0,0,0,.4);
-              ">
-                <iframe
-                  id="spotify-player"
-                  src="https://open.spotify.com/embed/playlist/37i9dQZF1DWWQRwui0ExPn?utm_source=generator&theme=0"
-                  width="300"
-                  height="152"
-                  frameBorder="0"
-                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                  loading="lazy"
-                  style="display:block;border-radius:14px"
-                ></iframe>
-              </div>
-
               <!-- Aulas de hoje -->
               <div>
                 <div style="font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:8px">Hoje</div>
