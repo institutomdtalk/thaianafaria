@@ -48,26 +48,36 @@ html, body {
 .slide.active { opacity: 1; pointer-events: all; transform: translateY(0); }
 .slide.exit   { opacity: 0; transform: translateY(-16px); transition: opacity 0.28s ease, transform 0.28s ease; }
 
-/* ─── TOPBAR ─── */
-.topbar {
+/* ─── GLOBAL TOPBAR ─── */
+#global-topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 300;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 48px 12px;
-  border-bottom: 1px solid var(--rule);
+  padding: 0 32px 0 28px;
+  height: 48px;
   background: var(--white);
-  flex-shrink: 0;
+  border-bottom: 1px solid var(--rule);
 }
-.topbar-left  { display: flex; align-items: center; gap: 16px; }
-.screen-badge {
-  background: var(--wine); color: var(--white);
-  font-size: 10px; font-weight: 500; letter-spacing: 0.14em;
-  padding: 4px 10px; border-radius: 2px; white-space: nowrap;
+.topbar-links {
+  display: flex; align-items: center; gap: 2px; flex: 1;
 }
-.screen-label {
-  font-size: 10px; font-weight: 400; letter-spacing: 0.22em;
-  text-transform: uppercase; color: var(--dust);
+.tl-item {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 9px; border-radius: 3px;
+  text-decoration: none; color: var(--dust);
+  font-size: 10px; font-weight: 400; letter-spacing: 0.06em;
+  transition: background 0.14s, color 0.14s;
+  white-space: nowrap; cursor: pointer; border: none; background: none;
+}
+.tl-item:hover { background: var(--paper); color: var(--ink); }
+.tl-item img {
+  width: 15px; height: 15px; border-radius: 2px;
+  display: block; flex-shrink: 0;
+}
+.tl-sep {
+  width: 1px; height: 18px; background: var(--rule); margin: 0 4px; flex-shrink: 0;
 }
 .topbar-right {
-  display: flex; align-items: center; gap: 16px;
+  display: flex; align-items: center; gap: 14px; flex-shrink: 0; margin-left: 16px;
 }
 #live-clock {
   font-size: 13px; font-weight: 400; color: var(--ash); letter-spacing: 0.04em;
@@ -76,6 +86,13 @@ html, body {
 #live-date {
   font-size: 10px; font-weight: 300; letter-spacing: 0.1em; color: var(--faint);
 }
+/* Push all slides down to clear the fixed topbar */
+#deck { padding-top: 48px; }
+.slide { top: 48px; }
+
+/* legacy topbar inside slides — hide */
+.slide > .topbar { display: none; }
+
 
 /* ─── SLIDE BODY ─── */
 .slide-body {
@@ -176,7 +193,7 @@ html, body {
 }
 .home-r {
   flex: 0.9; background: var(--wine); display: flex; flex-direction: column;
-  justify-content: center; padding: 48px 40px; position: relative; overflow: hidden;
+  justify-content: center; padding: 40px 40px; position: relative; overflow: hidden;
 }
 .home-r::before {
   content: ''; position: absolute; top: -80px; right: -80px;
@@ -223,7 +240,7 @@ html, body {
   font-size: 9px; font-weight: 400; letter-spacing: 0.22em;
   text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 20px; z-index:1; position:relative;
 }
-.quick-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; z-index:1; position:relative; }
+.quick-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; z-index:1; position:relative; }
 .qs-item { border-top: 1px solid rgba(255,255,255,0.18); padding-top: 12px; }
 .qs-label {
   font-size: 8.5px; font-weight: 400; letter-spacing: 0.2em;
@@ -700,6 +717,17 @@ html, body {
 </style>
 </head>
 <body>
+
+<!-- ══ GLOBAL TOPBAR ══ -->
+<div id="global-topbar">
+  <div class="topbar-links" id="topbar-links"><!-- rendered by JS --></div>
+  <div class="tl-sep"></div>
+  <div class="topbar-right">
+    <span id="live-date"></span>
+    <span id="live-clock"></span>
+  </div>
+</div>
+
 <div id="deck">
 
 <!-- ══ SCREEN 1 — HOME / FOCO DO DIA ══ -->
@@ -1635,6 +1663,40 @@ function loadMetrics() {
 });
 
 /* ═══════════════════════════════
+   HOME QUICK LINKS
+═══════════════════════════════ */
+const QUICK_LINKS = [
+  { label: 'WhatsApp',    url: 'https://web.whatsapp.com',                                        fav: 'whatsapp.com' },
+  { label: 'Gemini',      url: 'https://gemini.google.com',                                       fav: 'gemini.google.com' },
+  { label: 'Agenda',      url: 'https://calendar.google.com',                                     fav: 'calendar.google.com' },
+  { label: 'Google',      url: 'https://www.google.com',                                          fav: 'google.com' },
+  { label: 'ChatGPT',     url: 'https://chat.openai.com',                                         fav: 'chat.openai.com' },
+  { label: 'YouTube',     url: 'https://www.youtube.com',                                         fav: 'youtube.com' },
+  { label: 'Claude',      url: 'https://claude.ai',                                               fav: 'claude.ai' },
+  { label: 'Canva',       url: 'https://www.canva.com',                                           fav: 'canva.com' },
+  { label: 'Hotmail',     url: 'https://outlook.live.com',                                        fav: 'outlook.live.com' },
+  { label: 'Meet',        url: 'https://meet.google.com/vdt-rqqm-jqb?pli=1',                      fav: 'meet.google.com' },
+  { label: 'Spotify',     url: 'https://open.spotify.com',                                        fav: 'open.spotify.com' },
+  { label: 'Drive',       url: 'https://drive.google.com',                                        fav: 'drive.google.com' },
+  { label: 'NotebookLM',  url: 'https://notebooklm.google.com',                                   fav: 'notebooklm.google.com' },
+  { label: 'Sheets',      url: 'https://sheets.google.com',                                       fav: 'docs.google.com' },
+];
+
+function renderHomeLinks() {
+  const bar = document.getElementById('topbar-links');
+  if (!bar) return;
+  bar.innerHTML = '';
+  QUICK_LINKS.forEach(lk => {
+    const a = document.createElement('a');
+    a.className = 'tl-item'; a.href = lk.url; a.target = '_blank';
+    a.title = lk.label;
+    const favUrl = `https://www.google.com/s2/favicons?domain=${lk.fav}&sz=32`;
+    a.innerHTML = `<img src="${favUrl}" alt="${lk.label}" />${lk.label}`;
+    bar.appendChild(a);
+  });
+}
+
+/* ═══════════════════════════════
    GOOGLE CALENDAR — iCal SYNC
 ═══════════════════════════════ */
 function parseIcal(text) {
@@ -1760,6 +1822,7 @@ function clearAllData() {
    INIT
 ═══════════════════════════════ */
 loadHome();
+renderHomeLinks();
 renderCalendar();
 renderTasks();
 renderLinks();
