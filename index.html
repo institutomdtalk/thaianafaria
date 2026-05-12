@@ -1716,9 +1716,9 @@ function buildAvatarOrbit() {
 
   const svgNS = 'http://www.w3.org/2000/svg';
   const svg = document.createElementNS(svgNS, 'svg');
-  svg.setAttribute('viewBox', \`0 0 \${size} \${size}\`);
+  svg.setAttribute('viewBox', `0 0 ${size} ${size}`);
   svg.setAttribute('class', 'dash-avatar-orbit');
-  svg.style.cssText = \`position:absolute;inset:-20px;width:\${size}px;height:\${size}px;z-index:1;pointer-events:none\`;
+  svg.style.cssText = `position:absolute;inset:-20px;width:${size}px;height:${size}px;z-index:1;pointer-events:none`;
 
   orbits.forEach(o => {
     // Grupo com rotação de tilt + animação orbital
@@ -1729,14 +1729,14 @@ function buildAvatarOrbit() {
       const angle = (360 / o.dots) * i;
       const dotG = document.createElementNS(svgNS, 'g');
       // Transformação: tilt fixo + posição no ângulo inicial
-      dotG.setAttribute('transform', \`rotate(\${o.tilt} \${cx} \${cy})\`);
+      dotG.setAttribute('transform', `rotate(${o.tilt} ${cx} ${cy})`);
 
       const animGroup = document.createElementNS(svgNS, 'g');
       const anim = document.createElementNS(svgNS, 'animateTransform');
       anim.setAttribute('attributeName', 'transform');
       anim.setAttribute('type', 'rotate');
-      anim.setAttribute('from', \`\${angle} \${cx} \${cy}\`);
-      anim.setAttribute('to', \`\${angle + (o.dir === 'orbitB' ? -360 : 360)} \${cx} \${cy}\`);
+      anim.setAttribute('from', `${angle} ${cx} ${cy}`);
+      anim.setAttribute('to', `${angle + (o.dir === 'orbitB' ? -360 : 360)} ${cx} ${cy}`);
       anim.setAttribute('dur', o.dur);
       anim.setAttribute('repeatCount', 'indefinite');
       animGroup.appendChild(anim);
@@ -1757,18 +1757,18 @@ function buildAvatarOrbit() {
       // Pulso
       const pa = document.createElementNS(svgNS, 'animate');
       pa.setAttribute('attributeName', 'rx');
-      pa.setAttribute('values', \`\${o.r};\${o.r * 1.6};\${o.r}\`);
-      pa.setAttribute('dur', \`\${2 + i * 0.4}s\`);
+      pa.setAttribute('values', `${o.r};${o.r * 1.6};${o.r}`);
+      pa.setAttribute('dur', `${2 + i * 0.4}s`);
       pa.setAttribute('repeatCount', 'indefinite');
       const pa2 = document.createElementNS(svgNS, 'animate');
       pa2.setAttribute('attributeName', 'ry');
-      pa2.setAttribute('values', \`\${o.r};\${o.r * 1.6};\${o.r}\`);
-      pa2.setAttribute('dur', \`\${2 + i * 0.4}s\`);
+      pa2.setAttribute('values', `${o.r};${o.r * 1.6};${o.r}`);
+      pa2.setAttribute('dur', `${2 + i * 0.4}s`);
       pa2.setAttribute('repeatCount', 'indefinite');
       const pa3 = document.createElementNS(svgNS, 'animate');
       pa3.setAttribute('attributeName', 'opacity');
       pa3.setAttribute('values', '0.4;1;0.4');
-      pa3.setAttribute('dur', \`\${2 + i * 0.4}s\`);
+      pa3.setAttribute('dur', `${2 + i * 0.4}s`);
       pa3.setAttribute('repeatCount', 'indefinite');
       dot.appendChild(pa); dot.appendChild(pa2); dot.appendChild(pa3);
 
