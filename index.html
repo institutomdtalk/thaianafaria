@@ -746,7 +746,15 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
   color: var(--text-muted); background: var(--bg-soft); font-weight: 500;
   position: sticky; top: 0; z-index: 2;
   border-bottom: 2px solid var(--border);
+  user-select: none;
 }
+.fin-editable-table th.sortable {
+  cursor: pointer;
+  transition: color .2s;
+}
+.fin-editable-table th.sortable:hover { color: var(--navy); }
+.fin-editable-table th.sort-asc::after  { content: ' ↑'; color: var(--gold); }
+.fin-editable-table th.sort-desc::after { content: ' ↓'; color: var(--gold); }
 .fin-editable-table th.th-mes {
   text-align: center; min-width: 110px;
 }
@@ -1300,11 +1308,11 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
             <table class="fin-editable-table">
               <thead>
                 <tr>
-                  <th style="min-width:180px">Aluno</th>
-                  <th style="min-width:110px">Valor/mês</th>
-                  <th class="th-mes" id="fin-th-m1">—</th>
-                  <th class="th-mes" id="fin-th-m2">—</th>
-                  <th class="th-mes" id="fin-th-m3">—</th>
+                  <th style="min-width:180px" class="sortable" id="th-nome" onclick="finSort('nome')">Aluno</th>
+                  <th style="min-width:110px" class="sortable" id="th-valor" onclick="finSort('valor')">Valor/mês</th>
+                  <th class="th-mes sortable" id="fin-th-m1" onclick="finSort('m0')">—</th>
+                  <th class="th-mes sortable" id="fin-th-m2" onclick="finSort('m1')">—</th>
+                  <th class="th-mes sortable" id="fin-th-m3" onclick="finSort('m2')">—</th>
                 </tr>
               </thead>
               <tbody id="fin-tbody">
@@ -2186,7 +2194,7 @@ function renderFin() {
 
   // ── Tabela ──
   const tbody = document.getElementById('fin-tbody');
-  const alunos = dados.filter(r => r.nome);
+  const alunos = finGetSortedData(dados.filter(r => r.nome));
 
   tbody.innerHTML = alunos.map((row, rowIdx) => {
     const valFmt = row.valor > 0 ? row.valor.toLocaleString('pt-BR', {minimumFractionDigits:2}) : '';
