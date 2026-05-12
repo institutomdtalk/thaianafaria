@@ -43,6 +43,15 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
   display: none; align-items: center; justify-content: center;
   transition: opacity .5s ease;
 }
+#page-loading {
+  position: fixed; inset: 0; z-index: 99999;
+  background: var(--navy-deep);
+  display: none; align-items: center; justify-content: center; flex-direction: column;
+  transition: opacity .4s ease;
+}
+#page-loading.visible {
+  display: flex;
+}
 #page-login::before {
   content: '';
   position: absolute; inset: 0;
@@ -920,12 +929,7 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 
 <!-- ══ LOGIN ══════════════════════════════ -->
 <!-- ══ LOADING ══════════════════════════════ -->
-<div id="page-loading" style="
-  position:fixed;inset:0;z-index:99999;
-  background:var(--navy-deep);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  transition:opacity .5s ease;
-">
+<div id="page-loading">
   <div style="position:absolute;inset:0;background-image:radial-gradient(circle,rgba(196,164,90,.12) 1px,transparent 1px);background-size:28px 28px;pointer-events:none"></div>
   <div style="position:relative;z-index:1;text-align:center">
     <div style="font-family:var(--serif);font-size:2rem;font-weight:300;color:rgba(255,255,255,.9);margin-bottom:6px">
@@ -1504,7 +1508,6 @@ function doLogin() {
   if (CREDENCIAIS[user] && CREDENCIAIS[user] === pass) {
     err.textContent = '';
     // Salvar sessão (persiste até fechar o navegador; use localStorage para persistir mais)
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ user, ts: Date.now() }));
     enterApp();
   } else {
     err.textContent = 'Usuário ou senha incorretos.';
@@ -1513,13 +1516,8 @@ function doLogin() {
 }
 
 function enterApp() {
-  document.getElementById('page-login').style.display = 'none';
-  const shell = document.getElementById('shell');
-  shell.style.display = 'flex';
-  shell.style.height = '100%';
-  // Mostrar shell IMEDIATAMENTE, depois carregar dados em background
-  hideLoading();
-  initApp(); // fire-and-forget — não bloqueia
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify({ ts: Date.now() }));
+  abrirApp();
 }
 
 function doLogout() {
@@ -1533,33 +1531,32 @@ function doLogout() {
   setTimeout(() => { pg.style.opacity = '1'; }, 10);
 }
 
-function hideLoading() {
-  const ld = document.getElementById('page-loading');
-  if (!ld) return;
-  ld.style.transition = 'opacity .4s ease';
-  ld.style.opacity = '0';
-  setTimeout(() => { ld.style.display = 'none'; }, 420);
-}
-
-function showLogin() {
-  const pg = document.getElementById('page-login');
-  pg.style.display = 'flex';
-  pg.style.opacity = '0';
-  setTimeout(() => { pg.style.opacity = '1'; }, 10);
-}
-
 // ── Verificar sessão ao carregar ──
 window.addEventListener('load', () => {
-  const sess = sessionStorage.getItem(SESSION_KEY);
-  if (sess) {
-    // Tem sessão — fechar loading e abrir app direto
-    enterApp();
+  if (sessionStorage.getItem(SESSION_KEY)) {
+    abrirApp();
   } else {
-    // Sem sessão — fechar loading e mostrar login
-    hideLoading();
-    showLogin();
+    mostrarLogin();
   }
 });
+
+function abrirApp() {
+  // Esconder tudo que não é o shell
+  document.getElementById('page-loading').classList.remove('visible');
+  document.getElementById('page-login').style.display = 'none';
+  // Mostrar shell
+  const shell = document.getElementById('shell');
+  shell.style.cssText = 'display:flex;height:100%';
+  // Carregar dados
+  initApp();
+}
+
+function mostrarLogin() {
+  document.getElementById('page-loading').classList.remove('visible');
+  const pg = document.getElementById('page-login');
+  pg.style.cssText = 'display:flex;opacity:0';
+  setTimeout(() => { pg.style.opacity = '1'; }, 20);
+}
 
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && document.getElementById('page-login').style.display !== 'none') doLogin();
