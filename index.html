@@ -602,7 +602,7 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 /* ══════════════════════════════════════
    PAINEL: FINANCEIRO
 ══════════════════════════════════════ */
-.fin-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+.fin-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 20px; }
 .fin-kpi {
   background: var(--bg-card); border: 1px solid var(--border);
   border-radius: var(--radius); padding: 20px 22px;
@@ -959,19 +959,38 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
         </div>
         <div class="fin-row" data-reveal>
           <div class="fin-kpi accent">
-            <div class="fin-kpi-label">Receita do Mês</div>
+            <div class="fin-kpi-label">Já Entrou</div>
             <div class="fin-kpi-value" id="fin-receita">R$ —</div>
-            <div class="fin-kpi-sub">pagamentos recebidos</div>
+            <div class="fin-kpi-sub" id="fin-receita-sub">— pagamentos confirmados</div>
+          </div>
+          <div class="fin-kpi" style="border-top:3px solid #b91c1c">
+            <div class="fin-kpi-label">Falta Entrar</div>
+            <div class="fin-kpi-value" id="fin-pendente" style="color:#b91c1c">R$ —</div>
+            <div class="fin-kpi-sub" id="fin-pendente-sub">— em atraso</div>
+          </div>
+          <div class="fin-kpi" style="border-top:3px solid #d97706">
+            <div class="fin-kpi-label">Não Pago / Suspenso</div>
+            <div class="fin-kpi-value" id="fin-naopago" style="color:#d97706">R$ —</div>
+            <div class="fin-kpi-sub" id="fin-naopago-sub">— alunos</div>
           </div>
           <div class="fin-kpi">
-            <div class="fin-kpi-label">A Receber</div>
-            <div class="fin-kpi-value" id="fin-pendente">R$ —</div>
-            <div class="fin-kpi-sub">pagamentos pendentes</div>
+            <div class="fin-kpi-label">Total Previsto do Mês</div>
+            <div class="fin-kpi-value" id="fin-total">R$ —</div>
+            <div class="fin-kpi-sub" id="fin-total-sub">— alunos ativos</div>
           </div>
-          <div class="fin-kpi">
-            <div class="fin-kpi-label">Total de Alunos Pagantes</div>
-            <div class="fin-kpi-value" id="fin-total-alunos">—</div>
-            <div class="fin-kpi-sub">este mês</div>
+        </div>
+        <!-- Barra de progresso -->
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;box-shadow:var(--shadow)" data-reveal>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted)">Progresso de Recebimento</span>
+            <span style="font-family:var(--serif);font-size:1.1rem;color:var(--navy)" id="fin-pct">—%</span>
+          </div>
+          <div style="height:8px;background:var(--bg-soft);border-radius:4px;overflow:hidden">
+            <div id="fin-bar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:4px;transition:width 1s ease"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:var(--text-muted)">
+            <span id="fin-bar-left">R$ 0 recebido</span>
+            <span id="fin-bar-right">meta: R$ 0</span>
           </div>
         </div>
 
@@ -1235,9 +1254,11 @@ function mockData(action, payload) {
     { id: 2, titulo: 'Reunião com hospital', corpo: 'Discutir renovação do contrato corporativo.', data: '2026-05-08' },
   ]};
   if (action === 'getPaymentControl') return { ok: true, data: [
-    { nome: 'Dr. Lucas Carvalho',   valor: 1200, meses: ['Pago','Pago','Pago','Pago','Pago','Null','Null','Null','Null','Null','Null','Null'] },
-    { nome: 'Dra. Marina Oliveira', valor: 900,  meses: ['Null','Null','Pago','Pago','Pago','Null','Null','Null','Null','Null','Null','Null'] },
-    { nome: 'Dr. Paulo Mendes',     valor: 600,  meses: ['Null','Null','Pago','Atrasado','Null','Null','Null','Null','Null','Null','Null','Null'] },
+    { nome: 'Dr. Lucas Carvalho',   valor: 1200, meses: ['Pago','Pago','Pago','Pago','Pago',   'Null','Null','Null','Null','Null','Null','Null'] },
+    { nome: 'Dra. Marina Oliveira', valor: 900,  meses: ['Null','Null','Pago','Pago','Pago',   'Null','Null','Null','Null','Null','Null','Null'] },
+    { nome: 'Dr. Paulo Mendes',     valor: 600,  meses: ['Null','Null','Pago','Pago','Atrasado','Null','Null','Null','Null','Null','Null','Null'] },
+    { nome: 'Dra. Ana Costa',       valor: 900,  meses: ['Pago','Pago','Pago','Pago','Não paga','Null','Null','Null','Null','Null','Null','Null'] },
+    { nome: 'Dr. Carlos Fonseca',   valor: 1400, meses: ['Pago','Pago','Pago','Pago','Pago',   'Null','Null','Null','Null','Null','Null','Null'] },
   ]};
   return { ok: true };
 }
@@ -1573,23 +1594,44 @@ function renderFin() {
 
   const mesIdx = getMesAtual(); // 0-based
 
-  // KPIs do mês atual
-  let recebido = 0, atrasado = 0, naoPago = 0, suspenso = 0, totalAlunos = 0;
+  // KPIs: calcular sobre o mês atual (não o filtro de tabela)
+  let recebido = 0, atrasado = 0, naoPago = 0, suspenso = 0;
+  let ctPago = 0, ctAtrasado = 0, ctNaoPago = 0, ctAtivos = 0;
+  let totalPrevisto = 0;
+
   dados.forEach(row => {
     if (!row.nome) return;
-    totalAlunos++;
-    const st = (row.meses[mesIdx] || '').toLowerCase().trim();
+    const st  = (row.meses[mesIdx] || 'null').toLowerCase().trim();
     const val = row.valor || 0;
-    if (st === 'pago')       recebido += val;
-    else if (st === 'atrasado')  atrasado += val;
-    else if (st === 'não paga' || st === 'nao paga') naoPago += val;
-    else if (st === 'suspenso')  suspenso += val;
+    // Só conta no total previsto quem tem qualquer registro no mês (não é puro Null)
+    const hasActivity = row.meses.some(m => m && m.toLowerCase() !== 'null' && m.trim() !== '');
+    if (!hasActivity) return; // aluno inativo (sem registros em nenhum mês)
+    ctAtivos++;
+    totalPrevisto += val;
+    if (st === 'pago')                                { recebido += val; ctPago++; }
+    else if (st === 'atrasado')                       { atrasado += val; ctAtrasado++; }
+    else if (st === 'não paga' || st === 'nao paga') { naoPago  += val; ctNaoPago++; }
+    else if (st === 'suspenso')                       { suspenso += val; }
   });
 
-  document.getElementById('fin-receita').textContent  = 'R$\u00a0' + recebido.toLocaleString('pt-BR');
-  document.getElementById('fin-pendente').textContent = 'R$\u00a0' + (atrasado + naoPago).toLocaleString('pt-BR');
-  document.getElementById('fin-total-alunos').textContent = totalAlunos;
-  document.getElementById('kpi-receita').textContent  = 'R$\u00a0' + recebido.toLocaleString('pt-BR');
+  const pct = totalPrevisto > 0 ? Math.round(recebido / totalPrevisto * 100) : 0;
+
+  // KPI cards
+  document.getElementById('fin-receita').textContent      = 'R$\u00a0' + recebido.toLocaleString('pt-BR');
+  document.getElementById('fin-receita-sub').textContent  = ctPago + (ctPago === 1 ? ' pagamento confirmado' : ' pagamentos confirmados');
+  document.getElementById('fin-pendente').textContent     = 'R$\u00a0' + atrasado.toLocaleString('pt-BR');
+  document.getElementById('fin-pendente-sub').textContent = ctAtrasado + (ctAtrasado === 1 ? ' aluno em atraso' : ' alunos em atraso');
+  document.getElementById('fin-naopago').textContent      = 'R$\u00a0' + (naoPago + suspenso).toLocaleString('pt-BR');
+  document.getElementById('fin-naopago-sub').textContent  = ctNaoPago + (ctNaoPago === 1 ? ' aluno não pagou' : ' alunos não pagaram');
+  document.getElementById('fin-total').textContent        = 'R$\u00a0' + totalPrevisto.toLocaleString('pt-BR');
+  document.getElementById('fin-total-sub').textContent    = ctAtivos + ' alunos ativos';
+  document.getElementById('kpi-receita').textContent      = 'R$\u00a0' + recebido.toLocaleString('pt-BR');
+
+  // Barra de progresso
+  document.getElementById('fin-pct').textContent      = pct + '%';
+  document.getElementById('fin-bar-right').textContent = 'meta: R$\u00a0' + totalPrevisto.toLocaleString('pt-BR');
+  document.getElementById('fin-bar-left').textContent  = 'R$\u00a0' + recebido.toLocaleString('pt-BR') + ' recebido';
+  setTimeout(() => { document.getElementById('fin-bar').style.width = pct + '%'; }, 100);
 
   // Filtro de mês selecionado
   const filtroMes = parseInt(document.getElementById('fin-mes-sel')?.value ?? mesIdx);
