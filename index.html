@@ -1950,18 +1950,28 @@ function agendaWeek(dir) {
 
 function syncCalendar() {
   const btn = document.getElementById('btn-sync-cal');
-  if (btn) btn.textContent = '↻ Sincronizando...';
+  if (btn) { btn.textContent = '↻ Sincronizando...'; btn.disabled = true; }
   const dates = getWeekDates(state.agendaOffset);
   const start = dates[0] + 'T00:00:00-03:00';
   const end   = dates[6] + 'T23:59:59-03:00';
 
-  // Chamar Google Calendar via Apps Script (proxy)
-  safeApi('getCalendarEvents', r => {
-    state.aulas = r.data;
-    renderAgenda();
-    if (btn) btn.textContent = '↺ Sincronizar';
-    toast('Agenda sincronizada — ' + r.data.length + ' eventos');
-  }, { start, end });
+  api('getCalendarEvents', { start, end }).then(r => {
+    console.log('Calendar response:', JSON.stringify(r).slice(0, 300));
+    if (btn) { btn.textContent = '↺ Sincronizar'; btn.disabled = false; }
+    if (r && r.ok && r.data && r.data.length) {
+      state.aulas = r.data;
+      renderAgenda();
+      toast('Agenda sincronizada — ' + r.data.length + ' eventos');
+    } else {
+      const msg = r && r.error ? r.error : 'sem dados';
+      toast('Calendar: ' + msg);
+      console.warn('Calendar erro:', r);
+    }
+  }).catch(e => {
+    if (btn) { btn.textContent = '↺ Sincronizar'; btn.disabled = false; }
+    console.error('syncCalendar erro:', e);
+    toast('Erro ao sincronizar agenda');
+  });
 }
 
 function renderAgenda() {
