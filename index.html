@@ -405,6 +405,40 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
   font-size: 11px; color: rgba(255,255,255,.85);
   backdrop-filter: blur(8px);
 }
+/* Card próxima aula */
+.proxima-aula-card {
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 14px; padding: 18px 20px;
+  backdrop-filter: blur(10px);
+  display: flex; align-items: center; gap: 20px;
+  max-width: 520px; flex-wrap: wrap;
+}
+.proxima-aula-info { flex: 1; min-width: 160px; }
+.proxima-aula-label {
+  font-size: 9px; letter-spacing: .18em; text-transform: uppercase;
+  color: rgba(255,255,255,.4); margin-bottom: 4px;
+}
+.proxima-aula-nome {
+  font-family: var(--serif); font-size: 1.5rem; font-weight: 300;
+  color: #fff; line-height: 1.1;
+}
+.proxima-aula-hora {
+  font-size: 12px; color: var(--gold-light); margin-top: 3px;
+}
+.btn-whatsapp {
+  display: flex; align-items: center; gap: 8px;
+  background: #25D366; color: #fff;
+  border: none; border-radius: 10px;
+  padding: 12px 18px;
+  font-family: var(--sans); font-size: 11px; font-weight: 700;
+  letter-spacing: .06em;
+  cursor: pointer; flex-shrink: 0;
+  transition: background .2s, transform .15s;
+  text-decoration: none;
+}
+.btn-whatsapp:hover { background: #1ebe5d; transform: translateY(-1px); }
+.btn-whatsapp svg { width: 18px; height: 18px; flex-shrink: 0; }
 
 /* ══════════════════════════════════════
    PAINEL: AGENDA
@@ -1440,6 +1474,25 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
   </div>
 </div>
 
+<!-- Modal: cadastrar contato WhatsApp -->
+<div class="modal-overlay" id="modal-contato">
+  <div class="modal-box" style="width:380px">
+    <div class="modal-title">📱 WhatsApp</div>
+    <p style="font-size:12px;color:var(--text-muted);margin:-8px 0 18px">Cadastre o número de <strong id="mc-label"></strong> para enviar confirmações</p>
+    <input type="hidden" id="mc-nome">
+    <input type="hidden" id="mc-hora">
+    <div class="form-row">
+      <label class="form-label">Número WhatsApp</label>
+      <input class="form-input" id="mc-wa" placeholder="+5511999990000" type="tel">
+    </div>
+    <p style="font-size:11px;color:var(--text-muted);margin-top:8px">Inclua o código do país: +55 para Brasil</p>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('modal-contato')">Cancelar</button>
+      <button class="btn-gold" onclick="salvarContato()">Salvar e enviar</button>
+    </div>
+  </div>
+</div>
+
 <!-- Modal: lançamento financeiro -->
 <div class="modal-overlay" id="modal-fin">
   <div class="modal-box">
@@ -1876,19 +1929,53 @@ function renderDashboard() {
   if (window._clockInterval) clearInterval(window._clockInterval);
   window._clockInterval = setInterval(updateClock, 1000);
 
-  // ── Aulas de hoje ──
-  const elHoje = document.getElementById('dash-hoje');
-  if (!elHoje) return;
-  if (!aulasHoje.length) {
-    elHoje.innerHTML = '<span style="font-size:11px;color:rgba(255,255,255,.3);font-style:italic">Nenhuma aula hoje</span>';
+  // ── Próxima aula ──
+  renderProximaAula();
+}
+
+function renderProximaAula() {
+  const el = document.getElementById('dash-proxima');
+  if (!el) return;
+  const agora = new Date();
+  const hoje  = fmtISO(agora);
+  const horaAgora = agora.getHours() * 60 + agora.getMinutes();
+
+  // Filtrar eventos de hoje que ainda não passaram
+  const proximas = (state.aulas || [])
+    .filter(ev => (ev.start || '').slice(0, 10) === hoje)
+    .map(ev => ({
+      ...ev,
+      horaStr: (ev.start || '').slice(11, 16),
+      minutos: parseInt((ev.start||'').slice(11,13)||0)*60 + parseInt((ev.start||'').slice(14,16)||0)
+    }))
+    .filter(ev => ev.minutos >= horaAgora - 10) // incluir aula que começou há até 10min
+    .sort((a, b) => a.minutos - b.minutos);
+
+  if (!proximas.length) {
+    el.innerHTML = '<div style="font-size:12px;color:rgba(255,255,255,.3);font-style:italic;padding:4px 0">Nenhuma aula pendente hoje</div>';
     return;
   }
-  elHoje.innerHTML = aulasHoje.map(a =>
-    `<div class="dash-aula-chip">
-      <span style="font-weight:600">${a.aluno.split(' ').slice(0,2).join(' ')}</span>
-      <span style="color:rgba(255,255,255,.5);margin-left:6px">${a.hora}</span>
-    </div>`
-  ).join('');
+
+  const prox = proximas[0];
+  const nome = (prox.summary || '').split('|')[0].trim();
+  const hora = prox.horaStr;
+  const cor  = (window.CAL_COLOR_MAP || {})[prox.colorId || '1'];
+  const hex  = cor ? cor.hex : '#7986CB';
+  const temWa = !!getContatoByNome(nome);
+  const contatos = getContatos();
+  const totalContatos = Object.keys(contatos).length;
+
+  el.innerHTML = `<div class="proxima-aula-card">
+    <div class="proxima-aula-info">
+      <div class="proxima-aula-label">Próxima aula</div>
+      <div class="proxima-aula-nome" style="color:${hex}">${nome}</div>
+      <div class="proxima-aula-hora">${hora} · hoje</div>
+    </div>
+    <button class="btn-whatsapp" onclick="abrirWhatsApp('${nome.replace(/'/g,"\\'")}', '${hora}')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.116 1.524 5.849L0 24l6.335-1.495A11.954 11.954 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 0 1-5.006-1.37l-.36-.214-3.732.881.938-3.618-.235-.373A9.818 9.818 0 0 1 2.182 12C2.182 6.575 6.575 2.182 12 2.182S21.818 6.575 21.818 12 17.425 21.818 12 21.818z"/></svg>
+      ${temWa ? 'Confirmar aula' : 'Cadastrar e confirmar'}
+    </button>
+  </div>`;
 }
 
 // ══════════════════════════════════════════════
@@ -1898,6 +1985,7 @@ const DIAS_SEMANA = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const MESES_ABREV = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
 
 // Mapa de colorId → hex visual
+window.CAL_COLOR_MAP = CAL_COLOR_MAP;
 const CAL_COLOR_MAP = {
   '1':  { hex: '#7986CB', label: 'Programado' },       // Lavanda
   '2':  { hex: '#33B679', label: '' },                  // Sage
@@ -2580,6 +2668,71 @@ function toast(msg) {
   el.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+// ══════════════════════════════════════════════
+// WHATSAPP — cadastro de números
+// ══════════════════════════════════════════════
+function getContatos() {
+  try { return JSON.parse(localStorage.getItem('ws_contatos') || '{}'); }
+  catch(e) { return {}; }
+}
+function saveContatos(c) {
+  localStorage.setItem('ws_contatos', JSON.stringify(c));
+}
+function getContatoByNome(nome) {
+  const c = getContatos();
+  const nLow = nome.toLowerCase();
+  // Busca exata primeiro, depois parcial
+  for (const key in c) {
+    if (key.toLowerCase() === nLow) return c[key];
+  }
+  for (const key in c) {
+    if (nLow.includes(key.toLowerCase()) || key.toLowerCase().includes(nLow.split(' ')[0].toLowerCase())) return c[key];
+  }
+  return null;
+}
+
+function montarMsgWhatsApp(nomeAluno, horaAula) {
+  const hora = new Date().getHours();
+  const saudacao = hora >= 5 && hora < 12 ? 'Bom dia' : hora >= 12 && hora < 18 ? 'Boa tarde' : 'Boa noite';
+  const primeiroNome = nomeAluno.replace(/^(Dr\.|Dra\.|Dr|Dra)\s*/i,'').split(' ')[0];
+  return `${saudacao}, ${primeiroNome}! Posso confirmar a sua aula de hoje começando às ${horaAula}?`;
+}
+
+function abrirWhatsApp(nomeAluno, horaAula) {
+  const numero = getContatoByNome(nomeAluno);
+  if (!numero) {
+    // Sem número cadastrado — abrir modal de cadastro
+    abrirModalContato(nomeAluno, horaAula);
+    return;
+  }
+  const msg = montarMsgWhatsApp(nomeAluno, horaAula);
+  const num = numero.replace(/\D/g,'');
+  window.open('https://wa.me/' + num + '?text=' + encodeURIComponent(msg), '_blank');
+}
+
+function abrirModalContato(nomeAluno, horaAula) {
+  document.getElementById('mc-nome').value = nomeAluno;
+  document.getElementById('mc-wa').value = '';
+  document.getElementById('mc-hora').value = horaAula || '';
+  document.getElementById('mc-label').textContent = nomeAluno;
+  openModal('modal-contato');
+}
+
+function salvarContato() {
+  const nome = document.getElementById('mc-nome').value.trim();
+  const wa   = document.getElementById('mc-wa').value.trim();
+  const hora = document.getElementById('mc-hora').value;
+  if (!nome || !wa) return;
+  const c = getContatos();
+  c[nome] = wa;
+  saveContatos(c);
+  closeModal('modal-contato');
+  // Abrir WhatsApp depois de salvar
+  if (hora) abrirWhatsApp(nome, hora);
+  toast('Número salvo para ' + nome.split(' ')[0]);
+  renderProximaAula();
 }
 
 // ══════════════════════════════════════════════
