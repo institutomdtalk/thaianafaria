@@ -2164,17 +2164,28 @@ function renderFin() {
   let recebido=0, faltaEntrar=0;
   let ctPago=0, ctFalta=0, ctAtivos=0;
   let totalPrevisto = 0;
+  const mesAnterior = mesAtual > 0 ? mesAtual - 1 : null;
   dados.forEach(row => {
     if (!row.nome) return;
     const val = row.valor || 0;
-    totalPrevisto += val; // todos os alunos da tabela
-    const st  = (row.meses[mesAtual] || '').toLowerCase().trim();
-    if (st === 'suspenso' || st === 'null' || st === 'não paga' || st === 'nao paga') return;
+    totalPrevisto += val;
+    const st     = (row.meses[mesAtual] || '').toLowerCase().trim();
+    const stAnt  = mesAnterior !== null ? (row.meses[mesAnterior] || '').toLowerCase().trim() : '';
+    // Verificar se estava atrasado no mês anterior e ainda não pagou no atual
+    const atrasadoAnterior = stAnt === 'atrasado' && st !== 'pago';
+    if (st === 'suspenso' || st === 'null' || st === 'não paga' || st === 'nao paga') {
+      // Mesmo isento no atual, se estava atrasado antes conta o débito anterior
+      if (atrasadoAnterior) { faltaEntrar += val; ctFalta++; }
+      return;
+    }
     ctAtivos++;
     if (st === 'pago') {
       recebido += val; ctPago++;
+      // Se estava atrasado no mês anterior e pagou agora, não acumula
     } else {
       faltaEntrar += val; ctFalta++;
+      // Se estava atrasado no mês anterior E não pagou ainda, soma o mês anterior também
+      if (atrasadoAnterior) { faltaEntrar += val; ctFalta++; }
     }
   });
   const pct = totalPrevisto > 0 ? Math.round(recebido/totalPrevisto*100) : 0;
@@ -2277,15 +2288,21 @@ function renderFinKpis() {
   let recebido=0,faltaEntrar=0,ctPago=0,ctFalta=0,ctAtivos=0;
   const mesAtualK = new Date().getMonth();
   let totalPrevisto=0;
+  const mesAntK = mesAtualK > 0 ? mesAtualK - 1 : null;
   state.lancamentos.forEach(row => {
     if (!row.nome) return;
     const val=row.valor||0;
     totalPrevisto+=val;
     const st=(row.meses[mesAtualK]||'').toLowerCase().trim();
-    if(st==='suspenso'||st==='null'||st==='não paga'||st==='nao paga') return;
+    const stA=mesAntK!==null?(row.meses[mesAntK]||'').toLowerCase().trim():'';
+    const atrasadoAnt = stA==='atrasado' && st!=='pago';
+    if(st==='suspenso'||st==='null'||st==='não paga'||st==='nao paga'){
+      if(atrasadoAnt){faltaEntrar+=val;ctFalta++;}
+      return;
+    }
     ctAtivos++;
     if(st==='pago'){recebido+=val;ctPago++;}
-    else {faltaEntrar+=val;ctFalta++;}
+    else{faltaEntrar+=val;ctFalta++;if(atrasadoAnt){faltaEntrar+=val;ctFalta++;}}
   });
   const pct=totalPrevisto>0?Math.round(recebido/totalPrevisto*100):0;
   document.getElementById('fin-receita').textContent='R$\u00a0'+recebido.toLocaleString('pt-BR');
