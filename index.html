@@ -1019,6 +1019,12 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
         <!-- CONTEÚDO -->
         <div style="position:relative;z-index:2;padding:52px 48px 44px;min-height:calc(100vh - var(--header));display:flex;flex-direction:column;justify-content:space-between">
 
+          <!-- Relógio canto superior direito -->
+          <div style="position:absolute;top:28px;right:40px;text-align:right">
+            <div id="dash-clock" style="font-family:var(--serif);font-size:2.8rem;font-weight:300;color:rgba(255,255,255,.92);line-height:1;letter-spacing:.02em"></div>
+            <div id="dash-clock-date" style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.38);margin-top:4px"></div>
+          </div>
+
           <!-- SAUDAÇÃO -->
           <div>
             <div style="font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:rgba(196,164,90,.8);margin-bottom:16px" id="dash-periodo"></div>
@@ -1718,32 +1724,85 @@ function buildAvatarOrbit() {
 // DASHBOARD
 // ══════════════════════════════════════════════
 function renderDashboard() {
+  // ── Saudação por horário ──
+  const hora = new Date().getHours();
+  const saudacao = hora >= 5 && hora < 12 ? 'Bom dia,'
+                 : hora >= 12 && hora < 18 ? 'Boa tarde,'
+                 : 'Boa noite,';
+  const periodo  = hora >= 5 && hora < 12 ? 'Manhã'
+                 : hora >= 12 && hora < 18 ? 'Tarde' : 'Noite';
+
+  const elG = document.getElementById('dash-greeting-text');
+  if (elG) elG.textContent = saudacao;
+  const elP = document.getElementById('dash-periodo');
+  if (elP) elP.textContent = periodo + ' · Instituto MD Talk';
+
+  // ── Data por extenso ──
+  const now  = new Date();
+  const dias  = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+  const meses = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  const elS = document.getElementById('dash-sub');
+  if (elS) elS.textContent = `${dias[now.getDay()]}, ${now.getDate()} de ${meses[now.getMonth()]} de ${now.getFullYear()}`;
+  const elHD = document.getElementById('header-date');
+  if (elHD) elHD.textContent = `${dias[now.getDay()]}, ${now.getDate()} de ${meses[now.getMonth()]}`;
+
+  // ── KPIs ──
   const ativos = state.lancamentos.filter(r => r.nome && r.nome.trim()).length;
-  const hoje = fmtISO(new Date());
+  const hoje = fmtISO(now);
   const semana = getWeekDates(0);
-  const aulasHoje = state.aulas.filter(a => a.data === hoje);
+  const aulasHoje   = state.aulas.filter(a => a.data === hoje);
   const aulasSemana = state.aulas.filter(a => a.data >= semana[0] && a.data <= semana[6]);
   const tasksPendentes = state.tasks.filter(t => !t.done).length;
-
   const recebido = state.lancamentos.filter(r => r.nome && r.valor > 0).reduce((s, r) => {
-    const st = (r.meses[new Date().getMonth()] || '').toLowerCase();
+    const st = (r.meses[now.getMonth()] || '').toLowerCase();
     return st === 'pago' ? s + r.valor : s;
   }, 0);
 
-  document.getElementById('kpi-alunos').textContent = ativos;
-  document.getElementById('kpi-aulas-semana').textContent = aulasSemana.length;
-  document.getElementById('kpi-tasks').textContent = tasksPendentes;
-  document.getElementById('kpi-receita').textContent = 'R$\u00a0' + recebido.toLocaleString('pt-BR');
+  document.getElementById('kpi-alunos').textContent       = ativos;
+  document.getElementById('kpi-aulas-semana').textContent  = aulasSemana.length;
+  document.getElementById('kpi-tasks').textContent         = tasksPendentes;
+  document.getElementById('kpi-receita').textContent       = 'R$ ' + recebido.toLocaleString('pt-BR');
 
-  const el = document.getElementById('dash-hoje');
+  // ── Sub-textos dos cards ──
+  const dnca = document.getElementById('dnc-alunos-sub');
+  if (dnca) dnca.textContent = ativos + ' ativos';
+  const dnct = document.getElementById('dnc-tasks-sub');
+  if (dnct) dnct.textContent = tasksPendentes + ' pendente' + (tasksPendentes !== 1 ? 's' : '');
+  const dncf = document.getElementById('dnc-fin-sub');
+  if (dncf) dncf.textContent = 'R$ ' + recebido.toLocaleString('pt-BR') + ' recebido';
+  const dnca2 = document.getElementById('dnc-agenda-sub');
+  if (dnca2) dnca2.textContent = aulasSemana.length + ' aula' + (aulasSemana.length !== 1 ? 's' : '') + ' esta semana';
+  const dncn = document.getElementById('dnc-notas-sub');
+  if (dncn) dncn.textContent = state.notas.length + ' nota' + (state.notas.length !== 1 ? 's' : '');
+
+  // ── Relógio ──
+  function updateClock() {
+    const n = new Date();
+    const h = String(n.getHours()).padStart(2,'0');
+    const m = String(n.getMinutes()).padStart(2,'0');
+    const s = String(n.getSeconds()).padStart(2,'0');
+    const elC = document.getElementById('dash-clock');
+    if (elC) elC.textContent = `${h}:${m}:${s}`;
+    const dias2  = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+    const meses2 = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    const elD = document.getElementById('dash-clock-date');
+    if (elD) elD.textContent = `${dias2[n.getDay()]} · ${n.getDate()} ${meses2[n.getMonth()]} ${n.getFullYear()}`;
+  }
+  updateClock();
+  if (window._clockInterval) clearInterval(window._clockInterval);
+  window._clockInterval = setInterval(updateClock, 1000);
+
+  // ── Aulas de hoje ──
+  const elHoje = document.getElementById('dash-hoje');
+  if (!elHoje) return;
   if (!aulasHoje.length) {
-    el.innerHTML = '<div class="state-empty">Nenhuma aula agendada para hoje.</div>';
+    elHoje.innerHTML = '<span style="font-size:11px;color:rgba(255,255,255,.3);font-style:italic">Nenhuma aula hoje</span>';
     return;
   }
-  el.innerHTML = aulasHoje.map(a =>
-    `<div class="aula-chip">
-      <span class="chip-nome">${a.aluno}</span>
-      <span class="chip-hora">${a.hora} &mdash; ${a.duracao} min</span>
+  elHoje.innerHTML = aulasHoje.map(a =>
+    `<div class="dash-aula-chip">
+      <span style="font-weight:600">${a.aluno.split(' ').slice(0,2).join(' ')}</span>
+      <span style="color:rgba(255,255,255,.5);margin-left:6px">${a.hora}</span>
     </div>`
   ).join('');
 }
