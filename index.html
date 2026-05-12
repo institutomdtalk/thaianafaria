@@ -2163,20 +2163,20 @@ function renderFin() {
   // Null        → não vai pagar (ignorar)
   let recebido=0, faltaEntrar=0;
   let ctPago=0, ctFalta=0, ctAtivos=0;
+  let totalPrevisto = 0;
   dados.forEach(row => {
     if (!row.nome) return;
-    const st  = (row.meses[mesAtual] || '').toLowerCase().trim();
     const val = row.valor || 0;
-    if (st === 'suspenso' || st === 'null' || st === 'não paga' || st === 'nao paga') return; // não vai pagar
+    totalPrevisto += val; // todos os alunos da tabela
+    const st  = (row.meses[mesAtual] || '').toLowerCase().trim();
+    if (st === 'suspenso' || st === 'null' || st === 'não paga' || st === 'nao paga') return;
     ctAtivos++;
     if (st === 'pago') {
       recebido += val; ctPago++;
     } else {
-      // atrasado ou vazio — ainda vai pagar
       faltaEntrar += val; ctFalta++;
     }
   });
-  const totalPrevisto = recebido + faltaEntrar;
   const pct = totalPrevisto > 0 ? Math.round(recebido/totalPrevisto*100) : 0;
   document.getElementById('fin-receita').textContent      = 'R$\u00a0' + recebido.toLocaleString('pt-BR');
   document.getElementById('fin-receita-sub').textContent  = ctPago + ' confirmado' + (ctPago!==1?'s':'');
@@ -2276,16 +2276,17 @@ function renderFinKpis() {
   const mesAtual = getMesAtual();
   let recebido=0,faltaEntrar=0,ctPago=0,ctFalta=0,ctAtivos=0;
   const mesAtualK = new Date().getMonth();
+  let totalPrevisto=0;
   state.lancamentos.forEach(row => {
     if (!row.nome) return;
-    const st=(row.meses[mesAtualK]||'').toLowerCase().trim();
     const val=row.valor||0;
+    totalPrevisto+=val;
+    const st=(row.meses[mesAtualK]||'').toLowerCase().trim();
     if(st==='suspenso'||st==='null'||st==='não paga'||st==='nao paga') return;
     ctAtivos++;
     if(st==='pago'){recebido+=val;ctPago++;}
     else {faltaEntrar+=val;ctFalta++;}
   });
-  const totalPrevisto=recebido+faltaEntrar;
   const pct=totalPrevisto>0?Math.round(recebido/totalPrevisto*100):0;
   document.getElementById('fin-receita').textContent='R$\u00a0'+recebido.toLocaleString('pt-BR');
   document.getElementById('fin-pendente').textContent='R$\u00a0'+faltaEntrar.toLocaleString('pt-BR');
