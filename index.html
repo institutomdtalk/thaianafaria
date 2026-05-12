@@ -1193,17 +1193,43 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
       <div id="panel-agenda" class="panel">
         <div class="section-header" data-reveal>
           <div class="section-overline">Google Calendar</div>
-          <div class="section-title">Agenda de Aulas</div>
+          <div class="section-title">Aulas de Hoje</div>
         </div>
 
+        <div style="display:flex;gap:40px;align-items:flex-start;flex-wrap:wrap" data-reveal>
 
-                <div class="agenda-controls" data-reveal>
-          <button class="agenda-nav-btn" onclick="agendaWeek(-1)">&#8592;</button>
-          <div class="agenda-week-label" id="agenda-week-label">Semana de...</div>
-          <button class="agenda-nav-btn" onclick="agendaWeek(+1)">&#8594;</button>
-          <button class="btn-gold btn-sm" id="btn-sync-cal" onclick="syncCalendar()">↺ Sincronizar</button>
+          <!-- Checklist -->
+          <div style="flex:1;min-width:280px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+              <div id="agenda-data-label" style="font-size:12px;color:var(--text-muted);letter-spacing:.04em"></div>
+              <button class="btn-gold btn-sm" id="btn-sync-cal" onclick="syncCalendar()">&#8635; Sincronizar</button>
+            </div>
+            <div id="agenda-checklist"></div>
+          </div>
+
+          <!-- Botão Google Calendar orbital -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:14px;padding-top:8px;flex-shrink:0">
+            <div style="position:relative;width:100px;height:100px;cursor:pointer"
+              onclick="window.open('https://calendar.google.com','_blank')"
+              title="Abrir Google Calendar">
+              <svg id="gcal-orbit-svg" viewBox="0 0 100 100"
+                style="position:absolute;inset:0;width:100px;height:100px;pointer-events:none"></svg>
+              <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2">
+                <div style="width:58px;height:58px;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.15)">
+                  <svg width="34" height="34" viewBox="0 0 24 24">
+                    <rect x="3" y="4" width="18" height="17" rx="2" fill="white" stroke="#DADCE0" stroke-width="1"/>
+                    <rect x="3" y="9" width="18" height="1.5" fill="#DADCE0"/>
+                    <rect x="8" y="2" width="2" height="4" rx="1" fill="#4285F4"/>
+                    <rect x="14" y="2" width="2" height="4" rx="1" fill="#4285F4"/>
+                    <text x="12" y="20" font-size="7" font-weight="bold" fill="#4285F4" text-anchor="middle" font-family="Arial">CAL</text>
+                  </svg>
+                </div>
+              </div>
+            </div>
+            <span style="font-size:10px;color:var(--text-muted);letter-spacing:.06em">Google Calendar</span>
+          </div>
+
         </div>
-        <div class="week-grid" id="week-grid" data-reveal></div>
 
         <!-- Modal de cor do evento -->
         <div class="modal-overlay" id="modal-event-color">
@@ -1211,194 +1237,16 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
             <div class="modal-title" id="modal-event-title">Alterar cor</div>
             <div style="font-size:11px;color:var(--text-muted);margin-bottom:16px" id="modal-event-time"></div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-              <button class="cal-color-btn" data-color-id="5"  data-hex="#F6BF26" data-label="🟡 Aula ocorreu" onclick="setEventColor(this)">🟡 Aula ocorreu</button>
-              <button class="cal-color-btn" data-color-id="1"  data-hex="#7986CB" data-label="🟣 Programado" onclick="setEventColor(this)">🟣 Programado</button>
-              <button class="cal-color-btn" data-color-id="11" data-hex="#D50000" data-label="🔴 Reposição" onclick="setEventColor(this)">🔴 Reposição</button>
-              <button class="cal-color-btn" data-color-id="3"  data-hex="#8E24AA" data-label="🟣 Aluno faltou" onclick="setEventColor(this)">🟣 Aluno faltou</button>
-              <button class="cal-color-btn" data-color-id="10" data-hex="#0B8043" data-label="🟢 Eu faltei" onclick="setEventColor(this)">🟢 Eu faltei</button>
-              <button class="cal-color-btn" data-color-id="6"  data-hex="#E67C73" data-label="🟠 Aula estendida" onclick="setEventColor(this)">🟠 Aula estendida</button>
+              <button class="cal-color-btn" data-color-id="5"  data-label="Aula ocorreu"   onclick="setEventColor(this)">&#128993; Aula ocorreu</button>
+              <button class="cal-color-btn" data-color-id="1"  data-label="Programado"     onclick="setEventColor(this)">&#128994; Programado</button>
+              <button class="cal-color-btn" data-color-id="11" data-label="Reposição"      onclick="setEventColor(this)">&#128308; Reposição</button>
+              <button class="cal-color-btn" data-color-id="3"  data-label="Aluno faltou"   onclick="setEventColor(this)">&#128995; Aluno faltou</button>
+              <button class="cal-color-btn" data-color-id="10" data-label="Eu faltei"      onclick="setEventColor(this)">&#128992; Eu faltei</button>
+              <button class="cal-color-btn" data-color-id="6"  data-label="Aula estendida" onclick="setEventColor(this)">&#129001; Aula estendida</button>
             </div>
             <div class="modal-actions">
               <button class="btn-cancel" onclick="closeModal('modal-event-color')">Fechar</button>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── ALUNOS ── -->
-      <div id="panel-alunos" class="panel">
-        <div class="section-header" data-reveal>
-          <div class="section-overline">Lista</div>
-          <div class="section-title">Alunos Ativos</div>
-        </div>
-        <div class="alunos-toolbar" data-reveal>
-          <input class="search-input" placeholder="Buscar aluno..." oninput="filtrarAlunos(this.value)" id="aluno-search">
-          <button class="btn-gold" onclick="openModalAluno()">+ Novo Aluno</button>
-        </div>
-        <table class="alunos-table" data-reveal>
-          <thead class="table-head">
-            <tr>
-              <th>Nome</th>
-              <th>Especialidade</th>
-              <th>Nível</th>
-              <th>Status</th>
-              <th>Plano</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody id="alunos-tbody">
-            <tr><td colspan="6"><div class="state-loading"><div class="spinner"></div>Carregando...</div></td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- ── TAREFAS ── -->
-      <div id="panel-tarefas" class="panel">
-        <div class="section-header" data-reveal>
-          <div class="section-overline">To-do</div>
-          <div class="section-title">Tarefas</div>
-        </div>
-        <div class="tasks-layout" data-reveal>
-          <div class="task-list" id="task-list">
-            <div class="state-loading"><div class="spinner"></div>Carregando...</div>
-          </div>
-          <!-- Adicionar tarefa -->
-          <div class="task-add-form">
-            <div class="task-add-title">Nova Tarefa</div>
-            <div class="form-row">
-              <label class="form-label">Descrição</label>
-              <input class="form-input" id="task-texto" placeholder="O que precisa ser feito?">
-            </div>
-            <div class="form-row">
-              <label class="form-label">Categoria</label>
-              <select class="form-select" id="task-cat">
-                <option>Administrativo</option>
-                <option>Pedagógico</option>
-                <option>Conteúdo</option>
-                <option>Financeiro</option>
-                <option>Pessoal</option>
-              </select>
-            </div>
-            <div class="form-row">
-              <label class="form-label">Prazo</label>
-              <input class="form-input" type="date" id="task-prazo">
-            </div>
-            <button class="btn-gold" style="width:100%" onclick="addTask()">Adicionar</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── NOTAS ── -->
-      <div id="panel-notas" class="panel">
-        <div class="section-header" data-reveal>
-          <div class="section-overline">Diário</div>
-          <div class="section-title">Anotações</div>
-        </div>
-        <div class="notes-layout" data-reveal>
-          <div class="notes-list">
-            <div class="notes-list-header">
-              <span>Notas</span>
-              <button class="btn-gold btn-sm" onclick="newNote()">+</button>
-            </div>
-            <div id="notes-list-body">
-              <div class="state-loading"><div class="spinner"></div>Carregando...</div>
-            </div>
-          </div>
-          <div class="note-editor">
-            <div class="note-editor-toolbar">
-              <input class="note-title-input" id="note-title-inp" placeholder="Título da nota...">
-              <button class="btn-save" onclick="saveNote()">Salvar</button>
-              <button class="btn-cancel" onclick="deleteNote()" title="Apagar nota">&#10006;</button>
-            </div>
-            <div class="note-body" id="note-body" contenteditable="true" spellcheck="false"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── LINKS ── -->
-      <div id="panel-links" class="panel">
-        <div class="section-header" data-reveal>
-          <div class="section-overline">Atalhos</div>
-          <div class="section-title">Links Úteis</div>
-        </div>
-        <div class="links-grid" data-reveal id="links-grid"></div>
-      </div>
-
-      <!-- ── FINANCEIRO ── -->
-      <div id="panel-financeiro" class="panel">
-        <div class="section-header" data-reveal>
-          <div class="section-overline">Controle</div>
-          <div class="section-title">Financeiro</div>
-        </div>
-
-        <!-- KPIs -->
-        <div class="fin-row" data-reveal>
-          <div class="fin-kpi accent">
-            <div class="fin-kpi-label">Já Entrou</div>
-            <div class="fin-kpi-value" id="fin-receita">R$ —</div>
-            <div class="fin-kpi-sub" id="fin-receita-sub">— confirmados</div>
-          </div>
-
-          <div class="fin-kpi" style="border-top:3px solid #b91c1c">
-            <div class="fin-kpi-label">Falta Entrar</div>
-            <div class="fin-kpi-value" id="fin-naopago" style="color:#b91c1c">R$ —</div>
-            <div class="fin-kpi-sub" id="fin-naopago-sub">— alunos</div>
-          </div>
-          <div class="fin-kpi">
-            <div class="fin-kpi-label">Total Previsto</div>
-            <div class="fin-kpi-value" id="fin-total">R$ —</div>
-            <div class="fin-kpi-sub" id="fin-total-sub">— alunos ativos</div>
-          </div>
-        </div>
-
-        <!-- Barra de progresso -->
-        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;box-shadow:var(--shadow)" data-reveal>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted)">Progresso do mês atual</span>
-            <span style="font-family:var(--serif);font-size:1.1rem;color:var(--navy)" id="fin-pct">—%</span>
-          </div>
-          <div style="height:8px;background:var(--bg-soft);border-radius:4px;overflow:hidden">
-            <div id="fin-bar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:4px;transition:width 1.2s ease"></div>
-          </div>
-          <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:var(--text-muted)">
-            <span id="fin-bar-left">R$ 0 recebido</span>
-            <span id="fin-bar-right">meta: R$ 0</span>
-          </div>
-        </div>
-
-        <!-- Tabela editável -->
-        <div class="fin-grid-wrap" data-reveal>
-          <div class="fin-grid-header">
-            <span>Payment Control</span>
-            <div style="display:flex;align-items:center;gap:12px">
-              <div class="fin-grid-months" id="fin-month-tabs"></div>
-              <button onclick="recarregarFin()" style="background:rgba(196,164,90,.15);border:1px solid rgba(196,164,90,.3);border-radius:6px;padding:4px 10px;font-size:10px;color:var(--gold);cursor:pointer;font-family:var(--sans)" title="Recarregar dados do Sheets">↺ Sheets</button>
-            </div>
-          </div>
-          <div style="overflow-x:auto">
-            <table class="fin-editable-table">
-              <thead>
-                <tr>
-                  <th style="min-width:180px" class="sortable" id="th-nome" onclick="finSort('nome')">Aluno</th>
-                  <th style="min-width:110px" class="sortable" id="th-valor" onclick="finSort('valor')">Valor/mês</th>
-                  <th class="th-mes sortable" id="fin-th-m1" onclick="finSort('m0')">—</th>
-                  <th class="th-mes sortable" id="fin-th-m2" onclick="finSort('m1')">—</th>
-                  <th class="th-mes sortable" id="fin-th-m3" onclick="finSort('m2')">—</th>
-                </tr>
-              </thead>
-              <tbody id="fin-tbody">
-                <tr><td colspan="5"><div class="state-loading"><div class="spinner"></div>Carregando...</div></td></tr>
-              </tbody>
-            </table>
-          </div>
-          <!-- legenda -->
-          <div class="fin-legend">
-            <div class="fin-legend-item"><span class="status-pill sp-pago">Pago</span></div>
-            <div class="fin-legend-item"><span class="status-pill sp-atrasado">Atrasado</span></div>
-            <div class="fin-legend-item"><span class="status-pill sp-naopaga">Não paga</span></div>
-            <div class="fin-legend-item"><span class="status-pill sp-suspenso">Suspenso</span></div>
-            <div class="fin-legend-item"><span class="status-pill sp-null">—</span> sem registro</div>
-            <div class="fin-legend-item" style="margin-left:auto;color:var(--gold);font-size:10px">← clique no status para alterar · clique no nome/valor para editar</div>
           </div>
         </div>
       </div>
@@ -1629,7 +1477,7 @@ function goTo(id) {
   if (header) header.style.display = id === 'dashboard' ? 'none' : 'flex';
 
   // lazy render
-  if (id === 'agenda') renderAgenda();
+  if (id === 'agenda') { syncCalendar(); }
   if (id === 'links')  renderLinks();
 
   // scroll reveal
@@ -2046,47 +1894,125 @@ function syncCalendar() {
 }
 
 function renderAgenda() {
-  const dates = getWeekDates(state.agendaOffset);
-  const firstD = new Date(dates[0] + 'T12:00:00');
-  const lastD  = new Date(dates[6] + 'T12:00:00');
-  document.getElementById('agenda-week-label').textContent =
-    `${firstD.getDate()} ${MESES_ABREV[firstD.getMonth()]} — ${lastD.getDate()} ${MESES_ABREV[lastD.getMonth()]} ${lastD.getFullYear()}`;
-
   const hoje = fmtISO(new Date());
-  const grid = document.getElementById('week-grid');
-  grid.innerHTML = dates.map(d => {
-    const dd = new Date(d + 'T12:00:00');
-    const isToday = d === hoje;
-    const eventosDia = (state.aulas || []).filter(ev => {
-      // Usar os primeiros 10 chars do ISO já em BRT (ex: "2026-05-16T10:20:00-03:00")
-      const evDate = (ev.start || '').slice(0, 10);
-      return evDate === d;
-    }).sort((a, b) => (a.start || '') > (b.start || '') ? 1 : -1);
+  const now  = new Date();
+  const dias = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+  const meses2 = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 
-    const chips = eventosDia.map(ev => {
-      const cor = CAL_COLOR_MAP[ev.colorId || null];
-      const hex = cor ? cor.hex : '#7986CB';
-      // Extrair hora diretamente do string ISO (já em BRT), sem converter
-      const hora = ev.start ? ev.start.slice(11, 16) : '';
-      const nome = (ev.summary || '').split('|')[0].trim();
-      return `<div class="cal-event-chip"
-        style="background:${hex}22;border-left-color:${hex}"
-        onclick="openColorModal('${ev.id}','${nome.replace(/'/g,"\\'")}','${hora}','${ev.colorId||''}')">
-        <div class="cal-event-nome" style="color:${hex}">${nome}</div>
-        <div class="cal-event-hora">${hora}</div>
-      </div>`;
-    }).join('');
+  const elLabel = document.getElementById('agenda-data-label');
+  if (elLabel) elLabel.textContent = `${dias[now.getDay()]}, ${now.getDate()} de ${meses2[now.getMonth()]}`;
 
-    return `<div class="day-col">
-      <div class="day-header ${isToday ? 'today' : ''}">
-        ${DIAS_SEMANA[dd.getDay()]}
-        <span class="day-num">${dd.getDate()}</span>
+  const eventos = (state.aulas || [])
+    .filter(ev => (ev.start || '').slice(0, 10) === hoje)
+    .sort((a, b) => (a.start || '') > (b.start || '') ? 1 : -1);
+
+  const el = document.getElementById('agenda-checklist');
+  if (!el) return;
+
+  if (!eventos.length) {
+    el.innerHTML = '<div class="state-empty">Nenhuma aula hoje — agenda sincronizada.</div>';
+    return;
+  }
+
+  // Estado de check local (reseta no dia)
+  const checkKey = 'ws_checks_' + hoje;
+  let checks = {};
+  try { checks = JSON.parse(localStorage.getItem(checkKey) || '{}'); } catch(e) {}
+
+  el.innerHTML = eventos.map((ev, i) => {
+    const cor  = CAL_COLOR_MAP[ev.colorId || '1'];
+    const hex  = cor ? cor.hex : '#7986CB';
+    const hora = (ev.start || '').slice(11, 16);
+    const nome = (ev.summary || '').split('|')[0].trim();
+    const done = !!checks[ev.id];
+    const temWa = !!getContatoByNome(nome);
+
+    return `<div class="checklist-item ${done ? 'done' : ''}" id="ci-${ev.id}">
+      <div class="ci-check" style="color:${hex};border-color:${hex}" onclick="toggleCheck('${ev.id}','${hoje}')">
+        <svg viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="2 6 5 9 10 3"/>
+        </svg>
       </div>
-      <div class="day-aulas" style="padding:6px">
-        ${chips || '<div style="font-size:10px;color:var(--text-muted);padding:8px 4px;text-align:center">—</div>'}
+      <div class="ci-body" onclick="toggleCheck('${ev.id}','${hoje}')">
+        <div class="ci-nome" style="color:${hex}">${nome}</div>
+        <div class="ci-hora">${hora}</div>
       </div>
+      <button class="ci-wa" onclick="abrirWhatsApp('${nome.replace(/'/g,"\\'")}','${hora}')" title="Confirmar via WhatsApp">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.116 1.524 5.849L0 24l6.335-1.495A11.954 11.954 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 0 1-5.006-1.37l-.36-.214-3.732.881.938-3.618-.235-.373A9.818 9.818 0 0 1 2.182 12C2.182 6.575 6.575 2.182 12 2.182S21.818 6.575 21.818 12 17.425 21.818 12 21.818z"/>
+        </svg>
+      </button>
     </div>`;
   }).join('');
+
+  // Construir órbita do botão Google
+  buildGCalOrbit();
+}
+
+function toggleCheck(evId, hoje) {
+  const checkKey = 'ws_checks_' + hoje;
+  let checks = {};
+  try { checks = JSON.parse(localStorage.getItem(checkKey) || '{}'); } catch(e) {}
+  checks[evId] = !checks[evId];
+  localStorage.setItem(checkKey, JSON.stringify(checks));
+  renderAgenda();
+}
+
+function buildGCalOrbit() {
+  const svg = document.getElementById('gcal-orbit-svg');
+  if (!svg) return;
+  const svgNS = 'http://www.w3.org/2000/svg';
+  svg.innerHTML = '';
+  const cx = 50, cy = 50;
+
+  // 4 órbitas com cores Google: azul, vermelho, amarelo, verde
+  const orbits = [
+    { rx: 42, ry: 16, tilt: -15, dur: '5s',  color: '#4285F4', dots: 2 },
+    { rx: 38, ry: 14, tilt:  45, dur: '8s',  color: '#EA4335', dots: 2 },
+    { rx: 44, ry: 12, tilt:  75, dur: '6.5s',color: '#FBBC05', dots: 1 },
+    { rx: 36, ry: 18, tilt: -55, dur: '9s',  color: '#34A853', dots: 2 },
+  ];
+
+  orbits.forEach(o => {
+    const g = document.createElementNS(svgNS, 'g');
+    g.setAttribute('transform', `rotate(${o.tilt} ${cx} ${cy})`);
+
+    for (let i = 0; i < o.dots; i++) {
+      const angle = (360 / o.dots) * i;
+      const rad = angle * Math.PI / 180;
+      const px = cx + o.rx * Math.cos(rad);
+      const py = cy + o.ry * Math.sin(rad);
+
+      const animG = document.createElementNS(svgNS, 'g');
+      const anim = document.createElementNS(svgNS, 'animateTransform');
+      anim.setAttribute('attributeName', 'transform');
+      anim.setAttribute('type', 'rotate');
+      anim.setAttribute('from', `${angle} ${cx} ${cy}`);
+      anim.setAttribute('to', `${angle + 360} ${cx} ${cy}`);
+      anim.setAttribute('dur', o.dur);
+      anim.setAttribute('repeatCount', 'indefinite');
+      animG.appendChild(anim);
+
+      const dot = document.createElementNS(svgNS, 'circle');
+      dot.setAttribute('cx', px);
+      dot.setAttribute('cy', py);
+      dot.setAttribute('r', '3.5');
+      dot.setAttribute('fill', o.color);
+      dot.style.filter = `drop-shadow(0 0 3px ${o.color})`;
+
+      const pa = document.createElementNS(svgNS, 'animate');
+      pa.setAttribute('attributeName', 'r');
+      pa.setAttribute('values', `3.5;5;3.5`);
+      pa.setAttribute('dur', `${2 + i * 0.7}s`);
+      pa.setAttribute('repeatCount', 'indefinite');
+      dot.appendChild(pa);
+
+      animG.appendChild(dot);
+      g.appendChild(animG);
+    }
+    svg.appendChild(g);
+  });
 }
 
 // ── Modal de cor ──
