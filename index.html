@@ -734,6 +734,106 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 }
 
 /* ══════════════════════════════════════
+   PAINEL: LINKS
+══════════════════════════════════════ */
+#panel-links {
+  margin: -32px;
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+  min-height: calc(100vh - var(--header));
+}
+.links-hero-bg {
+  position: absolute; inset: 0;
+  background: url('https://drive.google.com/thumbnail?id=12nV6o553vN4-Q1BTxxP04rbbZYfWyUWo&sz=w1600') center center / cover no-repeat;
+}
+.links-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(5,13,26,.75) 0%, rgba(11,29,58,.55) 50%, rgba(5,13,26,.40) 100%);
+}
+.links-content {
+  position: relative; z-index: 2;
+  padding: 48px 48px 40px;
+  min-height: calc(100vh - var(--header));
+  display: flex; flex-direction: column;
+}
+.links-header-row {
+  margin-bottom: 36px;
+}
+.links-overline {
+  font-size: 9px; letter-spacing: .22em; text-transform: uppercase;
+  color: rgba(196,164,90,.8); margin-bottom: 8px;
+}
+.links-title {
+  font-family: var(--serif); font-size: 2.2rem; font-weight: 300;
+  color: #fff; line-height: 1.1;
+}
+.links-title em { color: var(--gold-light); font-style: italic; }
+
+/* Grid de links */
+.links-immersive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+  flex: 1;
+}
+.link-immersive-card {
+  background: rgba(255,255,255,.09);
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 16px; padding: 20px 18px 16px;
+  backdrop-filter: blur(10px);
+  cursor: pointer; text-decoration: none; display: block;
+  transition: background .25s, border-color .25s, transform .2s;
+}
+.link-immersive-card:hover {
+  background: rgba(255,255,255,.16);
+  border-color: rgba(196,164,90,.4);
+  transform: translateY(-3px);
+}
+.link-immersive-icon {
+  width: 38px; height: 38px; border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.18);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 12px;
+}
+.link-immersive-icon svg { width: 20px; height: 20px; }
+.link-immersive-name {
+  font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 3px;
+}
+.link-immersive-desc {
+  font-size: 10px; color: rgba(255,255,255,.45); line-height: 1.4;
+}
+
+/* Balão flutuante do WhatsApp */
+.wa-float-wrap {
+  position: fixed;
+  bottom: 36px; right: 36px;
+  z-index: 200;
+  width: 72px; height: 72px;
+  animation: waFloat 3.5s ease-in-out infinite;
+}
+@keyframes waFloat {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-14px); }
+}
+.wa-float-btn {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: #25D366;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; position: relative; z-index: 2;
+  box-shadow: 0 6px 24px rgba(37,211,102,.4);
+  border: none; text-decoration: none;
+  transition: background .2s;
+}
+.wa-float-btn:hover { background: #1ebe5d; }
+.wa-float-btn svg { width: 36px; height: 36px; }
+.wa-float-orbit {
+  position: absolute; inset: -16px;
+  width: calc(100% + 32px); height: calc(100% + 32px);
+  pointer-events: none; z-index: 1;
+}
+
+/* ══════════════════════════════════════
    PAINEL: METAS
 ══════════════════════════════════════ */
 .metas-cat-tabs {
@@ -1186,6 +1286,10 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         <span>Financeiro</span>
       </div>
+      <div class="nav-item" data-panel="links" onclick="goTo('links')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        <span>Links</span>
+      </div>
       <div class="nav-item" data-panel="metas" onclick="goTo('metas')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
         <span>Metas</span>
@@ -1416,7 +1520,31 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
       </div>
 
 
-            <!-- ── METAS ── -->
+            <!-- ── LINKS ── -->
+      <div id="panel-links" class="panel">
+        <div class="links-hero-bg"></div>
+        <div class="links-overlay"></div>
+        <div class="links-content">
+          <div class="links-header-row">
+            <div class="links-overline">Atalhos Rápidos</div>
+            <div class="links-title">Seus <em>Links.</em></div>
+          </div>
+          <div class="links-immersive-grid" id="links-immersive-grid"></div>
+        </div>
+
+        <!-- Balão flutuante WhatsApp Web -->
+        <div class="wa-float-wrap" id="wa-float-wrap">
+          <svg class="wa-float-orbit" id="wa-orbit-svg" viewBox="0 0 104 104"></svg>
+          <a href="https://web.whatsapp.com" target="_blank" class="wa-float-btn" title="WhatsApp Web">
+            <svg viewBox="0 0 24 24" fill="white">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+              <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.116 1.524 5.849L0 24l6.335-1.495A11.954 11.954 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 0 1-5.006-1.37l-.36-.214-3.732.881.938-3.618-.235-.373A9.818 9.818 0 0 1 2.182 12C2.182 6.575 6.575 2.182 12 2.182S21.818 6.575 21.818 12 17.425 21.818 12 21.818z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- ── METAS ── -->
       <div id="panel-metas" class="panel">
         <div class="section-header" data-reveal>
           <div class="section-overline">Objetivos</div>
@@ -1637,6 +1765,7 @@ window.addEventListener('load', () => {
 const PANEL_TITLES = {
   dashboard:  'Dashboard',
   financeiro: 'Financeiro',
+  links: 'Links',
   metas: 'Metas'
 };
 
@@ -1652,7 +1781,7 @@ function goTo(id) {
 
   // Esconder header no dashboard imersivo
   const header = document.querySelector('.main-header');
-  if (header) header.style.display = id === 'dashboard' ? 'none' : 'flex';
+  if (header) header.style.display = (id === 'dashboard' || id === 'links') ? 'none' : 'flex';
 
   // lazy render + reveal
   requestAnimationFrame(() => {
@@ -1660,6 +1789,14 @@ function goTo(id) {
       el.classList.add('visible');
     });
     if (id === 'metas') renderMetas();
+    if (id === 'links') {
+      renderLinks();
+      const waWrap = document.getElementById('wa-float-wrap');
+      if (waWrap) waWrap.style.display = 'block';
+    } else {
+      const waWrap = document.getElementById('wa-float-wrap');
+      if (waWrap) waWrap.style.display = 'none';
+    }
     if (id === 'financeiro') {
       renderFin(); // render com dados atuais
       // recarregar do Sheets sempre que abrir
@@ -2436,18 +2573,64 @@ const ICONS = {
 };
 
 function renderLinks() {
-  if (!document.getElementById('links-grid')) return;
-
-  document.getElementById('links-grid').innerHTML = LINKS_FIXOS.map(l => `
-    <a class="link-card" href="${l.url}" target="_blank" rel="noopener">
-      <div class="link-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  const grid = document.getElementById('links-immersive-grid');
+  if (!grid) return;
+  grid.innerHTML = LINKS_FIXOS.map(l => `
+    <a class="link-immersive-card" href="${l.url}" target="_blank" rel="noopener">
+      <div class="link-immersive-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           ${ICONS[l.icon] || ICONS.portal}
         </svg>
       </div>
-      <div class="link-name">${l.nome}</div>
-      <div class="link-desc">${l.desc}</div>
+      <div class="link-immersive-name">${l.nome}</div>
+      <div class="link-immersive-desc">${l.desc}</div>
     </a>`).join('');
+  buildWaOrbit();
+}
+
+function buildWaOrbit() {
+  const svg = document.getElementById('wa-orbit-svg');
+  if (!svg) return;
+  const svgNS = 'http://www.w3.org/2000/svg';
+  svg.innerHTML = '';
+  const cx = 52, cy = 52;
+  const orbits = [
+    { rx: 46, ry: 18, tilt: -15, dur: '4s',   color: '#25D366', dots: 3, r: 3.0 },
+    { rx: 42, ry: 14, tilt:  45, dur: '7s',   color: '#86EFAC', dots: 2, r: 2.0 },
+    { rx: 44, ry: 10, tilt:  75, dur: '5.5s', color: '#4ADE80', dots: 3, r: 1.8 },
+  ];
+  orbits.forEach(function(o) {
+    var g = document.createElementNS(svgNS, 'g');
+    g.setAttribute('transform', 'rotate(' + o.tilt + ' ' + cx + ' ' + cy + ')');
+    for (var i = 0; i < o.dots; i++) {
+      var angle = (360 / o.dots) * i;
+      var rad   = angle * Math.PI / 180;
+      var px    = cx + o.rx * Math.cos(rad);
+      var py    = cy + o.ry * Math.sin(rad);
+      var animG = document.createElementNS(svgNS, 'g');
+      var anim  = document.createElementNS(svgNS, 'animateTransform');
+      anim.setAttribute('attributeName', 'transform');
+      anim.setAttribute('type', 'rotate');
+      anim.setAttribute('from', angle + ' ' + cx + ' ' + cy);
+      anim.setAttribute('to',   (angle + 360) + ' ' + cx + ' ' + cy);
+      anim.setAttribute('dur', o.dur);
+      anim.setAttribute('repeatCount', 'indefinite');
+      animG.appendChild(anim);
+      var dot = document.createElementNS(svgNS, 'circle');
+      dot.setAttribute('cx', px); dot.setAttribute('cy', py);
+      dot.setAttribute('r', o.r); dot.setAttribute('fill', o.color);
+      dot.style.filter = 'drop-shadow(0 0 4px ' + o.color + ')';
+      var pa = document.createElementNS(svgNS, 'animate');
+      pa.setAttribute('attributeName', 'opacity');
+      pa.setAttribute('values', '0.3;1;0.3');
+      pa.setAttribute('dur', (1.5 + i * 0.6) + 's');
+      pa.setAttribute('repeatCount', 'indefinite');
+      dot.appendChild(pa);
+      animG.appendChild(dot);
+      g.appendChild(animG);
+    }
+    svg.appendChild(g);
+  });
 }
 
 // ══════════════════════════════════════════════
