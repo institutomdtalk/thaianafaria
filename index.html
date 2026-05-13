@@ -3916,34 +3916,7 @@ function initReveal() {
   }, { threshold: .12 });
   document.querySelectorAll('[data-reveal]').forEach(el => obs.observe(el));
 }
+
 </script>
 </body>
-</html>// ── API via fetch (segue redirects, funciona com Apps Script) ──
-function api(action, payload) {
-  if (!SCRIPT_URL) return Promise.resolve(mockData(action, payload || {}));
-  var url = SCRIPT_URL + '?action=' + encodeURIComponent(action);
-  if (payload) {
-    Object.keys(payload).forEach(function(k) {
-      if (payload[k] !== undefined && payload[k] !== null) {
-        url += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(payload[k]);
-      }
-    });
-  }
-  return fetch(url)
-    .then(function(r) { return r.text(); })
-    .then(function(text) {
-      // Apps Script retorna JSONP: callback({...}) ou JSON puro
-      var t = text.trim();
-      // Remover wrapper JSONP: qualquer coisa antes do primeiro {
-      var jsonStart = t.indexOf('{');
-      var jsonEnd   = t.lastIndexOf('}');
-      if (jsonStart >= 0 && jsonEnd > jsonStart) {
-        try { return JSON.parse(t.slice(jsonStart, jsonEnd + 1)); } catch(e) {}
-      }
-      try { return JSON.parse(t); } catch(e) {}
-      return { ok: false, error: 'parse: ' + t.slice(0, 80) };
-    })
-    .catch(function(e) {
-      return { ok: false, error: e.message };
-    });
-}
+</html>
