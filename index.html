@@ -1313,6 +1313,23 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 </div>
 
 <script>
+// Mapa de cores do Google Calendar
+const CAL_COLOR_MAP = {
+  '1':  { hex: '#7986CB', label: 'Programado' },
+  '2':  { hex: '#33B679', label: '' },
+  '3':  { hex: '#8E24AA', label: 'Aluno faltou' },
+  '4':  { hex: '#E67C73', label: 'Aula estendida' },
+  '5':  { hex: '#F6BF26', label: 'Aula ocorreu' },
+  '6':  { hex: '#F4511E', label: 'Aula estendida' },
+  '7':  { hex: '#039BE5', label: '' },
+  '8':  { hex: '#616161', label: '' },
+  '9':  { hex: '#3F51B5', label: '' },
+  '10': { hex: '#0B8043', label: 'Eu faltei' },
+  '11': { hex: '#D50000', label: 'Reposição' },
+  '':   { hex: '#7986CB', label: 'Programado' },
+  null: { hex: '#7986CB', label: 'Programado' },
+};
+
 // ══════════════════════════════════════════════
 // CONFIG — preencha após criar o Apps Script
 // ══════════════════════════════════════════════
@@ -1337,69 +1354,19 @@ let state = {
 // LOGIN / LOGOUT
 // ══════════════════════════════════════════════
 // ── Chave de sessão no sessionStorage ──
-const SESSION_KEY = 'ws_thaiana_auth';
-
-function doLogin() {
-  const user = document.getElementById('inp-user').value.trim().toLowerCase();
-  const pass = document.getElementById('inp-pass').value;
-  const err  = document.getElementById('login-error');
-
-  if (CREDENCIAIS[user] && CREDENCIAIS[user] === pass) {
-    err.textContent = '';
-    // Salvar sessão (persiste até fechar o navegador; use localStorage para persistir mais)
-    enterApp();
-  } else {
+ else {
     err.textContent = 'Usuário ou senha incorretos.';
     document.getElementById('inp-pass').value = '';
   }
 }
 
-function enterApp() {
-  sessionStorage.setItem(SESSION_KEY, JSON.stringify({ ts: Date.now() }));
-  abrirApp();
-}
+function doLogout() { /* sem login por ora */ }
 
-function doLogout() {
-  sessionStorage.removeItem(SESSION_KEY);
-  document.getElementById('shell').style.display = 'none';
-  const pg = document.getElementById('page-login');
-  pg.style.display = 'flex';
-  pg.style.opacity = '0';
-  document.getElementById('inp-user').value = '';
-  document.getElementById('inp-pass').value = '';
-  setTimeout(() => { pg.style.opacity = '1'; }, 10);
-}
-
-// ── Verificar sessão ao carregar ──
 window.addEventListener('load', () => {
-  if (sessionStorage.getItem(SESSION_KEY)) {
-    abrirApp();
-  } else {
-    mostrarLogin();
-  }
-});
-
-function abrirApp() {
-  // Esconder tudo que não é o shell
-  document.getElementById('page-loading').classList.remove('visible');
-  document.getElementById('page-login').style.display = 'none';
-  // Mostrar shell
-  const shell = document.getElementById('shell');
-  shell.style.cssText = 'display:flex;height:100%';
-  // Carregar dados
   initApp();
-}
-
-function mostrarLogin() {
-  document.getElementById('page-loading').classList.remove('visible');
-  const pg = document.getElementById('page-login');
-  pg.style.cssText = 'display:flex;opacity:0';
-  setTimeout(() => { pg.style.opacity = '1'; }, 20);
-}
-
-document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && document.getElementById('page-login').style.display !== 'none') doLogin();
 });
+
+
 
 // ══════════════════════════════════════════════
 // NAVEGAÇÃO
@@ -1800,23 +1767,6 @@ const DIAS_SEMANA = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const MESES_ABREV = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
 
 // Mapa de colorId → hex visual
-window.CAL_COLOR_MAP = CAL_COLOR_MAP;
-const CAL_COLOR_MAP = {
-  '1':  { hex: '#7986CB', label: 'Programado' },       // Lavanda
-  '2':  { hex: '#33B679', label: '' },                  // Sage
-  '3':  { hex: '#8E24AA', label: 'Aluno faltou' },      // Grape
-  '4':  { hex: '#E67C73', label: 'Aula estendida' },    // Flamingo (uso como laranja)
-  '5':  { hex: '#F6BF26', label: 'Aula ocorreu' },      // Banana
-  '6':  { hex: '#F4511E', label: 'Aula estendida' },    // Tangerine
-  '7':  { hex: '#039BE5', label: '' },                  // Peacock
-  '8':  { hex: '#616161', label: '' },                  // Graphite
-  '9':  { hex: '#3F51B5', label: '' },                  // Blueberry
-  '10': { hex: '#0B8043', label: 'Eu faltei' },         // Basil
-  '11': { hex: '#D50000', label: 'Reposição' },         // Tomato
-  '':   { hex: '#7986CB', label: 'Programado' },        // sem cor = lavanda
-  null:  { hex: '#7986CB', label: 'Programado' },
-};
-
 function getWeekDates(offset) {
   const today = new Date();
   const dow = today.getDay();
