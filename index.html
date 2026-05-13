@@ -1536,10 +1536,10 @@ function goTo(id) {
   // lazy render
   if (id === 'financeiro') renderFin();
 
-  // scroll reveal
+  // forçar reveal imediato em todos os elementos do painel
   requestAnimationFrame(() => {
-    document.querySelectorAll('#panel-' + id + ' [data-reveal]').forEach((el, i) => {
-      setTimeout(() => el.classList.add('visible'), i * 80);
+    document.querySelectorAll('#panel-' + id + ' [data-reveal]').forEach(el => {
+      el.classList.add('visible');
     });
   });
 }
