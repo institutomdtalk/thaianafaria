@@ -1863,6 +1863,14 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
           <div class="conquistas-header">
             <div class="conquistas-title">Minhas <em>Conquistas</em></div>
             <div class="conquistas-divider"></div>
+            <button onclick="resetarConquistas()"
+              style="background:none;border:1px solid rgba(196,164,90,.25);border-radius:6px;
+                padding:5px 12px;font-size:9px;font-weight:600;letter-spacing:.1em;
+                text-transform:uppercase;color:rgba(196,164,90,.5);cursor:pointer;
+                font-family:var(--sans);white-space:nowrap;transition:all .2s"
+              onmouseover="this.style.borderColor='rgba(239,68,68,.4)';this.style.color='rgba(239,68,68,.7)'"
+              onmouseout="this.style.borderColor='rgba(196,164,90,.25)';this.style.color='rgba(196,164,90,.5)'"
+              title="Remover todas as conquistas">↺ Resetar</button>
           </div>
           <div class="metas-grid" id="conquistas-grid"></div>
         </div>
@@ -3451,11 +3459,19 @@ function conquistaCardHtml(m) {
         </div>
         <div class="conquista-titulo">${m.titulo}</div>
         ${m.desc ? `<div class="conquista-desc">${m.desc}</div>` : ''}
-        <div class="conquista-badge">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-          ${catLabel} · Conquistada
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
+          <div class="conquista-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            ${catLabel} · Conquistada
+          </div>
+          <button onclick="deleteMeta(${m.id}, event)"
+            style="background:none;border:none;cursor:pointer;color:rgba(196,164,90,.4);
+              font-size:16px;padding:2px 6px;border-radius:4px;transition:color .2s"
+            onmouseover="this.style.color='rgba(255,100,100,.7)'"
+            onmouseout="this.style.color='rgba(196,164,90,.4)'"
+            title="Remover conquista">×</button>
         </div>
       </div>
     </div>`;
@@ -3599,6 +3615,20 @@ function deleteMeta(id, event) {
   renderMetas();
   safeApi('deleteMeta', () => {}, { id });
   toast('Meta removida.');
+}
+
+function resetarConquistas() {
+  if (!confirm('Remover todas as conquistas? Esta ação não pode ser desfeita.')) return;
+  let metas = getMetas();
+  // Deletar as conquistadas do Sheets
+  metas.filter(m => m.concluida).forEach(m => {
+    safeApi('deleteMeta', () => {}, { id: m.id });
+  });
+  // Manter só as ativas
+  metas = metas.filter(m => !m.concluida);
+  saveMetas(metas);
+  renderMetas();
+  toast('Conquistas removidas.');
 }
 
 function salvarNovaMeta() {
