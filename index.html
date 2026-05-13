@@ -1135,6 +1135,143 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 }
 
 /* ══════════════════════════════════════
+   NOTAS / TO-DO
+══════════════════════════════════════ */
+.notas-add-row {
+  display: flex; gap: 10px; margin-bottom: 28px; align-items: center;
+}
+.notas-add-input {
+  flex: 1;
+  background: var(--bg-card); border: 1.5px solid var(--border);
+  border-radius: 10px; padding: 12px 16px;
+  font-family: var(--sans); font-size: 13px; color: var(--text);
+  outline: none; transition: border-color .25s, box-shadow .25s;
+}
+.notas-add-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(196,164,90,.12);
+}
+.notas-add-input::placeholder { color: var(--text-muted); }
+.btn-add-nota {
+  background: var(--navy); color: var(--gold);
+  border: none; border-radius: 10px; padding: 12px 20px;
+  font-family: var(--sans); font-size: 12px; font-weight: 700;
+  letter-spacing: .08em; cursor: pointer;
+  transition: background .2s, transform .15s;
+  white-space: nowrap;
+}
+.btn-add-nota:hover { background: var(--navy-light); transform: translateY(-1px); }
+
+/* Grupo de data */
+.nota-date-group { margin-bottom: 32px; }
+.nota-date-label {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 12px;
+}
+.nota-date-text {
+  font-size: 10px; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--text-muted); font-weight: 600; white-space: nowrap;
+}
+.nota-date-line {
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+}
+.nota-date-badge-atrasado {
+  font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: #b91c1c; background: rgba(185,28,28,.08);
+  padding: 2px 8px; border-radius: 10px;
+}
+.nota-date-badge-hoje {
+  font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--gold); background: rgba(196,164,90,.1);
+  padding: 2px 8px; border-radius: 10px;
+}
+
+/* Item to-do */
+.nota-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 13px 16px;
+  margin-bottom: 8px; cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: background .2s, opacity .3s, transform .2s;
+  position: relative; overflow: hidden;
+}
+.nota-item::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; background: var(--gold); opacity: 0;
+  transition: opacity .3s;
+}
+.nota-item.pendente::before { opacity: 1; }
+.nota-item.atrasado { border-color: rgba(185,28,28,.2); }
+.nota-item.atrasado::before { background: #b91c1c; opacity: 1; }
+.nota-item.feito { opacity: .55; }
+.nota-item.feito:hover { opacity: .7; }
+.nota-item:hover { background: var(--bg-soft); }
+
+.nota-check-btn {
+  width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+  border: 2px solid var(--border-gold); background: none;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all .3s cubic-bezier(.34,1.56,.64,1);
+  margin-top: 1px;
+}
+.nota-item.feito .nota-check-btn {
+  background: var(--gold); border-color: var(--gold);
+  box-shadow: 0 0 10px rgba(196,164,90,.4);
+}
+.nota-item.atrasado .nota-check-btn { border-color: #b91c1c; }
+.nota-check-btn svg { display: none; width: 11px; height: 11px; }
+.nota-item.feito .nota-check-btn svg { display: block; }
+
+.nota-texto {
+  flex: 1; font-size: 13px; color: var(--text); line-height: 1.5;
+  transition: color .3s;
+  position: relative;
+}
+.nota-texto::after {
+  content: ''; position: absolute;
+  left: 0; top: 50%; right: 0; height: 1.5px;
+  background: var(--text-muted); transform: scaleX(0); transform-origin: left;
+  transition: transform .4s cubic-bezier(.4,0,.2,1);
+}
+.nota-item.feito .nota-texto { color: var(--text-muted); }
+.nota-item.feito .nota-texto::after { transform: scaleX(1); }
+
+.nota-delete {
+  background: none; border: none; cursor: pointer;
+  color: var(--text-muted); font-size: 16px; padding: 0 4px;
+  transition: color .2s; flex-shrink: 0; line-height: 1;
+}
+.nota-delete:hover { color: #c0392b; }
+
+/* Seção arquivadas */
+.notas-arquivo-header {
+  display: flex; align-items: center; gap: 12px;
+  margin: 36px 0 16px; cursor: pointer; user-select: none;
+}
+.notas-arquivo-title {
+  font-size: 10px; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--text-muted); font-weight: 600;
+}
+.notas-arquivo-count {
+  background: var(--bg-soft); border: 1px solid var(--border);
+  border-radius: 10px; padding: 1px 8px; font-size: 10px;
+  color: var(--text-muted);
+}
+.notas-arquivo-toggle {
+  font-size: 10px; color: var(--text-muted); margin-left: auto;
+  transition: transform .25s;
+}
+.notas-arquivo-toggle.open { transform: rotate(180deg); }
+
+@keyframes notaEnter {
+  from { opacity:0; transform: translateY(-8px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+.nota-item { animation: notaEnter .25s ease; }
+
+/* ══════════════════════════════════════
    METAS
 ══════════════════════════════════════ */
 .metas-cat-tabs { display:flex; gap:6px; margin-bottom:24px; flex-wrap:wrap; }
@@ -1424,6 +1561,10 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         <span>Meu Dia</span>
       </div>
+      <div class="nav-item" data-panel="notas" onclick="goTo('notas')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/></svg>
+        <span>Notas</span>
+      </div>
       <div class="nav-item" data-panel="metas" onclick="goTo('metas')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
         <span>Metas</span>
@@ -1659,7 +1800,36 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
       </div>
 
 
-            <!-- ── METAS ── -->
+            <!-- ── NOTAS ── -->
+      <div id="panel-notas" class="panel">
+        <div style="margin-bottom:8px">
+          <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px">To-do List</div>
+          <h2 style="font-family:var(--serif);font-size:1.8rem;font-weight:400;color:var(--navy);line-height:1.1">Notas</h2>
+        </div>
+        <div style="height:1px;background:linear-gradient(90deg,var(--gold),transparent);margin:16px 0 24px;opacity:.4"></div>
+
+        <!-- Adicionar nota -->
+        <div class="notas-add-row">
+          <input class="notas-add-input" id="nota-input" placeholder="Nova tarefa... (Enter para adicionar)"
+            onkeydown="if(event.key==='Enter') addNota()">
+          <button class="btn-add-nota" onclick="addNota()">+ Adicionar</button>
+        </div>
+
+        <!-- Lista de notas por data -->
+        <div id="notas-lista"></div>
+
+        <!-- Arquivadas -->
+        <div id="notas-arquivo-wrap" style="display:none">
+          <div class="notas-arquivo-header" onclick="toggleArquivo()">
+            <span class="notas-arquivo-title">Concluídas</span>
+            <span class="notas-arquivo-count" id="notas-arquivo-count">0</span>
+            <span class="notas-arquivo-toggle" id="notas-arquivo-toggle">▼</span>
+          </div>
+          <div id="notas-arquivo-lista" style="display:none"></div>
+        </div>
+      </div>
+
+      <!-- ── METAS ── -->
       <div id="panel-metas" class="panel">
         <div style="margin-bottom:8px">
           <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px">Objetivos</div>
@@ -1964,6 +2134,7 @@ window.addEventListener('load', () => {
 const PANEL_TITLES = {
   dashboard:  'Dashboard',
   financeiro: 'Financeiro',
+  notas: 'Notas',
   metas: 'Metas',
   meudio: 'Meu Dia',
   contatos: 'Contatos',
@@ -1989,6 +2160,7 @@ function goTo(id) {
     document.querySelectorAll('#panel-' + id + ' [data-reveal]').forEach(el => {
       el.classList.add('visible');
     });
+    if (id === 'notas') renderNotas();
     if (id === 'metas') renderMetas();
     if (id === 'meudio')   { syncMeuDia(); }
     if (id === 'contatos') { renderContatos(); }
@@ -3942,6 +4114,157 @@ function salvarNovaMeta() {
   renderMetas();
   safeApi('saveMeta', ()=>{}, {id:meta.id, titulo:encodeURIComponent(meta.titulo), desc:encodeURIComponent(meta.desc), cat:meta.cat, concluida:false});
   toast('Meta criada! 🎯');
+}
+
+// ══════════════════════════════════════════════
+// NOTAS / TO-DO
+// ══════════════════════════════════════════════
+function getNotas() {
+  try { return JSON.parse(localStorage.getItem('ws_notas_todo') || '[]'); }
+  catch(e) { return []; }
+}
+function saveNotas(n) { localStorage.setItem('ws_notas_todo', JSON.stringify(n)); }
+
+function fmtDateLabel(iso) {
+  const hoje = fmtISO(new Date());
+  if (iso === hoje) return 'Hoje';
+  const d = new Date(iso + 'T12:00:00');
+  const dias = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const meses = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  return dias[d.getDay()] + ', ' + d.getDate() + ' de ' + meses[d.getMonth()];
+}
+
+function addNota() {
+  const inp = document.getElementById('nota-input');
+  if (!inp) return;
+  const texto = inp.value.trim();
+  if (!texto) return;
+  const notas = getNotas();
+  notas.unshift({ id: Date.now(), texto, data: fmtISO(new Date()), feito: false });
+  saveNotas(notas);
+  inp.value = '';
+  renderNotas();
+  // Animar o input
+  inp.style.transform = 'scale(.98)';
+  setTimeout(() => { inp.style.transform = ''; }, 150);
+}
+
+function toggleNota(id) {
+  const notas = getNotas();
+  const n = notas.find(x => x.id === id);
+  if (!n) return;
+  n.feito = !n.feito;
+  if (n.feito) n.feitoEm = fmtISO(new Date());
+  saveNotas(notas);
+  renderNotas();
+}
+
+function deleteNota(id, event) {
+  event.stopPropagation();
+  let notas = getNotas().filter(n => n.id !== id);
+  saveNotas(notas);
+  renderNotas();
+}
+
+let _arquivoAberto = false;
+function toggleArquivo() {
+  _arquivoAberto = !_arquivoAberto;
+  document.getElementById('notas-arquivo-lista').style.display = _arquivoAberto ? 'block' : 'none';
+  const tog = document.getElementById('notas-arquivo-toggle');
+  if (tog) tog.classList.toggle('open', _arquivoAberto);
+}
+
+function renderNotas() {
+  const el = document.getElementById('notas-lista');
+  if (!el) return;
+  const hoje = fmtISO(new Date());
+  const notas = getNotas();
+
+  // Separar pendentes e feitas
+  const pendentes = notas.filter(n => !n.feito);
+  const feitas    = notas.filter(n =>  n.feito);
+
+  // Agrupar pendentes por data
+  // Notas de dias anteriores acumulam no grupo "Em atraso"
+  const grupos = {};
+  pendentes.forEach(n => {
+    const key = n.data <= hoje ? (n.data < hoje ? '_atrasado' : hoje) : n.data;
+    if (!grupos[key]) grupos[key] = [];
+    grupos[key].push(n);
+  });
+
+  // Ordenar: atrasado primeiro, depois hoje, depois futuro
+  const keys = Object.keys(grupos).sort((a, b) => {
+    if (a === '_atrasado') return -1;
+    if (b === '_atrasado') return  1;
+    return a > b ? 1 : -1;
+  });
+
+  if (!keys.length) {
+    el.innerHTML = `<div class="state-empty" style="padding:48px 0;text-align:center">
+      <div style="font-size:2rem;margin-bottom:12px">✓</div>
+      <div style="font-family:var(--serif);font-size:1.2rem;color:var(--navy);margin-bottom:6px">Tudo em dia!</div>
+      <div style="font-size:12px;color:var(--text-muted)">Adicione uma nova tarefa acima.</div>
+    </div>`;
+  } else {
+    el.innerHTML = keys.map(key => {
+      const isAtrasado = key === '_atrasado';
+      const label = isAtrasado ? 'Em atraso' : fmtDateLabel(key);
+      const badge = isAtrasado
+        ? `<span class="nota-date-badge-atrasado">⚠ ${grupos[key].length} pendente${grupos[key].length>1?'s':''}</span>`
+        : key === hoje ? `<span class="nota-date-badge-hoje">Hoje</span>` : '';
+      const items = grupos[key].map(n => notaItemHtml(n, isAtrasado)).join('');
+      return `<div class="nota-date-group">
+        <div class="nota-date-label">
+          <span class="nota-date-text">${label}</span>
+          ${badge}
+          <div class="nota-date-line"></div>
+        </div>
+        ${items}
+      </div>`;
+    }).join('');
+  }
+
+  // Arquivo (feitas)
+  const wrap  = document.getElementById('notas-arquivo-wrap');
+  const aLista = document.getElementById('notas-arquivo-lista');
+  const aCount = document.getElementById('notas-arquivo-count');
+  if (!wrap) return;
+  if (!feitas.length) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  if (aCount) aCount.textContent = feitas.length;
+  if (aLista) {
+    // Agrupar feitas por data em que foram feitas
+    const gf = {};
+    feitas.sort((a,b) => (b.feitoEm||b.data) > (a.feitoEm||a.data) ? 1 : -1).forEach(n => {
+      const k = n.feitoEm || n.data;
+      if (!gf[k]) gf[k] = [];
+      gf[k].push(n);
+    });
+    aLista.innerHTML = Object.keys(gf).sort((a,b) => b>a?1:-1).map(k => {
+      const label = fmtDateLabel(k);
+      return `<div class="nota-date-group">
+        <div class="nota-date-label">
+          <span class="nota-date-text">${label}</span>
+          <div class="nota-date-line"></div>
+        </div>
+        ${gf[k].map(n => notaItemHtml(n, false)).join('')}
+      </div>`;
+    }).join('');
+  }
+}
+
+function notaItemHtml(n, atrasado) {
+  const cls = n.feito ? 'feito' : (atrasado ? 'atrasado' : 'pendente');
+  return `<div class="nota-item ${cls}" id="nota-${n.id}" onclick="toggleNota(${n.id})">
+    <button class="nota-check-btn" onclick="toggleNota(${n.id});event.stopPropagation()">
+      <svg viewBox="0 0 12 12" fill="none" stroke="var(--navy)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="2 6 5 9 10 3"/>
+      </svg>
+    </button>
+    <span class="nota-texto">${n.texto}</span>
+    <button class="nota-delete" onclick="deleteNota(${n.id},event)" title="Remover">×</button>
+  </div>`;
 }
 </script>
 </body>
