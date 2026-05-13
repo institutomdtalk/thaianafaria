@@ -640,6 +640,123 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 }
 
 /* ══════════════════════════════════════
+   PAINEL: MEU DIA
+══════════════════════════════════════ */
+.meudio-date {
+  font-size: 12px; color: var(--text-muted); letter-spacing: .04em;
+  margin-bottom: 24px;
+}
+.aula-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+  transition: box-shadow .2s;
+  position: relative;
+  overflow: hidden;
+}
+.aula-card::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: var(--border);
+  transition: background .3s;
+}
+.aula-card[data-status="dado"]::before      { background: #22C55E; }
+.aula-card[data-status="cancelei"]::before  { background: #F97316; }
+.aula-card[data-status="aluno_cancelou"]::before { background: #EF4444; }
+.aula-card[data-status="confirmado"]::before { background: #3B82F6; }
+
+.aula-card-header {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 14px;
+}
+.aula-hora-badge {
+  background: var(--navy); color: var(--gold);
+  font-size: 13px; font-weight: 700; letter-spacing: .04em;
+  padding: 6px 12px; border-radius: 8px; flex-shrink: 0;
+  font-family: var(--sans);
+}
+.aula-nome {
+  font-family: var(--serif); font-size: 1.15rem; font-weight: 400;
+  color: var(--navy); flex: 1;
+}
+.aula-cor-dot {
+  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+}
+.aula-status-row {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;
+}
+.status-btn {
+  padding: 6px 14px; border-radius: 20px;
+  font-size: 10px; font-weight: 700; letter-spacing: .06em;
+  cursor: pointer; border: 1.5px solid; font-family: var(--sans);
+  transition: all .2s; background: none;
+}
+.status-btn:hover { transform: translateY(-1px); }
+.status-btn.ativo {
+  color: #fff !important;
+}
+.sb-dado      { border-color: #22C55E; color: #22C55E; }
+.sb-dado.ativo      { background: #22C55E; }
+.sb-confirmado { border-color: #3B82F6; color: #3B82F6; }
+.sb-confirmado.ativo { background: #3B82F6; }
+.sb-cancelei  { border-color: #F97316; color: #F97316; }
+.sb-cancelei.ativo  { background: #F97316; }
+.sb-aluno_cancelou { border-color: #EF4444; color: #EF4444; }
+.sb-aluno_cancelou.ativo { background: #EF4444; }
+
+/* Botão WhatsApp verde brilhante */
+.btn-wa-confirm {
+  display: flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, #22C55E, #16A34A);
+  border: none; border-radius: 10px;
+  padding: 10px 16px;
+  font-family: var(--sans); font-size: 11px; font-weight: 700;
+  letter-spacing: .06em; color: #fff;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(34,197,94,.4);
+  animation: waPulse 2.5s ease-in-out infinite;
+  transition: transform .2s;
+}
+.btn-wa-confirm:hover { transform: scale(1.04); }
+.btn-wa-confirm svg { width: 16px; height: 16px; flex-shrink: 0; }
+@keyframes waPulse {
+  0%,100% { box-shadow: 0 4px 15px rgba(34,197,94,.4); }
+  50%      { box-shadow: 0 4px 25px rgba(34,197,94,.75), 0 0 0 6px rgba(34,197,94,.1); }
+}
+.btn-wa-semtelefone {
+  font-size: 10px; color: var(--text-muted);
+  background: none; border: 1px dashed var(--border);
+  border-radius: 8px; padding: 8px 12px;
+  cursor: pointer; font-family: var(--sans);
+}
+.btn-wa-semtelefone:hover { border-color: #22C55E; color: #22C55E; }
+
+/* Agenda de contatos */
+.contatos-table { width: 100%; border-collapse: collapse; }
+.contatos-table th {
+  padding: 10px 14px; text-align: left;
+  font-size: 9px; letter-spacing: .15em; text-transform: uppercase;
+  color: var(--text-muted); background: var(--bg-soft); font-weight: 500;
+  border-bottom: 2px solid var(--border);
+}
+.contatos-table td {
+  padding: 11px 14px; font-size: 12px;
+  border-bottom: 1px solid var(--border); color: var(--text-mid);
+}
+.contatos-table tr:last-child td { border-bottom: none; }
+.contatos-table tr:hover td { background: var(--bg-soft); }
+.contato-nome-td { font-weight: 600; color: var(--navy); }
+.td-edit {
+  background: none; border: none; cursor: pointer;
+  color: var(--text-muted); font-size: 13px; padding: 3px 6px;
+  border-radius: 4px; transition: color .2s;
+}
+.td-edit:hover { color: var(--gold); }
+
+/* ══════════════════════════════════════
    PAINEL: LINKS
 ══════════════════════════════════════ */
 .links-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); gap: 14px; }
@@ -1399,6 +1516,10 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         <span>Financeiro</span>
       </div>
+      <div class="nav-item" data-panel="meudio" onclick="goTo('meudio')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>Meu Dia</span>
+      </div>
       <div class="nav-item" data-panel="links" onclick="goTo('links')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
         <span>Links</span>
@@ -1633,7 +1754,79 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
       </div>
 
 
-            <!-- ── LINKS ── -->
+            <!-- ── MEU DIA ── -->
+      <div id="panel-meudio" class="panel">
+        <div class="section-header" data-reveal>
+          <div class="section-overline">Agenda do dia</div>
+          <div class="section-title">Meu Dia</div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px" data-reveal>
+          <div class="meudio-date" id="meudio-date"></div>
+          <div style="display:flex;gap:10px">
+            <button class="btn-gold btn-sm" onclick="syncMeuDia()">↺ Sincronizar</button>
+            <button class="btn-primary btn-sm" onclick="goTo('contatos')">📋 Contatos</button>
+          </div>
+        </div>
+
+        <div id="meudio-aulas" data-reveal>
+          <div class="state-loading"><div class="spinner"></div>Sincronizando com o Calendar...</div>
+        </div>
+      </div>
+
+      <!-- ── CONTATOS ── -->
+      <div id="panel-contatos" class="panel">
+        <div class="section-header" data-reveal>
+          <div class="section-overline">Agenda</div>
+          <div class="section-title">Contatos dos Alunos</div>
+        </div>
+        <div style="display:flex;gap:12px;margin-bottom:20px" data-reveal>
+          <input class="search-input" id="contatos-search" placeholder="Buscar aluno..."
+            oninput="filtrarContatos(this.value)">
+          <button class="btn-gold" onclick="openModalContato(null)">+ Novo Contato</button>
+        </div>
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)" data-reveal>
+          <table class="contatos-table">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>WhatsApp</th>
+                <th>Observação</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="contatos-tbody">
+              <tr><td colspan="4"><div class="state-loading"><div class="spinner"></div>Carregando...</div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Modal contato -->
+      <div class="modal-overlay" id="modal-contato">
+        <div class="modal-box" style="width:400px">
+          <div class="modal-title" id="modal-contato-title">Novo Contato</div>
+          <input type="hidden" id="mc-id">
+          <div class="form-row">
+            <label class="form-label">Nome do aluno</label>
+            <input class="form-input" id="mc-nome" placeholder="Exatamente como aparece no Calendar">
+          </div>
+          <div class="form-row" style="margin-top:12px">
+            <label class="form-label">WhatsApp (com DDI)</label>
+            <input class="form-input" id="mc-tel" placeholder="+5511999990000" type="tel">
+          </div>
+          <div class="form-row" style="margin-top:12px">
+            <label class="form-label">Observação</label>
+            <input class="form-input" id="mc-obs" placeholder="Ex: prefere mensagem às 8h">
+          </div>
+          <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeModal('modal-contato')">Cancelar</button>
+            <button class="btn-gold" onclick="salvarContato()">Salvar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── LINKS ── -->
       <div id="panel-links" class="panel">
         <div class="links-hero-bg"></div>
         <div class="links-overlay"></div>
@@ -1869,6 +2062,8 @@ window.addEventListener('load', () => {
 const PANEL_TITLES = {
   dashboard:  'Dashboard',
   financeiro: 'Financeiro',
+  meudio: 'Meu Dia',
+  contatos: 'Contatos',
   links: 'Links',
   metas: 'Metas'
 };
@@ -1893,6 +2088,8 @@ function goTo(id) {
       el.classList.add('visible');
     });
     if (id === 'metas') renderMetas();
+    if (id === 'meudio')   { syncMeuDia(); }
+    if (id === 'contatos') { renderContatos(); }
     if (id === 'links') {
       renderLinks();
     }
@@ -3432,6 +3629,233 @@ function salvarNovaMeta() {
     concluida: false
   });
   toast('Meta criada! 🎯');
+}
+
+// ══════════════════════════════════════════════
+// MEU DIA
+// ══════════════════════════════════════════════
+const STATUS_AULA = {
+  dado:          { label: '✓ Dado',           cls: 'sb-dado' },
+  confirmado:    { label: '✔ Confirmado',     cls: 'sb-confirmado' },
+  cancelei:      { label: '✗ Cancelei',       cls: 'sb-cancelei' },
+  aluno_cancelou:{ label: '✗ Aluno cancelou', cls: 'sb-aluno_cancelou' },
+};
+
+function getMeuDiaStatus() {
+  const hoje = fmtISO(new Date());
+  try { return JSON.parse(localStorage.getItem('meudia_' + hoje) || '{}'); }
+  catch(e) { return {}; }
+}
+function setMeuDiaStatus(evId, status) {
+  const hoje = fmtISO(new Date());
+  const data = getMeuDiaStatus();
+  data[evId] = status;
+  localStorage.setItem('meudia_' + hoje, JSON.stringify(data));
+  // Salvar no Sheets
+  safeApi('saveMeuDiaStatus', () => {}, {
+    data: hoje,
+    evId: encodeURIComponent(evId),
+    status: encodeURIComponent(status)
+  });
+}
+
+function syncMeuDia() {
+  const btn = document.getElementById('meudio-aulas');
+  if (btn) btn.innerHTML = '<div class="state-loading"><div class="spinner"></div>Sincronizando...</div>';
+  const hoje = fmtISO(new Date());
+  api('getCalendarEvents', { start: hoje + 'T00:00:00-03:00', end: hoje + 'T23:59:59-03:00' })
+    .then(r => {
+      if (r && r.ok && r.data) {
+        state.aulas = r.data;
+        renderMeuDia();
+      } else {
+        renderMeuDia();
+      }
+    });
+}
+
+function renderMeuDia() {
+  const el = document.getElementById('meudio-aulas');
+  if (!el) return;
+
+  const hoje = fmtISO(new Date());
+  const now  = new Date();
+  const dias  = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+  const meses = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  const elDate = document.getElementById('meudio-date');
+  if (elDate) elDate.textContent = dias[now.getDay()] + ', ' + now.getDate() + ' de ' + meses[now.getMonth()] + ' de ' + now.getFullYear();
+
+  const aulas = (state.aulas || [])
+    .filter(ev => (ev.start || '').slice(0, 10) === hoje)
+    .sort((a, b) => (a.start || '') > (b.start || '') ? 1 : -1);
+
+  if (!aulas.length) {
+    el.innerHTML = '<div class="state-empty">Nenhuma aula encontrada hoje.<br><small style="color:var(--text-muted)">Clique em ↺ Sincronizar para buscar do Calendar.</small></div>';
+    return;
+  }
+
+  const statusMap = getMeuDiaStatus();
+  const contatos  = getContatos();
+
+  el.innerHTML = aulas.map(ev => {
+    const nome   = (ev.summary || '').trim();
+    const hora   = (ev.start || '').slice(11, 16);
+    const evId   = ev.id;
+    const status = statusMap[evId] || '';
+    const cor    = (CAL_COLOR_MAP[ev.colorId || '1'] || {}).hex || '#7986CB';
+    const tel    = buscarTelefone(nome, contatos);
+
+    const statusBtns = Object.entries(STATUS_AULA).map(([key, s]) =>
+      `<button class="status-btn ${s.cls}${status === key ? ' ativo' : ''}"
+        onclick="marcarStatus('${evId}','${key}')">${s.label}</button>`
+    ).join('');
+
+    const waBtnHtml = tel
+      ? `<button class="btn-wa-confirm" onclick="enviarConfirmacao('${nome.replace(/'/g,"\'")}','${hora}','${tel}')">
+          <svg viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.116 1.524 5.849L0 24l6.335-1.495A11.954 11.954 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 0 1-5.006-1.37l-.36-.214-3.732.881.938-3.618-.235-.373A9.818 9.818 0 0 1 2.182 12C2.182 6.575 6.575 2.182 12 2.182S21.818 6.575 21.818 12 17.425 21.818 12 21.818z"/></svg>
+          Confirmar via WhatsApp
+        </button>`
+      : `<button class="btn-wa-semtelefone" onclick="pedirTelefone('${nome.replace(/'/g,"\'")}','${hora}')">
+          📱 Cadastrar número para confirmar
+        </button>`;
+
+    return `<div class="aula-card" id="aula-${evId}" data-status="${status}">
+      <div class="aula-card-header">
+        <div class="aula-hora-badge">${hora}</div>
+        <div class="aula-nome">${nome}</div>
+        <div class="aula-cor-dot" style="background:${cor}"></div>
+      </div>
+      <div class="aula-status-row">${statusBtns}</div>
+      <div>${waBtnHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+function marcarStatus(evId, status) {
+  setMeuDiaStatus(evId, status);
+  // Atualizar card visualmente sem re-render completo
+  const card = document.getElementById('aula-' + evId);
+  if (card) {
+    card.setAttribute('data-status', status);
+    card.querySelectorAll('.status-btn').forEach(btn => {
+      btn.classList.toggle('ativo', btn.classList.contains('sb-' + status));
+    });
+  }
+  toast(STATUS_AULA[status]?.label + ' registrado ✓');
+}
+
+function enviarConfirmacao(nome, hora, tel) {
+  const h = new Date().getHours();
+  const saudacao = h >= 5 && h < 12 ? 'Bom dia' : h >= 12 && h < 18 ? 'Boa tarde' : 'Boa noite';
+  const primeiroNome = nome.replace(/^(Dr\.?|Dra\.?)\s*/i, '').split(' ')[0];
+  const msg = saudacao + ', ' + primeiroNome + '! Posso confirmar nossa aula programada para às ' + hora + ' hoje?';
+  const num = tel.replace(/\D/g, '');
+  window.open('https://wa.me/' + num + '?text=' + encodeURIComponent(msg), '_blank');
+}
+
+function pedirTelefone(nome, hora) {
+  openModalContato({ nome, obs: '' });
+  document.getElementById('mc-nome').value = nome;
+  // Após salvar, enviar confirmação
+  window._pendingConfirm = { nome, hora };
+}
+
+// ══════════════════════════════════════════════
+// CONTATOS
+// ══════════════════════════════════════════════
+function getContatos() {
+  try { return JSON.parse(localStorage.getItem('ws_contatos_v2') || '[]'); }
+  catch(e) { return []; }
+}
+function saveContatosLocal(arr) {
+  localStorage.setItem('ws_contatos_v2', JSON.stringify(arr));
+}
+function buscarTelefone(nome, contatos) {
+  if (!contatos) contatos = getContatos();
+  const nomeLow = nome.toLowerCase().trim();
+  // Busca exata
+  let c = contatos.find(x => x.nome.toLowerCase().trim() === nomeLow);
+  if (c) return c.tel;
+  // Busca parcial: primeiro nome
+  const primeiro = nomeLow.split(' ')[0];
+  c = contatos.find(x => x.nome.toLowerCase().split(' ')[0] === primeiro);
+  return c ? c.tel : null;
+}
+
+function renderContatos(filtro) {
+  const tbody = document.getElementById('contatos-tbody');
+  if (!tbody) return;
+  let lista = getContatos();
+  if (filtro) lista = lista.filter(c => c.nome.toLowerCase().includes(filtro.toLowerCase()));
+  lista.sort((a, b) => a.nome.localeCompare(b.nome));
+  if (!lista.length) {
+    tbody.innerHTML = '<tr><td colspan="4"><div class="state-empty">Nenhum contato ainda.</div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = lista.map(c =>
+    `<tr>
+      <td class="contato-nome-td">${c.nome}</td>
+      <td>${c.tel || '—'}</td>
+      <td style="color:var(--text-muted);font-size:11px">${c.obs || ''}</td>
+      <td style="text-align:right">
+        <button class="td-edit" onclick="openModalContato(${JSON.stringify(c).replace(/"/g,'&quot;')})">✎</button>
+        <button class="td-edit" style="color:#c0392b" onclick="deletarContato('${c.id}')">×</button>
+      </td>
+    </tr>`
+  ).join('');
+}
+
+function filtrarContatos(v) { renderContatos(v); }
+
+function openModalContato(c) {
+  document.getElementById('mc-id').value  = c && c.id  ? c.id  : '';
+  document.getElementById('mc-nome').value = c && c.nome ? c.nome : '';
+  document.getElementById('mc-tel').value  = c && c.tel  ? c.tel  : '';
+  document.getElementById('mc-obs').value  = c && c.obs  ? c.obs  : '';
+  document.getElementById('modal-contato-title').textContent = c && c.id ? 'Editar Contato' : 'Novo Contato';
+  openModal('modal-contato');
+}
+
+function salvarContato() {
+  const id   = document.getElementById('mc-id').value || String(Date.now());
+  const nome = document.getElementById('mc-nome').value.trim();
+  const tel  = document.getElementById('mc-tel').value.trim();
+  const obs  = document.getElementById('mc-obs').value.trim();
+  if (!nome) return;
+
+  let lista = getContatos();
+  const idx = lista.findIndex(c => c.id === id);
+  const contato = { id, nome, tel, obs };
+  if (idx >= 0) lista[idx] = contato;
+  else lista.push(contato);
+  saveContatosLocal(lista);
+
+  // Sincronizar com Sheets
+  safeApi('saveContato', () => {}, {
+    id, nome: encodeURIComponent(nome),
+    tel: encodeURIComponent(tel),
+    obs: encodeURIComponent(obs)
+  });
+
+  closeModal('modal-contato');
+  renderContatos();
+  renderMeuDia(); // atualizar botões WhatsApp
+
+  // Se veio de pedirTelefone, enviar confirmação
+  if (window._pendingConfirm && window._pendingConfirm.nome === nome) {
+    const p = window._pendingConfirm;
+    window._pendingConfirm = null;
+    setTimeout(() => enviarConfirmacao(p.nome, p.hora, tel), 300);
+  }
+  toast('Contato salvo: ' + nome.split(' ')[0]);
+}
+
+function deletarContato(id) {
+  let lista = getContatos().filter(c => c.id !== id);
+  saveContatosLocal(lista);
+  renderContatos();
+  safeApi('deleteContato', () => {}, { id });
+  toast('Contato removido.');
 }
 
 // ══════════════════════════════════════════════
