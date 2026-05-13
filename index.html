@@ -1138,140 +1138,176 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
    NOTAS / TO-DO
 ══════════════════════════════════════ */
 .notas-add-row {
-  display: flex; gap: 10px; margin-bottom: 28px; align-items: center;
+  display: flex; gap: 10px; margin-bottom: 36px; align-items: center;
 }
 .notas-add-input {
   flex: 1;
   background: var(--bg-card); border: 1.5px solid var(--border);
-  border-radius: 10px; padding: 12px 16px;
+  border-radius: 12px; padding: 14px 18px;
   font-family: var(--sans); font-size: 13px; color: var(--text);
-  outline: none; transition: border-color .25s, box-shadow .25s;
+  outline: none; transition: border-color .3s, box-shadow .3s, transform .2s;
+  box-shadow: var(--shadow);
 }
 .notas-add-input:focus {
   border-color: var(--gold);
-  box-shadow: 0 0 0 3px rgba(196,164,90,.12);
+  box-shadow: 0 0 0 4px rgba(196,164,90,.12), var(--shadow);
+  transform: translateY(-1px);
 }
 .notas-add-input::placeholder { color: var(--text-muted); }
 .btn-add-nota {
-  background: var(--navy); color: var(--gold);
-  border: none; border-radius: 10px; padding: 12px 20px;
-  font-family: var(--sans); font-size: 12px; font-weight: 700;
-  letter-spacing: .08em; cursor: pointer;
-  transition: background .2s, transform .15s;
+  background: linear-gradient(135deg, var(--navy), var(--navy-light));
+  color: var(--gold); border: none; border-radius: 12px;
+  padding: 14px 22px; font-family: var(--sans); font-size: 12px;
+  font-weight: 700; letter-spacing: .08em; cursor: pointer;
+  transition: transform .2s, box-shadow .2s;
+  box-shadow: 0 4px 14px rgba(11,29,58,.25);
   white-space: nowrap;
 }
-.btn-add-nota:hover { background: var(--navy-light); transform: translateY(-1px); }
+.btn-add-nota:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(11,29,58,.3); }
+.btn-add-nota:active { transform: translateY(0); }
 
-/* Grupo de data */
-.nota-date-group { margin-bottom: 32px; }
+/* Label de data */
+.nota-date-group { margin-bottom: 36px; }
 .nota-date-label {
-  display: flex; align-items: center; gap: 12px;
-  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
 }
 .nota-date-text {
-  font-size: 10px; letter-spacing: .16em; text-transform: uppercase;
+  font-size: 10px; letter-spacing: .18em; text-transform: uppercase;
   color: var(--text-muted); font-weight: 600; white-space: nowrap;
 }
-.nota-date-line {
-  flex: 1; height: 1px;
-  background: linear-gradient(90deg, var(--border), transparent);
-}
+.nota-date-line { flex:1; height:1px; background:linear-gradient(90deg, var(--border), transparent); }
 .nota-date-badge-atrasado {
-  font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
-  color: #b91c1c; background: rgba(185,28,28,.08);
-  padding: 2px 8px; border-radius: 10px;
+  font-size:9px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+  color:#b91c1c; background:rgba(185,28,28,.08); padding:2px 8px; border-radius:10px;
 }
 .nota-date-badge-hoje {
-  font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
-  color: var(--gold); background: rgba(196,164,90,.1);
-  padding: 2px 8px; border-radius: 10px;
+  font-size:9px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--gold); background:rgba(196,164,90,.1); padding:2px 8px; border-radius:10px;
 }
 
-/* Item to-do */
-.nota-item {
-  display: flex; align-items: flex-start; gap: 12px;
-  background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: 10px; padding: 13px 16px;
-  margin-bottom: 8px; cursor: pointer;
-  box-shadow: var(--shadow);
-  transition: background .2s, opacity .3s, transform .2s;
-  position: relative; overflow: hidden;
+/* Grid de cards */
+.notas-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
 }
-.nota-item::before {
-  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-  width: 3px; background: var(--gold); opacity: 0;
-  transition: opacity .3s;
-}
-.nota-item.pendente::before { opacity: 1; }
-.nota-item.atrasado { border-color: rgba(185,28,28,.2); }
-.nota-item.atrasado::before { background: #b91c1c; opacity: 1; }
-.nota-item.feito { opacity: .55; }
-.nota-item.feito:hover { opacity: .7; }
-.nota-item:hover { background: var(--bg-soft); }
 
-.nota-check-btn {
-  width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+/* Card individual */
+.nota-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(11,29,58,.07);
+  transition: transform .35s cubic-bezier(.34,1.56,.64,1),
+              box-shadow .35s ease,
+              opacity .4s ease;
+  position: relative;
+  cursor: pointer;
+  animation: cardEnter .35s cubic-bezier(.34,1.56,.64,1) both;
+}
+.nota-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 20px 50px rgba(11,29,58,.16);
+}
+.nota-card.feito {
+  opacity: .5;
+  transform: scale(.97);
+}
+.nota-card.feito:hover {
+  opacity: .7;
+  transform: scale(.99);
+}
+.nota-card.atrasado .nota-card-top { background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%); }
+
+@keyframes cardEnter {
+  from { opacity:0; transform: translateY(20px) scale(.95); }
+  to   { opacity:1; transform: translateY(0)   scale(1); }
+}
+@keyframes cardExit {
+  from { opacity:1; transform: scale(1); }
+  to   { opacity:0; transform: scale(.9) translateY(-10px); }
+}
+.nota-card.saindo { animation: cardExit .3s ease forwards; }
+
+.nota-card-top {
+  height: 6px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  transition: height .3s;
+}
+.nota-card:hover .nota-card-top { height: 8px; }
+.nota-card.feito .nota-card-top {
+  background: linear-gradient(90deg, #22C55E, #86EFAC);
+}
+
+.nota-card-body { padding: 18px 18px 14px; }
+.nota-card-check-row {
+  display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px;
+}
+.nota-card-check {
+  width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
   border: 2px solid var(--border-gold); background: none;
   display: flex; align-items: center; justify-content: center;
-  cursor: pointer; transition: all .3s cubic-bezier(.34,1.56,.64,1);
+  transition: all .4s cubic-bezier(.34,1.56,.64,1);
   margin-top: 1px;
 }
-.nota-item.feito .nota-check-btn {
+.nota-card.feito .nota-card-check {
   background: var(--gold); border-color: var(--gold);
-  box-shadow: 0 0 10px rgba(196,164,90,.4);
+  box-shadow: 0 0 14px rgba(196,164,90,.5);
+  transform: scale(1.1);
 }
-.nota-item.atrasado .nota-check-btn { border-color: #b91c1c; }
-.nota-check-btn svg { display: none; width: 11px; height: 11px; }
-.nota-item.feito .nota-check-btn svg { display: block; }
+.nota-card.atrasado .nota-card-check { border-color: #b91c1c; }
+.nota-card-check svg { display:none; width:11px; height:11px; }
+.nota-card.feito .nota-card-check svg { display:block; }
 
-.nota-texto {
-  flex: 1; font-size: 13px; color: var(--text); line-height: 1.5;
-  transition: color .3s;
+.nota-card-texto {
+  font-size: 13px; line-height: 1.55; color: var(--text);
+  transition: color .35s; flex: 1;
   position: relative;
 }
-.nota-texto::after {
+.nota-card-texto::after {
   content: ''; position: absolute;
   left: 0; top: 50%; right: 0; height: 1.5px;
-  background: var(--text-muted); transform: scaleX(0); transform-origin: left;
-  transition: transform .4s cubic-bezier(.4,0,.2,1);
+  background: var(--text-muted);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .45s cubic-bezier(.4,0,.2,1);
 }
-.nota-item.feito .nota-texto { color: var(--text-muted); }
-.nota-item.feito .nota-texto::after { transform: scaleX(1); }
+.nota-card.feito .nota-card-texto { color: var(--text-muted); }
+.nota-card.feito .nota-card-texto::after { transform: scaleX(1); }
 
-.nota-delete {
+.nota-card-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 10px; border-top: 1px solid var(--border);
+  margin-top: 2px;
+}
+.nota-card-time {
+  font-size: 10px; color: var(--text-muted); letter-spacing: .04em;
+}
+.nota-card-delete {
   background: none; border: none; cursor: pointer;
-  color: var(--text-muted); font-size: 16px; padding: 0 4px;
-  transition: color .2s; flex-shrink: 0; line-height: 1;
+  color: var(--text-muted); font-size: 15px; padding: 2px 5px;
+  border-radius: 4px; line-height: 1;
+  transition: color .2s, background .2s;
 }
-.nota-delete:hover { color: #c0392b; }
+.nota-card-delete:hover { color: #c0392b; background: rgba(192,57,43,.08); }
 
-/* Seção arquivadas */
+/* Glow no hover por tipo */
+.nota-card.pendente:hover { box-shadow: 0 20px 50px rgba(196,164,90,.15); }
+.nota-card.atrasado:hover { box-shadow: 0 20px 50px rgba(185,28,28,.15); }
+
+/* Seção arquivo */
 .notas-arquivo-header {
   display: flex; align-items: center; gap: 12px;
-  margin: 36px 0 16px; cursor: pointer; user-select: none;
+  margin: 40px 0 16px; cursor: pointer; user-select: none;
 }
-.notas-arquivo-title {
-  font-size: 10px; letter-spacing: .18em; text-transform: uppercase;
-  color: var(--text-muted); font-weight: 600;
-}
-.notas-arquivo-count {
-  background: var(--bg-soft); border: 1px solid var(--border);
-  border-radius: 10px; padding: 1px 8px; font-size: 10px;
-  color: var(--text-muted);
-}
-.notas-arquivo-toggle {
-  font-size: 10px; color: var(--text-muted); margin-left: auto;
-  transition: transform .25s;
-}
-.notas-arquivo-toggle.open { transform: rotate(180deg); }
-
-@keyframes notaEnter {
-  from { opacity:0; transform: translateY(-8px); }
-  to   { opacity:1; transform: translateY(0); }
-}
-.nota-item { animation: notaEnter .25s ease; }
+.notas-arquivo-title { font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--text-muted); font-weight:600; }
+.notas-arquivo-count { background:var(--bg-soft); border:1px solid var(--border); border-radius:10px; padding:1px 8px; font-size:10px; color:var(--text-muted); }
+.notas-arquivo-toggle { font-size:10px; color:var(--text-muted); margin-left:auto; transition:transform .25s; }
+.notas-arquivo-toggle.open { transform:rotate(180deg); }
 
 /* ══════════════════════════════════════
+   METAS/* ══════════════════════════════════════
    METAS
 ══════════════════════════════════════ */
 .metas-cat-tabs { display:flex; gap:6px; margin-bottom:24px; flex-wrap:wrap; }
@@ -1545,7 +1581,7 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
       <div class="sidebar-overline">MD Talk</div>
-      <div class="sidebar-name">Thaiana<br>Martignoni</div>
+      <div class="sidebar-name">Thaiana<br>Faria</div>
       <div class="sidebar-role">CEO · Linguista · Professora</div>
     </div>
     <nav class="sidebar-nav">
@@ -4179,32 +4215,25 @@ function renderNotas() {
   if (!el) return;
   const hoje = fmtISO(new Date());
   const notas = getNotas();
-
-  // Separar pendentes e feitas
   const pendentes = notas.filter(n => !n.feito);
   const feitas    = notas.filter(n =>  n.feito);
 
-  // Agrupar pendentes por data
-  // Notas de dias anteriores acumulam no grupo "Em atraso"
   const grupos = {};
   pendentes.forEach(n => {
-    const key = n.data <= hoje ? (n.data < hoje ? '_atrasado' : hoje) : n.data;
+    const key = n.data < hoje ? '_atrasado' : (n.data === hoje ? hoje : n.data);
     if (!grupos[key]) grupos[key] = [];
     grupos[key].push(n);
   });
-
-  // Ordenar: atrasado primeiro, depois hoje, depois futuro
-  const keys = Object.keys(grupos).sort((a, b) => {
-    if (a === '_atrasado') return -1;
-    if (b === '_atrasado') return  1;
-    return a > b ? 1 : -1;
+  const keys = Object.keys(grupos).sort((a,b) => {
+    if (a==='_atrasado') return -1; if (b==='_atrasado') return 1;
+    return a>b?1:-1;
   });
 
   if (!keys.length) {
-    el.innerHTML = `<div class="state-empty" style="padding:48px 0;text-align:center">
-      <div style="font-size:2rem;margin-bottom:12px">✓</div>
-      <div style="font-family:var(--serif);font-size:1.2rem;color:var(--navy);margin-bottom:6px">Tudo em dia!</div>
-      <div style="font-size:12px;color:var(--text-muted)">Adicione uma nova tarefa acima.</div>
+    el.innerHTML = `<div style="padding:64px 0;text-align:center">
+      <div style="font-size:3rem;margin-bottom:16px;filter:drop-shadow(0 4px 8px rgba(196,164,90,.3))">✦</div>
+      <div style="font-family:var(--serif);font-size:1.4rem;font-weight:400;color:var(--navy);margin-bottom:8px">Tudo em dia!</div>
+      <div style="font-size:12px;color:var(--text-muted)">Adicione uma nova tarefa acima para começar.</div>
     </div>`;
   } else {
     el.innerHTML = keys.map(key => {
@@ -4212,58 +4241,64 @@ function renderNotas() {
       const label = isAtrasado ? 'Em atraso' : fmtDateLabel(key);
       const badge = isAtrasado
         ? `<span class="nota-date-badge-atrasado">⚠ ${grupos[key].length} pendente${grupos[key].length>1?'s':''}</span>`
-        : key === hoje ? `<span class="nota-date-badge-hoje">Hoje</span>` : '';
-      const items = grupos[key].map(n => notaItemHtml(n, isAtrasado)).join('');
+        : key===hoje ? `<span class="nota-date-badge-hoje">Hoje</span>` : '';
       return `<div class="nota-date-group">
         <div class="nota-date-label">
           <span class="nota-date-text">${label}</span>
           ${badge}
           <div class="nota-date-line"></div>
         </div>
-        ${items}
+        <div class="notas-cards-grid">${grupos[key].map(n => notaCardHtml(n, isAtrasado)).join('')}</div>
       </div>`;
     }).join('');
   }
 
-  // Arquivo (feitas)
-  const wrap  = document.getElementById('notas-arquivo-wrap');
+  // Arquivo
+  const wrap   = document.getElementById('notas-arquivo-wrap');
   const aLista = document.getElementById('notas-arquivo-lista');
   const aCount = document.getElementById('notas-arquivo-count');
   if (!wrap) return;
-  if (!feitas.length) { wrap.style.display = 'none'; return; }
+  if (!feitas.length) { wrap.style.display='none'; return; }
   wrap.style.display = 'block';
   if (aCount) aCount.textContent = feitas.length;
-  if (aLista) {
-    // Agrupar feitas por data em que foram feitas
+  if (aLista && _arquivoAberto) {
     const gf = {};
-    feitas.sort((a,b) => (b.feitoEm||b.data) > (a.feitoEm||a.data) ? 1 : -1).forEach(n => {
-      const k = n.feitoEm || n.data;
-      if (!gf[k]) gf[k] = [];
-      gf[k].push(n);
+    feitas.sort((a,b)=>(b.feitoEm||b.data)>(a.feitoEm||a.data)?1:-1).forEach(n=>{
+      const k=n.feitoEm||n.data; if(!gf[k])gf[k]=[]; gf[k].push(n);
     });
-    aLista.innerHTML = Object.keys(gf).sort((a,b) => b>a?1:-1).map(k => {
-      const label = fmtDateLabel(k);
-      return `<div class="nota-date-group">
+    aLista.innerHTML = Object.keys(gf).sort((a,b)=>b>a?1:-1).map(k=>`
+      <div class="nota-date-group">
         <div class="nota-date-label">
-          <span class="nota-date-text">${label}</span>
+          <span class="nota-date-text">${fmtDateLabel(k)}</span>
           <div class="nota-date-line"></div>
         </div>
-        ${gf[k].map(n => notaItemHtml(n, false)).join('')}
-      </div>`;
-    }).join('');
+        <div class="notas-cards-grid">${gf[k].map(n=>notaCardHtml(n,false)).join('')}</div>
+      </div>`).join('');
   }
 }
 
-function notaItemHtml(n, atrasado) {
+function notaCardHtml(n, atrasado) {
   const cls = n.feito ? 'feito' : (atrasado ? 'atrasado' : 'pendente');
-  return `<div class="nota-item ${cls}" id="nota-${n.id}" onclick="toggleNota(${n.id})">
-    <button class="nota-check-btn" onclick="toggleNota(${n.id});event.stopPropagation()">
-      <svg viewBox="0 0 12 12" fill="none" stroke="var(--navy)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="2 6 5 9 10 3"/>
-      </svg>
-    </button>
-    <span class="nota-texto">${n.texto}</span>
-    <button class="nota-delete" onclick="deleteNota(${n.id},event)" title="Remover">×</button>
+  const hora = n.id ? new Date(n.id).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) : '';
+  const delay = (Math.random() * 0.15).toFixed(2);
+  return `<div class="nota-card ${cls}" id="nota-${n.id}"
+    style="animation-delay:${delay}s"
+    onclick="toggleNota(${n.id})">
+    <div class="nota-card-top"></div>
+    <div class="nota-card-body">
+      <div class="nota-card-check-row">
+        <div class="nota-card-check" onclick="toggleNota(${n.id});event.stopPropagation()">
+          <svg viewBox="0 0 12 12" fill="none" stroke="var(--navy)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="2 6 5 9 10 3"/>
+          </svg>
+        </div>
+        <span class="nota-card-texto">${n.texto}</span>
+      </div>
+      <div class="nota-card-footer">
+        <span class="nota-card-time">${hora}</span>
+        <button class="nota-card-delete" onclick="deleteNota(${n.id},event)" title="Remover">×</button>
+      </div>
+    </div>
   </div>`;
 }
 </script>
