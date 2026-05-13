@@ -2732,10 +2732,9 @@ function renderLinks() {
 
   grid.innerHTML = ALL_LINKS.map(l => {
     const icon = LINK_ICONS[l.icon] || LINK_ICONS.book;
-    return `<a class="link-immersive-card" href="${l.url}" target="_blank" rel="noopener"
-        style="border-top:3px solid ${l.cor}22">
-      <div class="link-immersive-icon" style="background:${l.cor}18;border-color:${l.cor}30">
-        <svg viewBox="0 0 24 24" fill="none" stroke="${l.cor}" stroke-width="1.7"
+    return `<a class="link-immersive-card" href="${l.url}" target="_blank" rel="noopener">
+      <div class="link-immersive-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="1.8"
           stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
           ${icon}
         </svg>
