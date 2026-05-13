@@ -1353,13 +1353,6 @@ let state = {
 // ══════════════════════════════════════════════
 // LOGIN / LOGOUT
 // ══════════════════════════════════════════════
-// ── Chave de sessão no sessionStorage ──
- else {
-    err.textContent = 'Usuário ou senha incorretos.';
-    document.getElementById('inp-pass').value = '';
-  }
-}
-
 function doLogout() { /* sem login por ora */ }
 
 window.addEventListener('load', () => {
