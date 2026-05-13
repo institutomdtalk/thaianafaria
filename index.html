@@ -34,99 +34,12 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; font-family: var(--sans); background: var(--bg); color: var(--text); }
 
-/* ══════════════════════════════════════
-   LOGIN
-══════════════════════════════════════ */
-#page-login {
-  position: fixed; inset: 0; z-index: 9999;
-  background: var(--navy-deep);
-  display: none; align-items: center; justify-content: center;
-  transition: opacity .5s ease;
-}
-#page-loading {
-  position: fixed; inset: 0; z-index: 99999;
-  background: var(--navy-deep);
-  display: none; align-items: center; justify-content: center; flex-direction: column;
-  transition: opacity .4s ease;
-}
-#page-loading.visible {
-  display: flex;
-}
-#page-login::before {
-  content: '';
-  position: absolute; inset: 0;
-  background-image: radial-gradient(circle, rgba(196,164,90,.12) 1px, transparent 1px);
-  background-size: 28px 28px;
-}
-.login-box {
-  position: relative; z-index: 1;
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(196,164,90,.18);
-  border-radius: 16px;
-  padding: 52px 44px 44px;
-  width: 380px;
-  backdrop-filter: blur(12px);
-  text-align: center;
-}
-.login-overline {
-  font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
-  color: var(--gold); margin-bottom: 12px;
-}
-.login-title {
-  font-family: var(--serif); font-size: 2rem; font-weight: 300;
-  color: rgba(255,255,255,.92); margin-bottom: 4px; line-height: 1.2;
-}
-.login-sub {
-  font-size: 11px; color: rgba(255,255,255,.35);
-  margin-bottom: 36px; letter-spacing: .04em;
-}
-.login-field {
-  margin-bottom: 14px; text-align: left;
-}
-.login-field label {
-  display: block; font-size: 9px; letter-spacing: .15em; text-transform: uppercase;
-  color: rgba(255,255,255,.4); margin-bottom: 6px;
-}
-.login-field input {
-  width: 100%;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(196,164,90,.15);
-  border-radius: 7px;
-  padding: 11px 14px;
-  font-family: var(--sans); font-size: 13px;
-  color: rgba(255,255,255,.88);
-  outline: none;
-  transition: border-color .3s;
-}
-.login-field input:focus { border-color: rgba(196,164,90,.5); }
-.login-field input::placeholder { color: rgba(255,255,255,.2); }
-.login-btn {
-  width: 100%; margin-top: 8px;
-  background: var(--gold);
-  border: none; border-radius: 7px;
-  padding: 13px;
-  font-family: var(--sans); font-size: 10px; font-weight: 700;
-  letter-spacing: .18em; text-transform: uppercase;
-  color: var(--navy-deep);
-  cursor: pointer;
-  transition: background .3s, transform .15s;
-}
-.login-btn:hover { background: var(--gold-light); }
-.login-btn:active { transform: scale(.98); }
-.login-error {
-  font-size: 11px; color: #e07070; margin-top: 10px;
-  min-height: 16px; transition: opacity .3s;
-}
-.login-divider {
-  width: 40px; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
-  margin: 28px auto 0;
-}
+
 
 /* ══════════════════════════════════════
    SHELL (SIDEBAR + MAIN)
 ══════════════════════════════════════ */
-#shell { display: none; height: 100%; width: 100%; overflow: hidden; position: relative; }
+#shell { display: flex; height: 100%; width: 100%; overflow: hidden; position: relative; }
 
 /* SIDEBAR — recolhível */
 .sidebar {
@@ -1019,23 +932,6 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 </head>
 <body>
 
-<!-- ══ LOGIN ══════════════════════════════ -->
-<!-- ══ LOADING ══════════════════════════════ -->
-<div id="page-loading">
-  <div style="position:absolute;inset:0;background-image:radial-gradient(circle,rgba(196,164,90,.12) 1px,transparent 1px);background-size:28px 28px;pointer-events:none"></div>
-  <div style="position:relative;z-index:1;text-align:center">
-    <div style="font-family:var(--serif);font-size:2rem;font-weight:300;color:rgba(255,255,255,.9);margin-bottom:6px">
-      Thaiana <em style="color:var(--gold);font-style:italic">Workspace</em>
-    </div>
-    <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:40px">Instituto MD Talk</div>
-    <div style="display:flex;gap:8px;justify-content:center;align-items:center">
-      <div class="ld-dot" style="animation-delay:0s"></div>
-      <div class="ld-dot" style="animation-delay:.18s"></div>
-      <div class="ld-dot" style="animation-delay:.36s"></div>
-    </div>
-  </div>
-</div>
-
 <style>
 .ld-dot {
   width:8px;height:8px;border-radius:50%;
@@ -1047,13 +943,6 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
   50%{opacity:1;transform:scale(1.2)}
 }
 </style>
-
-<!-- ══ LOGIN ══════════════════════════════ -->
-<div id="page-login">
-  <div class="login-box">
-    <div class="login-overline">Área Restrita</div>
-    <div class="login-title">Thaiana<br><em>Workspace</em></div>
-    <div class="login-sub">Instituto MD Talk · Acesso Pessoal</div>
 
     <div class="login-field">
       <label>Usuário</label>
@@ -1283,6 +1172,7 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
             <div style="display:flex;align-items:center;gap:12px">
               <div class="fin-grid-months" id="fin-month-tabs"></div>
               <button onclick="recarregarFin()" style="background:rgba(196,164,90,.15);border:1px solid rgba(196,164,90,.3);border-radius:6px;padding:4px 10px;font-size:10px;color:var(--gold);cursor:pointer;font-family:var(--sans)">↺ Sheets</button>
+              <button onclick="diagSheets()" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:6px;padding:4px 10px;font-size:10px;color:rgba(255,255,255,.5);cursor:pointer;font-family:var(--sans)">🔍 Teste</button>
             </div>
           </div>
           <div style="overflow-x:auto">
@@ -1428,10 +1318,7 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 // ══════════════════════════════════════════════
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby4JQp8yiMjGczWecdat3wHk0EhvY9SYP-q1sUe68uZlJTEjeGCoMaS-uqsHozG2h9qlg/exec'; // cole aqui a URL do Apps Script Web App
 
-// Credenciais (ficam só no HTML do seu dispositivo)
-const CREDENCIAIS = {
-  'thaiana': 'mdtalk2024'   // usuário: senha — altere aqui
-};
+
 
 // ══════════════════════════════════════════════
 // ESTADO GLOBAL
@@ -1541,7 +1428,19 @@ function goTo(id) {
     document.querySelectorAll('#panel-' + id + ' [data-reveal]').forEach(el => {
       el.classList.add('visible');
     });
-    if (id === 'financeiro') renderFin();
+    if (id === 'financeiro') {
+      renderFin(); // render com dados atuais
+      // recarregar do Sheets sempre que abrir
+      api('getPaymentControl', {}).then(r => {
+        if (r && r.ok && r.data) {
+          state.lancamentos = r.data;
+          renderFin();
+          toast('✓ ' + r.data.length + ' alunos carregados');
+        } else {
+          toast('Sheets: ' + (r && r.error ? r.error : 'sem resposta'));
+        }
+      });
+    }
   });
 
 
@@ -1551,50 +1450,46 @@ function goTo(id) {
 // API (Google Apps Script)
 // ══════════════════════════════════════════════
 // ── safeApi: chama api e executa callback se ok, sem travar ──
-function safeApi(action, onSuccess, payload = {}) {
-  api(action, payload).then(r => {
+function safeApi(action, onSuccess, payload) {
+  api(action, payload || {}).then(r => {
     if (r && r.ok && r.data) {
       onSuccess(r);
     } else {
+      console.warn('safeApi sem dados:', action, JSON.stringify(r).slice(0,200));
     }
   }).catch(e => {
     console.warn('safeApi erro:', action, e);
   });
 }
 
-// ── API via JSONP ──
-var _apiSeq = 0;
+// ── API via JSONP — mesmo padrão do diagSheets que funciona ──
 function api(action, payload) {
   if (!SCRIPT_URL) return Promise.resolve(mockData(action, payload || {}));
   return new Promise(function(resolve) {
-    var cbName = 'wsApi' + (++_apiSeq);
+    var cbName = 'cb_' + action.replace(/[^a-z]/gi,'') + '_' + Date.now();
     var url = SCRIPT_URL + '?action=' + encodeURIComponent(action) + '&callback=' + cbName;
     if (payload) {
       Object.keys(payload).forEach(function(k) {
-        url += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(payload[k]);
+        if (payload[k] !== undefined && payload[k] !== null) {
+          url += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(payload[k]);
+        }
       });
     }
-    var done = false;
-    var timer = setTimeout(function() {
-      if (done) return;
-      done = true;
-      delete window[cbName];
-      if (s.parentNode) s.parentNode.removeChild(s);
-      console.warn('JSONP timeout:', action);
-      resolve({ ok: false, error: 'timeout' });
-    }, 15000);
+    // Registrar callback ANTES de criar o script
     window[cbName] = function(data) {
-      if (done) return;
-      done = true;
       clearTimeout(timer);
       delete window[cbName];
-      if (s.parentNode) s.parentNode.removeChild(s);
+      if (s && s.parentNode) s.parentNode.removeChild(s);
       resolve(data);
     };
+    var timer = setTimeout(function() {
+      delete window[cbName];
+      if (s && s.parentNode) s.parentNode.removeChild(s);
+      console.warn('JSONP timeout 15s:', action);
+      resolve({ ok: false, error: 'timeout' });
+    }, 15000);
     var s = document.createElement('script');
     s.onerror = function() {
-      if (done) return;
-      done = true;
       clearTimeout(timer);
       delete window[cbName];
       resolve({ ok: false, error: 'script error' });
@@ -1672,6 +1567,19 @@ async function initApp() {
   // Criar órbita SVG
   buildAvatarOrbit();
 
+}
+
+function diagSheets() {
+  toast('Conectando ao Sheets...');
+  api('getPaymentControl', {}).then(function(data) {
+    if (data && data.ok && data.data) {
+      state.lancamentos = data.data;
+      renderFin();
+      toast('✓ ' + data.data.length + ' alunos — Sheets OK!');
+    } else {
+      toast('Erro: ' + JSON.stringify(data).slice(0,80));
+    }
+  });
 }
 
 function recarregarFin() {
@@ -3101,4 +3009,30 @@ function initReveal() {
 }
 </script>
 </body>
-</html>
+</html>// ── API via fetch (segue redirects, funciona com Apps Script) ──
+function api(action, payload) {
+  if (!SCRIPT_URL) return Promise.resolve(mockData(action, payload || {}));
+  var url = SCRIPT_URL + '?action=' + encodeURIComponent(action);
+  if (payload) {
+    Object.keys(payload).forEach(function(k) {
+      if (payload[k] !== undefined && payload[k] !== null) {
+        url += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(payload[k]);
+      }
+    });
+  }
+  return fetch(url)
+    .then(function(r) { return r.text(); })
+    .then(function(text) {
+      // Apps Script retorna JSONP: callback({...}) — extrair o JSON
+      var match = text.match(/^[^(]+\((.+)\)\s*;?\s*$/s);
+      if (match) {
+        try { return JSON.parse(match[1]); } catch(e) {}
+      }
+      // Tentar parsear direto como JSON
+      try { return JSON.parse(text); } catch(e) {}
+      return { ok: false, error: 'parse error: ' + text.slice(0, 100) };
+    })
+    .catch(function(e) {
+      return { ok: false, error: e.message };
+    });
+}
