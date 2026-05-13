@@ -734,6 +734,154 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 }
 
 /* ══════════════════════════════════════
+   PAINEL: METAS
+══════════════════════════════════════ */
+.metas-cat-tabs {
+  display: flex; gap: 6px; margin-bottom: 28px; flex-wrap: wrap;
+}
+.metas-cat-tab {
+  padding: 8px 20px; border-radius: 24px;
+  font-size: 11px; font-weight: 600; letter-spacing: .08em;
+  cursor: pointer; border: 1.5px solid var(--border);
+  background: var(--bg-card); color: var(--text-muted);
+  font-family: var(--sans); transition: all .25s;
+}
+.metas-cat-tab.active {
+  background: var(--navy); color: rgba(255,255,255,.9);
+  border-color: var(--navy);
+}
+.metas-cat-tab.cat-pessoal.active { background: #7C3AED; border-color: #7C3AED; }
+.metas-cat-tab.cat-profissional.active { background: var(--navy); border-color: var(--gold); }
+
+.metas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.meta-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease;
+  position: relative;
+  cursor: pointer;
+}
+.meta-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(11,29,58,.14);
+}
+.meta-card.concluida {
+  opacity: .7;
+}
+.meta-card.concluida .meta-card-body {
+  background: linear-gradient(135deg, rgba(34,197,94,.06) 0%, transparent 100%);
+}
+.meta-card-accent {
+  height: 4px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+}
+.meta-card.cat-pessoal .meta-card-accent {
+  background: linear-gradient(90deg, #7C3AED, #A78BFA);
+}
+.meta-card.concluida .meta-card-accent {
+  background: linear-gradient(90deg, #22C55E, #86EFAC);
+}
+.meta-card-body { padding: 20px 22px 18px; }
+.meta-card-header {
+  display: flex; align-items: flex-start; gap: 14px; margin-bottom: 12px;
+}
+.meta-check {
+  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+  border: 2px solid var(--border-gold);
+  display: flex; align-items: center; justify-content: center;
+  transition: all .4s cubic-bezier(.34,1.56,.64,1);
+  margin-top: 2px;
+}
+.meta-card.concluida .meta-check {
+  background: #22C55E; border-color: #22C55E;
+  box-shadow: 0 0 12px rgba(34,197,94,.4);
+}
+.meta-card.cat-pessoal .meta-check { border-color: #A78BFA; }
+.meta-card.cat-pessoal.concluida .meta-check {
+  background: #7C3AED; border-color: #7C3AED;
+  box-shadow: 0 0 12px rgba(124,58,237,.4);
+}
+.meta-check svg { display: none; width: 13px; height: 13px; }
+.meta-card.concluida .meta-check svg { display: block; }
+.meta-title-wrap { flex: 1; }
+.meta-titulo {
+  font-family: var(--serif); font-size: 1.1rem; font-weight: 400;
+  color: var(--navy); line-height: 1.3; margin-bottom: 2px;
+  transition: color .3s;
+}
+.meta-card.concluida .meta-titulo {
+  text-decoration: line-through; color: var(--text-muted);
+}
+.meta-cat-badge {
+  font-size: 9px; letter-spacing: .14em; text-transform: uppercase;
+  font-weight: 600; padding: 2px 8px; border-radius: 10px;
+  display: inline-block;
+}
+.cat-badge-profissional {
+  background: rgba(11,29,58,.07); color: var(--navy-light);
+}
+.cat-badge-pessoal {
+  background: rgba(124,58,237,.08); color: #7C3AED;
+}
+.meta-desc {
+  font-size: 12px; color: var(--text-muted); line-height: 1.6;
+  margin-bottom: 14px;
+}
+.meta-card-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 12px; border-top: 1px solid var(--border);
+}
+.meta-delete {
+  background: none; border: none; cursor: pointer;
+  color: var(--text-muted); font-size: 16px; padding: 2px 6px;
+  border-radius: 4px; transition: color .2s, background .2s;
+}
+.meta-delete:hover { color: #c0392b; background: rgba(192,57,43,.08); }
+.meta-concluida-label {
+  font-size: 10px; font-weight: 600; color: #22C55E;
+  letter-spacing: .06em;
+}
+.meta-card.cat-pessoal .meta-concluida-label { color: #7C3AED; }
+
+/* Card adicionar nova meta */
+.meta-card-add {
+  background: var(--bg-card);
+  border: 2px dashed var(--border-gold);
+  border-radius: 16px; padding: 28px 22px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 10px; cursor: pointer; min-height: 160px;
+  transition: all .25s;
+  color: var(--gold);
+}
+.meta-card-add:hover {
+  background: rgba(196,164,90,.05);
+  border-color: var(--gold-light);
+  transform: translateY(-2px);
+}
+.meta-card-add svg { width: 28px; height: 28px; opacity: .6; }
+.meta-card-add span { font-size: 12px; letter-spacing: .08em; font-weight: 600; }
+
+/* Partículas de celebração */
+@keyframes metaParticle {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-60px) scale(0); opacity: 0; }
+}
+.meta-particle {
+  position: absolute; width: 8px; height: 8px; border-radius: 50%;
+  pointer-events: none; animation: metaParticle .8s ease-out forwards;
+}
+
+/* ══════════════════════════════════════
    PAINEL: FINANCEIRO
 ══════════════════════════════════════ */
 .fin-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 20px; }
@@ -977,6 +1125,10 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         <span>Financeiro</span>
       </div>
+      <div class="nav-item" data-panel="metas" onclick="goTo('metas')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+        <span>Metas</span>
+      </div>
     </nav>
     <div class="sidebar-footer">
       <button class="btn-logout" onclick="doLogout()">
@@ -1203,7 +1355,55 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
       </div>
 
 
-          </div><!-- /main-content -->
+            <!-- ── METAS ── -->
+      <div id="panel-metas" class="panel">
+        <div class="section-header" data-reveal>
+          <div class="section-overline">Objetivos</div>
+          <div class="section-title">Metas</div>
+        </div>
+
+        <!-- Tabs de categoria -->
+        <div class="metas-cat-tabs" data-reveal>
+          <button class="metas-cat-tab active" onclick="metasTab('todas',this)">Todas</button>
+          <button class="metas-cat-tab cat-profissional" onclick="metasTab('profissional',this)">Profissional</button>
+          <button class="metas-cat-tab cat-pessoal" onclick="metasTab('pessoal',this)">Pessoal</button>
+        </div>
+
+        <!-- Grid de cards -->
+        <div class="metas-grid" id="metas-grid" data-reveal></div>
+      </div>
+
+      <!-- Modal nova meta -->
+      <div class="modal-overlay" id="modal-meta">
+        <div class="modal-box" style="width:460px">
+          <div class="modal-title">Nova Meta</div>
+          <div class="form-row">
+            <label class="form-label">Categoria</label>
+            <div style="display:flex;gap:10px">
+              <button id="meta-cat-prof" class="metas-cat-tab cat-profissional active"
+                style="flex:1" onclick="selecionarCatMeta('profissional')">Profissional</button>
+              <button id="meta-cat-pes" class="metas-cat-tab cat-pessoal"
+                style="flex:1" onclick="selecionarCatMeta('pessoal')">Pessoal</button>
+            </div>
+          </div>
+          <div class="form-row" style="margin-top:14px">
+            <label class="form-label">Título da meta</label>
+            <input class="form-input" id="meta-titulo-inp" placeholder="Ex: Atingir 40 alunos ativos">
+          </div>
+          <div class="form-row" style="margin-top:12px">
+            <label class="form-label">Descrição (opcional)</label>
+            <textarea class="form-input" id="meta-desc-inp" rows="3"
+              placeholder="Detalhes, estratégia, contexto..."
+              style="resize:vertical;font-family:var(--sans);font-size:12px"></textarea>
+          </div>
+          <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeModal('modal-meta')">Cancelar</button>
+            <button class="btn-gold" onclick="salvarNovaMeta()">Criar Meta</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /main-content -->
   </main>
 </div><!-- /shell -->
 
@@ -1366,7 +1566,8 @@ window.addEventListener('load', () => {
 // ══════════════════════════════════════════════
 const PANEL_TITLES = {
   dashboard:  'Dashboard',
-  financeiro: 'Financeiro'
+  financeiro: 'Financeiro',
+  metas: 'Metas'
 };
 
 function goTo(id) {
@@ -1388,6 +1589,7 @@ function goTo(id) {
     document.querySelectorAll('#panel-' + id + ' [data-reveal]').forEach(el => {
       el.classList.add('visible');
     });
+    if (id === 'metas') renderMetas();
     if (id === 'financeiro') {
       renderFin(); // render com dados atuais
       // recarregar do Sheets sempre que abrir
@@ -2923,6 +3125,173 @@ function renderHeatmap(registros, periodo) {
 }
 
 // ══════════════════════════════════════════════
+// METAS
+// ══════════════════════════════════════════════
+let metasFiltro = 'todas';
+let _metaCatSel = 'profissional';
+
+function getMetas() {
+  try { return JSON.parse(localStorage.getItem('ws_metas') || '[]'); }
+  catch(e) { return []; }
+}
+function saveMetas(metas) {
+  localStorage.setItem('ws_metas', JSON.stringify(metas));
+}
+
+function metasTab(cat, btn) {
+  metasFiltro = cat;
+  document.querySelectorAll('.metas-cat-tabs .metas-cat-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMetas();
+}
+
+function selecionarCatMeta(cat) {
+  _metaCatSel = cat;
+  document.getElementById('meta-cat-prof').classList.toggle('active', cat === 'profissional');
+  document.getElementById('meta-cat-pes').classList.toggle('active', cat === 'pessoal');
+}
+
+function renderMetas() {
+  const grid = document.getElementById('metas-grid');
+  if (!grid) return;
+  let metas = getMetas();
+  if (metasFiltro !== 'todas') {
+    metas = metas.filter(m => m.cat === metasFiltro);
+  }
+  // Ordenar: não concluídas primeiro, depois concluídas
+  metas.sort((a, b) => {
+    if (a.concluida === b.concluida) return b.id - a.id;
+    return a.concluida ? 1 : -1;
+  });
+
+  const cardsHtml = metas.map(m => metaCardHtml(m)).join('');
+
+  // Card de adicionar
+  const addCard = `
+    <div class="meta-card-add" onclick="openModal('modal-meta')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="16"/>
+        <line x1="8" y1="12" x2="16" y2="12"/>
+      </svg>
+      <span>Nova Meta</span>
+    </div>`;
+
+  grid.innerHTML = cardsHtml + addCard;
+}
+
+function metaCardHtml(m) {
+  const catClass = m.cat === 'pessoal' ? 'cat-pessoal' : 'cat-profissional';
+  const concluidaClass = m.concluida ? 'concluida' : '';
+  const badgeClass = m.cat === 'pessoal' ? 'cat-badge-pessoal' : 'cat-badge-profissional';
+  const badgeLabel = m.cat === 'pessoal' ? 'Pessoal' : 'Profissional';
+  return `
+    <div class="meta-card ${catClass} ${concluidaClass}" id="meta-card-${m.id}">
+      <div class="meta-card-accent"></div>
+      <div class="meta-card-body">
+        <div class="meta-card-header">
+          <div class="meta-check" onclick="toggleMeta(${m.id}, event)">
+            <svg viewBox="0 0 14 14" fill="none" stroke="white" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="2 7 5.5 10.5 12 3"/>
+            </svg>
+          </div>
+          <div class="meta-title-wrap">
+            <div class="meta-titulo">${m.titulo}</div>
+            <span class="meta-cat-badge ${badgeClass}">${badgeLabel}</span>
+          </div>
+        </div>
+        ${m.desc ? `<div class="meta-desc">${m.desc}</div>` : ''}
+        <div class="meta-card-footer">
+          <button class="meta-delete" onclick="deleteMeta(${m.id}, event)" title="Remover">×</button>
+          ${m.concluida ? `<span class="meta-concluida-label">✓ Conquistada</span>` : ''}
+        </div>
+      </div>
+    </div>`;
+}
+
+function toggleMeta(id, event) {
+  event.stopPropagation();
+  const metas = getMetas();
+  const m = metas.find(x => x.id === id);
+  if (!m) return;
+  m.concluida = !m.concluida;
+  saveMetas(metas);
+
+  // Efeito de celebração se acabou de concluir
+  if (m.concluida) {
+    celebrarMeta('meta-card-' + id, m.cat);
+    toast('🎯 Meta conquistada: ' + m.titulo.slice(0, 30) + '…');
+  }
+  renderMetas();
+  // Sincronizar com Sheets
+  safeApi('updateMeta', () => {}, { id, concluida: m.concluida });
+}
+
+function celebrarMeta(cardId, cat) {
+  const card = document.getElementById(cardId);
+  if (!card) return;
+  const rect = card.getBoundingClientRect();
+  const colors = cat === 'pessoal'
+    ? ['#7C3AED','#A78BFA','#DDD6FE','#C4B5FD']
+    : ['#C4A45A','#F6BF26','#34A853','#4285F4'];
+  for (let i = 0; i < 12; i++) {
+    const p = document.createElement('div');
+    p.className = 'meta-particle';
+    p.style.cssText = `
+      left: ${rect.left + rect.width/2 + (Math.random()-0.5)*80}px;
+      top: ${rect.top + rect.height/2}px;
+      background: ${colors[Math.floor(Math.random()*colors.length)]};
+      position: fixed;
+      animation-delay: ${Math.random()*0.3}s;
+      animation-duration: ${0.6 + Math.random()*0.4}s;
+    `;
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 1200);
+  }
+}
+
+function deleteMeta(id, event) {
+  event.stopPropagation();
+  let metas = getMetas();
+  metas = metas.filter(m => m.id !== id);
+  saveMetas(metas);
+  renderMetas();
+  safeApi('deleteMeta', () => {}, { id });
+  toast('Meta removida.');
+}
+
+function salvarNovaMeta() {
+  const titulo = document.getElementById('meta-titulo-inp').value.trim();
+  if (!titulo) return;
+  const desc = document.getElementById('meta-desc-inp').value.trim();
+  const meta = {
+    id: Date.now(),
+    titulo,
+    desc,
+    cat: _metaCatSel,
+    concluida: false,
+    ts: Date.now()
+  };
+  const metas = getMetas();
+  metas.unshift(meta);
+  saveMetas(metas);
+  closeModal('modal-meta');
+  document.getElementById('meta-titulo-inp').value = '';
+  document.getElementById('meta-desc-inp').value = '';
+  renderMetas();
+  // Sincronizar com Sheets
+  safeApi('saveMeta', () => {}, {
+    id: meta.id,
+    titulo: encodeURIComponent(meta.titulo),
+    desc: encodeURIComponent(meta.desc),
+    cat: meta.cat,
+    concluida: false
+  });
+  toast('Meta criada! 🎯');
+}
+
+// ══════════════════════════════════════════════
 // UTILS
 // ══════════════════════════════════════════════
 function fmtISO(d) {
@@ -2966,14 +3335,16 @@ function api(action, payload) {
   return fetch(url)
     .then(function(r) { return r.text(); })
     .then(function(text) {
-      // Apps Script retorna JSONP: callback({...}) — extrair o JSON
-      var match = text.match(/^[^(]+\((.+)\)\s*;?\s*$/s);
-      if (match) {
-        try { return JSON.parse(match[1]); } catch(e) {}
+      // Apps Script retorna JSONP: callback({...}) ou JSON puro
+      var t = text.trim();
+      // Remover wrapper JSONP: qualquer coisa antes do primeiro {
+      var jsonStart = t.indexOf('{');
+      var jsonEnd   = t.lastIndexOf('}');
+      if (jsonStart >= 0 && jsonEnd > jsonStart) {
+        try { return JSON.parse(t.slice(jsonStart, jsonEnd + 1)); } catch(e) {}
       }
-      // Tentar parsear direto como JSON
-      try { return JSON.parse(text); } catch(e) {}
-      return { ok: false, error: 'parse error: ' + text.slice(0, 100) };
+      try { return JSON.parse(t); } catch(e) {}
+      return { ok: false, error: 'parse: ' + t.slice(0, 80) };
     })
     .catch(function(e) {
       return { ok: false, error: e.message };
