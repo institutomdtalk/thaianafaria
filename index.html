@@ -39,7 +39,7 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 /* ══════════════════════════════════════
    SHELL (SIDEBAR + MAIN)
 ══════════════════════════════════════ */
-#shell { display: flex; height: 100%; width: 100%; overflow: hidden; position: relative; }
+#shell { display: flex; height: 100%; width: 100%; position: relative; }
 
 /* SIDEBAR — recolhível */
 .sidebar {
@@ -115,7 +115,7 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 /* MAIN */
 .main {
   margin-left: var(--sidebar);
-  height: 100%;
+  min-height: 100%;
   flex: 1;
   display: flex; flex-direction: column;
   overflow-y: auto;
@@ -142,7 +142,7 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 }
 .main-content {
   flex: 1; padding: 32px;
-  overflow-y: visible;
+  min-height: 0;
 }
 
 /* ══════════════════════════════════════
@@ -1027,144 +1027,6 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
   pointer-events: none; z-index: 1;
 }
 
-/* ══════════════════════════════════════
-   PAINEL: METAS
-══════════════════════════════════════ */
-.metas-cat-tabs {
-  display: flex; gap: 6px; margin-bottom: 28px; flex-wrap: wrap;
-}
-.metas-cat-tab {
-  padding: 8px 20px; border-radius: 24px;
-  font-size: 11px; font-weight: 600; letter-spacing: .08em;
-  cursor: pointer; border: 1.5px solid var(--border);
-  background: var(--bg-card); color: var(--text-muted);
-  font-family: var(--sans); transition: all .25s;
-}
-.metas-cat-tab.active {
-  background: var(--navy); color: rgba(255,255,255,.9);
-  border-color: var(--navy);
-}
-.metas-cat-tab.cat-pessoal.active { background: #7C3AED; border-color: #7C3AED; }
-.metas-cat-tab.cat-profissional.active { background: var(--navy); border-color: var(--gold); }
-
-.metas-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-}
-
-.meta-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 0;
-  overflow: hidden;
-  box-shadow: var(--shadow);
-  transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease;
-  position: relative;
-  cursor: pointer;
-}
-.meta-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 48px rgba(11,29,58,.14);
-}
-.meta-card.concluida {
-  opacity: .7;
-}
-.meta-card.concluida .meta-card-body {
-  background: linear-gradient(135deg, rgba(34,197,94,.06) 0%, transparent 100%);
-}
-.meta-card-accent {
-  height: 4px;
-  background: linear-gradient(90deg, var(--gold), var(--gold-light));
-}
-.meta-card.cat-pessoal .meta-card-accent {
-  background: linear-gradient(90deg, #7C3AED, #A78BFA);
-}
-.meta-card.concluida .meta-card-accent {
-  background: linear-gradient(90deg, #22C55E, #86EFAC);
-}
-.meta-card-body { padding: 20px 22px 18px; }
-.meta-card-header {
-  display: flex; align-items: flex-start; gap: 14px; margin-bottom: 12px;
-}
-.meta-check {
-  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
-  border: 2px solid var(--border-gold);
-  display: flex; align-items: center; justify-content: center;
-  transition: all .4s cubic-bezier(.34,1.56,.64,1);
-  margin-top: 2px;
-}
-.meta-card.concluida .meta-check {
-  background: #22C55E; border-color: #22C55E;
-  box-shadow: 0 0 12px rgba(34,197,94,.4);
-}
-.meta-card.cat-pessoal .meta-check { border-color: #A78BFA; }
-.meta-card.cat-pessoal.concluida .meta-check {
-  background: #7C3AED; border-color: #7C3AED;
-  box-shadow: 0 0 12px rgba(124,58,237,.4);
-}
-.meta-check svg { display: none; width: 13px; height: 13px; }
-.meta-card.concluida .meta-check svg { display: block; }
-.meta-title-wrap { flex: 1; }
-.meta-titulo {
-  font-family: var(--serif); font-size: 1.1rem; font-weight: 400;
-  color: var(--navy); line-height: 1.3; margin-bottom: 2px;
-  transition: color .3s;
-}
-.meta-card.concluida .meta-titulo {
-  text-decoration: line-through; color: var(--text-muted);
-}
-.meta-cat-badge {
-  font-size: 9px; letter-spacing: .14em; text-transform: uppercase;
-  font-weight: 600; padding: 2px 8px; border-radius: 10px;
-  display: inline-block;
-}
-.cat-badge-profissional {
-  background: rgba(11,29,58,.07); color: var(--navy-light);
-}
-.cat-badge-pessoal {
-  background: rgba(124,58,237,.08); color: #7C3AED;
-}
-.meta-desc {
-  font-size: 12px; color: var(--text-muted); line-height: 1.6;
-  margin-bottom: 14px;
-}
-.meta-card-footer {
-  display: flex; align-items: center; justify-content: space-between;
-  padding-top: 12px; border-top: 1px solid var(--border);
-}
-.meta-delete {
-  background: none; border: none; cursor: pointer;
-  color: var(--text-muted); font-size: 16px; padding: 2px 6px;
-  border-radius: 4px; transition: color .2s, background .2s;
-}
-.meta-delete:hover { color: #c0392b; background: rgba(192,57,43,.08); }
-.meta-concluida-label {
-  font-size: 10px; font-weight: 600; color: #22C55E;
-  letter-spacing: .06em;
-}
-.meta-card.cat-pessoal .meta-concluida-label { color: #7C3AED; }
-
-/* Card adicionar nova meta */
-.meta-card-add {
-  background: var(--bg-card);
-  border: 2px dashed var(--border-gold);
-  border-radius: 16px; padding: 28px 22px;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 10px; cursor: pointer; min-height: 160px;
-  transition: all .25s;
-  color: var(--gold);
-}
-.meta-card-add:hover {
-  background: rgba(196,164,90,.05);
-  border-color: var(--gold-light);
-  transform: translateY(-2px);
-}
-.meta-card-add svg { width: 28px; height: 28px; opacity: .6; }
-.meta-card-add span { font-size: 12px; letter-spacing: .08em; font-weight: 600; }
-
 /* ══ Seção Conquistas ══ */
 .conquistas-section {
   margin-top: 48px;
@@ -1271,6 +1133,62 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
   position: absolute; width: 8px; height: 8px; border-radius: 50%;
   pointer-events: none; animation: metaParticle .8s ease-out forwards;
 }
+
+/* ══════════════════════════════════════
+   METAS
+══════════════════════════════════════ */
+.metas-cat-tabs { display:flex; gap:6px; margin-bottom:24px; flex-wrap:wrap; }
+.metas-cat-tab { padding:8px 20px; border-radius:24px; font-size:11px; font-weight:600;
+  letter-spacing:.08em; cursor:pointer; border:1.5px solid var(--border);
+  background:var(--bg-card); color:var(--text-muted); font-family:var(--sans); transition:all .25s; }
+.metas-cat-tab.active { background:var(--navy); color:rgba(255,255,255,.9); border-color:var(--navy); }
+.metas-cat-tab.cat-pessoal.active { background:#7C3AED; border-color:#7C3AED; }
+.metas-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:20px; }
+.meta-card { background:var(--bg-card); border:1px solid var(--border); border-radius:16px;
+  overflow:hidden; box-shadow:var(--shadow); transition:transform .3s, box-shadow .3s; position:relative; }
+.meta-card:hover { transform:translateY(-4px); box-shadow:0 16px 48px rgba(11,29,58,.14); }
+.meta-card-accent { height:4px; background:linear-gradient(90deg,var(--gold),var(--gold-light)); }
+.meta-card.cat-pessoal .meta-card-accent { background:linear-gradient(90deg,#7C3AED,#A78BFA); }
+.meta-card.concluida .meta-card-accent { background:linear-gradient(90deg,#22C55E,#86EFAC); }
+.meta-card-body { padding:20px 22px 18px; }
+.meta-card-header { display:flex; align-items:flex-start; gap:14px; margin-bottom:12px; }
+.meta-check { width:26px; height:26px; border-radius:50%; flex-shrink:0;
+  border:2px solid var(--border-gold); display:flex; align-items:center; justify-content:center;
+  transition:all .4s cubic-bezier(.34,1.56,.64,1); margin-top:2px; cursor:pointer; }
+.meta-card.concluida .meta-check { background:#22C55E; border-color:#22C55E; box-shadow:0 0 12px rgba(34,197,94,.4); }
+.meta-card.cat-pessoal.concluida .meta-check { background:#7C3AED; border-color:#7C3AED; box-shadow:0 0 12px rgba(124,58,237,.4); }
+.meta-check svg { display:none; width:13px; height:13px; }
+.meta-card.concluida .meta-check svg { display:block; }
+.meta-titulo { font-family:var(--serif); font-size:1.1rem; font-weight:400; color:var(--navy); line-height:1.3; }
+.meta-card.concluida .meta-titulo { text-decoration:line-through; color:var(--text-muted); }
+.meta-cat-badge { font-size:9px; letter-spacing:.14em; text-transform:uppercase; font-weight:600;
+  padding:2px 8px; border-radius:10px; display:inline-block; margin-top:4px; }
+.badge-profissional { background:rgba(11,29,58,.07); color:var(--navy-light); }
+.badge-pessoal { background:rgba(124,58,237,.08); color:#7C3AED; }
+.meta-desc { font-size:12px; color:var(--text-muted); line-height:1.6; margin-bottom:14px; margin-top:8px; }
+.meta-card-footer { display:flex; align-items:center; justify-content:space-between;
+  padding-top:12px; border-top:1px solid var(--border); }
+.meta-delete { background:none; border:none; cursor:pointer; color:var(--text-muted);
+  font-size:18px; padding:2px 6px; border-radius:4px; transition:color .2s; }
+.meta-delete:hover { color:#c0392b; }
+.meta-card-add { background:var(--bg-card); border:2px dashed var(--border-gold); border-radius:16px;
+  padding:28px 22px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:10px; cursor:pointer; min-height:160px; transition:all .25s; color:var(--gold); }
+.meta-card-add:hover { background:rgba(196,164,90,.05); transform:translateY(-2px); }
+.meta-card-add svg { width:28px; height:28px; opacity:.6; }
+.meta-card-add span { font-size:12px; letter-spacing:.08em; font-weight:600; }
+.conquistas-section { margin-top:48px; }
+.conquista-card { background:linear-gradient(135deg,#0B1D3A 0%,#163158 100%);
+  border:1px solid rgba(196,164,90,.25); border-radius:16px; padding:22px;
+  box-shadow:0 8px 32px rgba(11,29,58,.18); transition:transform .3s; position:relative; overflow:visible; }
+.conquista-card:hover { transform:translateY(-4px); }
+.conquista-orbit-svg { position:absolute; inset:-18px; width:calc(100% + 36px); height:calc(100% + 36px);
+  pointer-events:none; z-index:0; }
+.conquista-body { position:relative; z-index:1; }
+.conquista-titulo { font-family:var(--serif); font-size:1.05rem; color:var(--gold-light); margin-bottom:6px; }
+.conquista-desc { font-size:11px; color:rgba(255,255,255,.45); line-height:1.6; margin-bottom:12px; }
+@keyframes metaParticle { 0%{transform:translateY(0) scale(1);opacity:1} 100%{transform:translateY(-60px) scale(0);opacity:0} }
+.meta-particle { position:fixed; width:8px; height:8px; border-radius:50%; pointer-events:none; animation:metaParticle .8s ease-out forwards; }
 
 /* ══════════════════════════════════════
    PAINEL: FINANCEIRO
@@ -1483,20 +1401,6 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 }
 </style>
 
-    <div class="login-field">
-      <label>Usuário</label>
-      <input type="text" id="inp-user" placeholder="seu usuário" autocomplete="username">
-    </div>
-    <div class="login-field">
-      <label>Senha</label>
-      <input type="password" id="inp-pass" placeholder="••••••••" autocomplete="current-password">
-    </div>
-    <button class="login-btn" onclick="doLogin()">Entrar</button>
-    <div class="login-error" id="login-error"></div>
-    <div class="login-divider"></div>
-  </div>
-</div>
-
 <!-- ══ SHELL ══════════════════════════════ -->
 <div id="shell">
 
@@ -1520,14 +1424,15 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         <span>Meu Dia</span>
       </div>
-      <div class="nav-item" data-panel="links" onclick="goTo('links')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-        <span>Links</span>
-      </div>
       <div class="nav-item" data-panel="metas" onclick="goTo('metas')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
         <span>Metas</span>
       </div>
+      <div class="nav-item" data-panel="links" onclick="goTo('links')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        <span>Links</span>
+      </div>
+
     </nav>
     <div class="sidebar-footer">
       <button class="btn-logout" onclick="doLogout()">
@@ -1754,7 +1659,56 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
       </div>
 
 
-            <!-- ── MEU DIA ── -->
+            <!-- ── METAS ── -->
+      <div id="panel-metas" class="panel">
+        <div style="margin-bottom:8px">
+          <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px">Objetivos</div>
+          <h2 style="font-family:var(--serif);font-size:1.8rem;font-weight:400;color:var(--navy);line-height:1.1">Metas</h2>
+        </div>
+        <div style="height:1px;background:linear-gradient(90deg,var(--gold),transparent);margin:16px 0 24px;opacity:.4"></div>
+        <div class="metas-cat-tabs">
+          <button class="metas-cat-tab active" onclick="metasTab('todas',this)">Todas</button>
+          <button class="metas-cat-tab cat-profissional" onclick="metasTab('profissional',this)">Profissional</button>
+          <button class="metas-cat-tab cat-pessoal" onclick="metasTab('pessoal',this)">Pessoal</button>
+        </div>
+        <div class="metas-grid" id="metas-grid"></div>
+        <div class="conquistas-section" id="conquistas-section" style="display:none">
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px">
+            <div style="font-family:var(--serif);font-size:1.5rem;color:var(--navy)">Minhas <em style="color:var(--gold);font-style:italic">Conquistas</em></div>
+            <div style="flex:1;height:1px;background:linear-gradient(90deg,var(--gold),transparent);opacity:.35"></div>
+            <button onclick="resetarConquistas()" style="background:none;border:1px solid rgba(196,164,90,.25);border-radius:6px;padding:5px 12px;font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(196,164,90,.5);cursor:pointer;font-family:var(--sans)">↺ Resetar</button>
+          </div>
+          <div class="metas-grid" id="conquistas-grid"></div>
+        </div>
+      </div>
+
+      <!-- Modal nova meta -->
+      <div class="modal-overlay" id="modal-meta">
+        <div class="modal-box" style="width:460px">
+          <div class="modal-title">Nova Meta</div>
+          <div class="form-row">
+            <label class="form-label">Categoria</label>
+            <div style="display:flex;gap:10px">
+              <button id="meta-cat-prof" class="metas-cat-tab cat-profissional active" style="flex:1" onclick="selecionarCatMeta('profissional')">Profissional</button>
+              <button id="meta-cat-pes" class="metas-cat-tab cat-pessoal" style="flex:1" onclick="selecionarCatMeta('pessoal')">Pessoal</button>
+            </div>
+          </div>
+          <div class="form-row" style="margin-top:14px">
+            <label class="form-label">Título da meta</label>
+            <input class="form-input" id="meta-titulo-inp" placeholder="Ex: Atingir 40 alunos ativos">
+          </div>
+          <div class="form-row" style="margin-top:12px">
+            <label class="form-label">Descrição (opcional)</label>
+            <textarea class="form-input" id="meta-desc-inp" rows="3" placeholder="Detalhes, estratégia, contexto..." style="resize:vertical;font-family:var(--sans);font-size:12px"></textarea>
+          </div>
+          <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeModal('modal-meta')">Cancelar</button>
+            <button class="btn-gold" onclick="salvarNovaMeta()">Criar Meta</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── MEU DIA ── -->
       <div id="panel-meudio" class="panel">
         <div class="section-header" data-reveal>
           <div class="section-overline">Agenda do dia</div>
@@ -1842,71 +1796,10 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
         <div class="balloons-container" id="balloons-container"></div>
 
       <!-- ── METAS ── -->
-      <div id="panel-metas" class="panel">
-        <div class="section-header" data-reveal>
-          <div class="section-overline">Objetivos</div>
-          <div class="section-title">Metas</div>
-        </div>
-
-        <!-- Tabs de categoria -->
-        <div class="metas-cat-tabs" data-reveal>
-          <button class="metas-cat-tab active" onclick="metasTab('todas',this)">Todas</button>
-          <button class="metas-cat-tab cat-profissional" onclick="metasTab('profissional',this)">Profissional</button>
-          <button class="metas-cat-tab cat-pessoal" onclick="metasTab('pessoal',this)">Pessoal</button>
-        </div>
-
-        <!-- Grid de cards ativos -->
-        <div class="metas-grid" id="metas-grid" data-reveal></div>
-
-        <!-- Seção Conquistas -->
-        <div class="conquistas-section" id="conquistas-section" style="display:none" data-reveal>
-          <div class="conquistas-header">
-            <div class="conquistas-title">Minhas <em>Conquistas</em></div>
-            <div class="conquistas-divider"></div>
-            <button onclick="resetarConquistas()"
-              style="background:none;border:1px solid rgba(196,164,90,.25);border-radius:6px;
-                padding:5px 12px;font-size:9px;font-weight:600;letter-spacing:.1em;
-                text-transform:uppercase;color:rgba(196,164,90,.5);cursor:pointer;
-                font-family:var(--sans);white-space:nowrap;transition:all .2s"
-              onmouseover="this.style.borderColor='rgba(239,68,68,.4)';this.style.color='rgba(239,68,68,.7)'"
-              onmouseout="this.style.borderColor='rgba(196,164,90,.25)';this.style.color='rgba(196,164,90,.5)'"
-              title="Remover todas as conquistas">↺ Resetar</button>
-          </div>
-          <div class="metas-grid" id="conquistas-grid"></div>
-        </div>
-      </div>
+      
 
       <!-- Modal nova meta -->
-      <div class="modal-overlay" id="modal-meta">
-        <div class="modal-box" style="width:460px">
-          <div class="modal-title">Nova Meta</div>
-          <div class="form-row">
-            <label class="form-label">Categoria</label>
-            <div style="display:flex;gap:10px">
-              <button id="meta-cat-prof" class="metas-cat-tab cat-profissional active"
-                style="flex:1" onclick="selecionarCatMeta('profissional')">Profissional</button>
-              <button id="meta-cat-pes" class="metas-cat-tab cat-pessoal"
-                style="flex:1" onclick="selecionarCatMeta('pessoal')">Pessoal</button>
-            </div>
-          </div>
-          <div class="form-row" style="margin-top:14px">
-            <label class="form-label">Título da meta</label>
-            <input class="form-input" id="meta-titulo-inp" placeholder="Ex: Atingir 40 alunos ativos">
-          </div>
-          <div class="form-row" style="margin-top:12px">
-            <label class="form-label">Descrição (opcional)</label>
-            <textarea class="form-input" id="meta-desc-inp" rows="3"
-              placeholder="Detalhes, estratégia, contexto..."
-              style="resize:vertical;font-family:var(--sans);font-size:12px"></textarea>
-          </div>
-          <div class="modal-actions">
-            <button class="btn-cancel" onclick="closeModal('modal-meta')">Cancelar</button>
-            <button class="btn-gold" onclick="salvarNovaMeta()">Criar Meta</button>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /main-content -->
+          </div><!-- /main-content -->
   </main>
 </div><!-- /shell -->
 
@@ -2016,6 +1909,7 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 </div>
 
 <script>
+
 // Mapa de cores do Google Calendar
 const CAL_COLOR_MAP = {
   '1':  { hex: '#7986CB', label: 'Programado' },
@@ -2070,10 +1964,10 @@ window.addEventListener('load', () => {
 const PANEL_TITLES = {
   dashboard:  'Dashboard',
   financeiro: 'Financeiro',
+  metas: 'Metas',
   meudio: 'Meu Dia',
   contatos: 'Contatos',
   links: 'Links',
-  metas: 'Metas'
 };
 
 function goTo(id) {
@@ -3378,290 +3272,6 @@ function renderHeatmap(registros, periodo) {
 }
 
 // ══════════════════════════════════════════════
-// METAS
-// ══════════════════════════════════════════════
-let metasFiltro = 'todas';
-let _metaCatSel = 'profissional';
-
-function getMetas() {
-  try { return JSON.parse(localStorage.getItem('ws_metas') || '[]'); }
-  catch(e) { return []; }
-}
-function saveMetas(metas) {
-  localStorage.setItem('ws_metas', JSON.stringify(metas));
-}
-
-function metasTab(cat, btn) {
-  metasFiltro = cat;
-  document.querySelectorAll('.metas-cat-tabs .metas-cat-tab').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderMetas();
-}
-
-function selecionarCatMeta(cat) {
-  _metaCatSel = cat;
-  document.getElementById('meta-cat-prof').classList.toggle('active', cat === 'profissional');
-  document.getElementById('meta-cat-pes').classList.toggle('active', cat === 'pessoal');
-}
-
-function renderMetas() {
-  const grid = document.getElementById('metas-grid');
-  if (!grid) return;
-  let todas = getMetas();
-  if (metasFiltro !== 'todas') {
-    todas = todas.filter(m => m.cat === metasFiltro);
-  }
-
-  // Separar ativas e conquistadas
-  const ativas      = todas.filter(m => !m.concluida).sort((a,b) => b.id - a.id);
-  const conquistadas = todas.filter(m => m.concluida).sort((a,b) => b.id - a.id);
-
-  // Grid de metas ativas
-  const addCard = `
-    <div class="meta-card-add" onclick="openModal('modal-meta')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <circle cx="12" cy="12" r="10"/>
-        <line x1="12" y1="8" x2="12" y2="16"/>
-        <line x1="8" y1="12" x2="16" y2="12"/>
-      </svg>
-      <span>Nova Meta</span>
-    </div>`;
-  grid.innerHTML = ativas.map(m => metaCardHtml(m)).join('') + addCard;
-
-  // Seção conquistas
-  const section = document.getElementById('conquistas-section');
-  const cgrid   = document.getElementById('conquistas-grid');
-  if (!section || !cgrid) return;
-
-  if (conquistadas.length === 0) {
-    section.style.display = 'none';
-    return;
-  }
-  section.style.display = 'block';
-  cgrid.innerHTML = conquistadas.map(m => conquistaCardHtml(m)).join('');
-  // Construir órbitas em cada card de conquista
-  requestAnimationFrame(() => {
-    conquistadas.forEach(m => buildConquistaOrbit('conquista-orbit-' + m.id, m.cat));
-  });
-}
-
-function conquistaCardHtml(m) {
-  const catLabel = m.cat === 'pessoal' ? 'Pessoal' : 'Profissional';
-  return `
-    <div class="conquista-card" id="conquista-card-${m.id}">
-      <svg class="conquista-orbit-svg" id="conquista-orbit-${m.id}"
-        viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
-      <div class="conquista-body">
-        <div class="conquista-icon">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-          </svg>
-        </div>
-        <div class="conquista-titulo">${m.titulo}</div>
-        ${m.desc ? `<div class="conquista-desc">${m.desc}</div>` : ''}
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
-          <div class="conquista-badge">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
-            ${catLabel} · Conquistada
-          </div>
-          <button onclick="deleteMeta(${m.id}, event)"
-            style="background:none;border:none;cursor:pointer;color:rgba(196,164,90,.4);
-              font-size:16px;padding:2px 6px;border-radius:4px;transition:color .2s"
-            onmouseover="this.style.color='rgba(255,100,100,.7)'"
-            onmouseout="this.style.color='rgba(196,164,90,.4)'"
-            title="Remover conquista">×</button>
-        </div>
-      </div>
-    </div>`;
-}
-
-function buildConquistaOrbit(svgId, cat) {
-  const svg = document.getElementById(svgId);
-  if (!svg) return;
-  const svgNS = 'http://www.w3.org/2000/svg';
-  svg.innerHTML = '';
-  const W = svg.parentElement.offsetWidth || 300;
-  const H = svg.parentElement.offsetHeight || 150;
-  const vw = W + 36, vh = H + 36;
-  svg.setAttribute('viewBox', '0 0 ' + vw + ' ' + vh);
-  const cx = vw / 2, cy = vh / 2;
-
-  const isPessoal = cat === 'pessoal';
-  const orbits = [
-    { rx: cx - 4, ry: 10, tilt: -8,  dur: '6s',  color: isPessoal ? '#A78BFA' : '#C4A45A', dots: 3, r: 2.5 },
-    { rx: cx - 2, ry: 8,  tilt:  18, dur: '9s',  color: isPessoal ? '#7C3AED' : '#D4BA7A', dots: 2, r: 2.0 },
-    { rx: cx - 6, ry: 6,  tilt:  45, dur: '12s', color: isPessoal ? '#DDD6FE' : '#E8D9B0', dots: 4, r: 1.5 },
-  ];
-
-  orbits.forEach(function(o) {
-    var g = document.createElementNS(svgNS, 'g');
-    g.setAttribute('transform', 'rotate(' + o.tilt + ' ' + cx + ' ' + cy + ')');
-
-    for (var i = 0; i < o.dots; i++) {
-      var angle = (360 / o.dots) * i;
-      var rad = angle * Math.PI / 180;
-      var px = cx + o.rx * Math.cos(rad);
-      var py = cy + o.ry * Math.sin(rad);
-
-      var animG = document.createElementNS(svgNS, 'g');
-      var anim  = document.createElementNS(svgNS, 'animateTransform');
-      anim.setAttribute('attributeName', 'transform');
-      anim.setAttribute('type', 'rotate');
-      anim.setAttribute('from', angle + ' ' + cx + ' ' + cy);
-      anim.setAttribute('to',   (angle + 360) + ' ' + cx + ' ' + cy);
-      anim.setAttribute('dur', o.dur);
-      anim.setAttribute('repeatCount', 'indefinite');
-      animG.appendChild(anim);
-
-      var dot = document.createElementNS(svgNS, 'circle');
-      dot.setAttribute('cx', px);
-      dot.setAttribute('cy', py);
-      dot.setAttribute('r',  o.r);
-      dot.setAttribute('fill', o.color);
-      dot.style.filter = 'drop-shadow(0 0 ' + (o.r * 1.5) + 'px ' + o.color + ')';
-
-      var pa = document.createElementNS(svgNS, 'animate');
-      pa.setAttribute('attributeName', 'opacity');
-      pa.setAttribute('values', '0.4;1;0.4');
-      pa.setAttribute('dur', (1.5 + i * 0.5) + 's');
-      pa.setAttribute('repeatCount', 'indefinite');
-      dot.appendChild(pa);
-
-      animG.appendChild(dot);
-      g.appendChild(animG);
-    }
-    svg.appendChild(g);
-  });
-}
-
-function metaCardHtml(m) {
-  const catClass = m.cat === 'pessoal' ? 'cat-pessoal' : 'cat-profissional';
-  const concluidaClass = m.concluida ? 'concluida' : '';
-  const badgeClass = m.cat === 'pessoal' ? 'cat-badge-pessoal' : 'cat-badge-profissional';
-  const badgeLabel = m.cat === 'pessoal' ? 'Pessoal' : 'Profissional';
-  return `
-    <div class="meta-card ${catClass} ${concluidaClass}" id="meta-card-${m.id}">
-      <div class="meta-card-accent"></div>
-      <div class="meta-card-body">
-        <div class="meta-card-header">
-          <div class="meta-check" onclick="toggleMeta(${m.id}, event)">
-            <svg viewBox="0 0 14 14" fill="none" stroke="white" stroke-width="2.5"
-              stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="2 7 5.5 10.5 12 3"/>
-            </svg>
-          </div>
-          <div class="meta-title-wrap">
-            <div class="meta-titulo">${m.titulo}</div>
-            <span class="meta-cat-badge ${badgeClass}">${badgeLabel}</span>
-          </div>
-        </div>
-        ${m.desc ? `<div class="meta-desc">${m.desc}</div>` : ''}
-        <div class="meta-card-footer">
-          <button class="meta-delete" onclick="deleteMeta(${m.id}, event)" title="Remover">×</button>
-          ${m.concluida ? `<span class="meta-concluida-label">✓ Conquistada</span>` : ''}
-        </div>
-      </div>
-    </div>`;
-}
-
-function toggleMeta(id, event) {
-  event.stopPropagation();
-  const metas = getMetas();
-  const m = metas.find(x => x.id === id);
-  if (!m) return;
-  m.concluida = !m.concluida;
-  saveMetas(metas);
-
-  // Efeito de celebração se acabou de concluir
-  if (m.concluida) {
-    celebrarMeta('meta-card-' + id, m.cat);
-    toast('🎯 Meta conquistada: ' + m.titulo.slice(0, 30) + '…');
-  }
-  renderMetas();
-  // Sincronizar com Sheets
-  safeApi('updateMeta', () => {}, { id, concluida: m.concluida });
-}
-
-function celebrarMeta(cardId, cat) {
-  const card = document.getElementById(cardId);
-  if (!card) return;
-  const rect = card.getBoundingClientRect();
-  const colors = cat === 'pessoal'
-    ? ['#7C3AED','#A78BFA','#DDD6FE','#C4B5FD']
-    : ['#C4A45A','#F6BF26','#34A853','#4285F4'];
-  for (let i = 0; i < 12; i++) {
-    const p = document.createElement('div');
-    p.className = 'meta-particle';
-    p.style.cssText = `
-      left: ${rect.left + rect.width/2 + (Math.random()-0.5)*80}px;
-      top: ${rect.top + rect.height/2}px;
-      background: ${colors[Math.floor(Math.random()*colors.length)]};
-      position: fixed;
-      animation-delay: ${Math.random()*0.3}s;
-      animation-duration: ${0.6 + Math.random()*0.4}s;
-    `;
-    document.body.appendChild(p);
-    setTimeout(() => p.remove(), 1200);
-  }
-}
-
-function deleteMeta(id, event) {
-  event.stopPropagation();
-  let metas = getMetas();
-  metas = metas.filter(m => m.id !== id);
-  saveMetas(metas);
-  renderMetas();
-  safeApi('deleteMeta', () => {}, { id });
-  toast('Meta removida.');
-}
-
-function resetarConquistas() {
-  if (!confirm('Remover todas as conquistas? Esta ação não pode ser desfeita.')) return;
-  let metas = getMetas();
-  // Deletar as conquistadas do Sheets
-  metas.filter(m => m.concluida).forEach(m => {
-    safeApi('deleteMeta', () => {}, { id: m.id });
-  });
-  // Manter só as ativas
-  metas = metas.filter(m => !m.concluida);
-  saveMetas(metas);
-  renderMetas();
-  toast('Conquistas removidas.');
-}
-
-function salvarNovaMeta() {
-  const titulo = document.getElementById('meta-titulo-inp').value.trim();
-  if (!titulo) return;
-  const desc = document.getElementById('meta-desc-inp').value.trim();
-  const meta = {
-    id: Date.now(),
-    titulo,
-    desc,
-    cat: _metaCatSel,
-    concluida: false,
-    ts: Date.now()
-  };
-  const metas = getMetas();
-  metas.unshift(meta);
-  saveMetas(metas);
-  closeModal('modal-meta');
-  document.getElementById('meta-titulo-inp').value = '';
-  document.getElementById('meta-desc-inp').value = '';
-  renderMetas();
-  // Sincronizar com Sheets
-  safeApi('saveMeta', () => {}, {
-    id: meta.id,
-    titulo: encodeURIComponent(meta.titulo),
-    desc: encodeURIComponent(meta.desc),
-    cat: meta.cat,
-    concluida: false
-  });
-  toast('Meta criada! 🎯');
-}
-
-// ══════════════════════════════════════════════
 // MEU DIA
 // ══════════════════════════════════════════════
 const STATUS_AULA = {
@@ -3917,6 +3527,422 @@ function initReveal() {
   document.querySelectorAll('[data-reveal]').forEach(el => obs.observe(el));
 }
 
+
+
+// ══════════════════════════════════════════════
+// FINANCEIRO — tabela editável 3 meses
+// ══════════════════════════════════════════════
+const MESES_NOME = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const MESES_FULL = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const STATUS_CICLO = ['Pago','Atrasado','Não paga','Suspenso','Null'];
+
+function getMesAtual() { return new Date().getMonth(); }
+let finMesFoco = getMesAtual();
+
+function finGetVisibleMonths() {
+  const meses = [];
+  for (let d = -1; d <= 1; d++) {
+    const m = finMesFoco + d;
+    if (m >= 0 && m <= 11) meses.push(m);
+  }
+  return meses;
+}
+
+function renderFinTabs() {
+  const tabs = document.getElementById('fin-month-tabs');
+  if (!tabs) return;
+  const prev = finMesFoco > 0  ? `<button class="fin-month-btn" onclick="finNavMes(-1)">&#8592; ${MESES_NOME[finMesFoco-1]}</button>` : '';
+  const next = finMesFoco < 11 ? `<button class="fin-month-btn" onclick="finNavMes(+1)">${MESES_NOME[finMesFoco+1]} &#8594;</button>` : '';
+  tabs.innerHTML = prev + `<button class="fin-month-btn active">${MESES_FULL[finMesFoco]}</button>` + next;
+}
+
+function finNavMes(dir) {
+  finMesFoco = Math.max(0, Math.min(11, finMesFoco + dir));
+  renderFin();
+}
+
+function statusClass(st) {
+  const sl = (st || '').toLowerCase().trim();
+  if (sl === 'pago')     return 'sp-pago';
+  if (sl === 'atrasado') return 'sp-atrasado';
+  if (sl === 'não paga' || sl === 'nao paga') return 'sp-naopaga';
+  if (sl === 'suspenso') return 'sp-suspenso';
+  return 'sp-null';
+}
+
+function statusSelect(rowIdx, mesIdx, stAtual) {
+  const opts = ['Pago','Atrasado','Não paga','Suspenso','Null'];
+  const stNorm = (stAtual||'Null').trim();
+  const cls = statusClass(stNorm);
+  const options = opts.map(o => {
+    const sel = o.toLowerCase() === stNorm.toLowerCase() ||
+                (o === 'Null' && (stNorm === '' || stNorm === 'Null')) ? 'selected' : '';
+    return `<option value="${o}" ${sel}>${o === 'Null' ? '—' : o}</option>`;
+  }).join('');
+  return `<select class="status-select ${cls}" onchange="finChangeStatus(${rowIdx}, ${mesIdx}, this)">${options}</select>`;
+}
+
+function renderFin() {
+  if (!document.getElementById('fin-tbody')) return;
+  renderFinTabs();
+  const meses = finGetVisibleMonths();
+  const mesAtual = getMesAtual();
+  meses.forEach((m, i) => {
+    const el = document.getElementById('fin-th-m' + (i+1));
+    if (el) el.textContent = MESES_FULL[m];
+  });
+  const th3 = document.getElementById('fin-th-m3');
+  if (th3) th3.style.display = meses.length < 3 ? 'none' : '';
+
+  const dados = state.lancamentos;
+  if (!dados.length) {
+    document.getElementById('fin-tbody').innerHTML = '<tr><td colspan="5"><div class="state-empty">Carregando dados...</div></td></tr>';
+    renderFinKpis();
+    return;
+  }
+
+  let recebido=0, faltaEntrar=0, ctPago=0, ctFalta=0, ctAtivos=0;
+  let totalPrevisto = 0;
+  const mesAnterior = mesAtual > 0 ? mesAtual - 1 : null;
+  dados.forEach(row => {
+    if (!row.nome) return;
+    const val = row.valor || 0;
+    totalPrevisto += val;
+    const st = (row.meses[mesAtual] || '').toLowerCase().trim();
+    const stAnt = mesAnterior !== null ? (row.meses[mesAnterior] || '').toLowerCase().trim() : '';
+    if (st === 'suspenso' || st === 'null' || st === 'não paga' || st === 'nao paga') {
+      if (stAnt === 'atrasado' && st !== 'pago') { faltaEntrar += val; ctFalta++; }
+      return;
+    }
+    ctAtivos++;
+    if (st === 'pago') { recebido += val; ctPago++; }
+    else { faltaEntrar += val; ctFalta++; if (stAnt === 'atrasado') faltaEntrar += val; }
+  });
+  const pct = totalPrevisto > 0 ? Math.round(recebido/totalPrevisto*100) : 0;
+  document.getElementById('fin-receita').textContent      = 'R ' + recebido.toLocaleString('pt-BR');
+  document.getElementById('fin-receita-sub').textContent  = ctPago + ' confirmado' + (ctPago!==1?'s':'');
+  document.getElementById('fin-naopago').textContent      = 'R ' + faltaEntrar.toLocaleString('pt-BR');
+  document.getElementById('fin-naopago-sub').textContent  = ctFalta + ' aluno' + (ctFalta!==1?'s':'');
+  document.getElementById('fin-total').textContent        = 'R ' + totalPrevisto.toLocaleString('pt-BR');
+  document.getElementById('fin-total-sub').textContent    = ctAtivos + ' pagantes este mês';
+  document.getElementById('kpi-receita').textContent      = 'R ' + recebido.toLocaleString('pt-BR');
+  document.getElementById('fin-pct').textContent          = pct + '%';
+  document.getElementById('fin-bar-right').textContent    = 'meta: R ' + totalPrevisto.toLocaleString('pt-BR');
+  document.getElementById('fin-bar-left').textContent     = 'R ' + recebido.toLocaleString('pt-BR') + ' recebido';
+  setTimeout(() => { document.getElementById('fin-bar').style.width = pct + '%'; }, 100);
+
+  const alunos = finGetSortedData(dados.filter(r => r.nome));
+  document.getElementById('fin-tbody').innerHTML = alunos.map((row, rowIdx) => {
+    const valFmt = row.valor > 0 ? row.valor.toLocaleString('pt-BR', {minimumFractionDigits:2}) : '';
+    const mesCols = meses.map((m, ci) => `<td><div class="cell-status">${statusSelect(rowIdx, m, row.meses[m])}</div></td>`).join('');
+    const pad = meses.length < 3 ? '<td style="display:none"></td>' : '';
+    return `<tr data-row="${rowIdx}">
+      <td><input class="cell-nome" value="${row.nome.replace(/"/g,'&quot;')}" onblur="finSaveNome(${rowIdx}, this.value)" onkeydown="if(event.key==='Enter')this.blur()"></td>
+      <td><input class="cell-valor" value="${valFmt}" placeholder="0,00" onblur="finSaveValor(${rowIdx}, this.value)" onkeydown="if(event.key==='Enter')this.blur()"></td>
+      ${mesCols}${pad}
+    </tr>`;
+  }).join('') +
+  `<tr class="fin-new-row"><td colspan="5"><button class="btn-add-row" onclick="finAddAluno()">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Adicionar aluno
+  </button></td></tr>`;
+}
+
+function renderFinKpis() {
+  if (!document.getElementById('fin-receita')) return;
+  const mesAtualK = new Date().getMonth();
+  const mesAntK = mesAtualK > 0 ? mesAtualK - 1 : null;
+  let recebido=0, faltaEntrar=0, ctPago=0, ctFalta=0, ctAtivos=0, totalPrevisto=0;
+  state.lancamentos.forEach(row => {
+    if (!row.nome) return;
+    const val = row.valor||0;
+    totalPrevisto += val;
+    const st  = (row.meses[mesAtualK]||'').toLowerCase().trim();
+    const stA = mesAntK!==null ? (row.meses[mesAntK]||'').toLowerCase().trim() : '';
+    if (st==='suspenso'||st==='null'||st==='não paga'||st==='nao paga') return;
+    ctAtivos++;
+    if (st==='pago'){recebido+=val;ctPago++;}
+    else{faltaEntrar+=val;ctFalta++;if(stA==='atrasado')faltaEntrar+=val;}
+  });
+  const pct = totalPrevisto>0 ? Math.round(recebido/totalPrevisto*100) : 0;
+  document.getElementById('fin-receita').textContent = 'R '+recebido.toLocaleString('pt-BR');
+  document.getElementById('fin-naopago').textContent = 'R '+faltaEntrar.toLocaleString('pt-BR');
+  document.getElementById('fin-total').textContent   = 'R '+totalPrevisto.toLocaleString('pt-BR');
+  document.getElementById('kpi-receita').textContent = 'R '+recebido.toLocaleString('pt-BR');
+  document.getElementById('fin-pct').textContent     = pct+'%';
+  document.getElementById('fin-bar').style.width     = pct+'%';
+}
+
+let finSortKey = null, finSortDir = 'asc';
+const STATUS_ORDER = {'pago':0,'atrasado':1,'não paga':2,'nao paga':2,'suspenso':3,'null':4,'':5};
+
+function finSort(key) {
+  finSortDir = finSortKey === key ? (finSortDir==='asc'?'desc':'asc') : 'asc';
+  finSortKey = key;
+  ['th-nome','th-valor','fin-th-m1','fin-th-m2','fin-th-m3'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('sort-asc','sort-desc');
+  });
+  const keyToId = {'nome':'th-nome','valor':'th-valor','m0':'fin-th-m1','m1':'fin-th-m2','m2':'fin-th-m3'};
+  const thEl = document.getElementById(keyToId[key]);
+  if (thEl) thEl.classList.add(finSortDir==='asc'?'sort-asc':'sort-desc');
+  renderFin();
+}
+
+function finGetSortedData(dados) {
+  if (!finSortKey) return [...dados];
+  const meses = finGetVisibleMonths();
+  return [...dados].sort((a,b) => {
+    let va,vb;
+    if (finSortKey==='nome'){va=(a.nome||'').toLowerCase();vb=(b.nome||'').toLowerCase();}
+    else if (finSortKey==='valor'){va=a.valor||0;vb=b.valor||0;}
+    else{const mi=parseInt(finSortKey.replace('m',''));const mesIdx=meses[mi]??getMesAtual();va=STATUS_ORDER[(a.meses[mesIdx]||'').toLowerCase().trim()]??5;vb=STATUS_ORDER[(b.meses[mesIdx]||'').toLowerCase().trim()]??5;}
+    if(va<vb)return finSortDir==='asc'?-1:1;
+    if(va>vb)return finSortDir==='asc'?1:-1;
+    return 0;
+  });
+}
+
+async function finChangeStatus(rowIdx, mesIdx, sel) {
+  const row = state.lancamentos[rowIdx];
+  if (!row) return;
+  const novo = sel.value;
+  row.meses[mesIdx] = novo;
+  sel.className = 'status-select ' + statusClass(novo);
+  renderFinKpis();
+  sel.disabled = true;
+  await api('updatePaymentStatus', {nome: encodeURIComponent(row.nome), mesIdx, status: encodeURIComponent(novo)});
+  sel.disabled = false;
+  toast(row.nome.split(' ')[0] + ' · ' + MESES_NOME[mesIdx] + ': ' + (novo==='Null'?'—':novo));
+}
+
+async function finSaveNome(rowIdx, novoNome) {
+  novoNome = novoNome.trim();
+  const row = state.lancamentos[rowIdx];
+  if (!row || novoNome === row.nome || !novoNome) return;
+  const nomeAntigo = row.nome;
+  row.nome = novoNome;
+  await api('updatePaymentNome', {nomeAntigo: encodeURIComponent(nomeAntigo), nomeNovo: encodeURIComponent(novoNome), rowIdx});
+  toast('Nome atualizado.');
+}
+
+async function finSaveValor(rowIdx, rawVal) {
+  const num = parseFloat(rawVal.replace(/\./g,'').replace(',','.')) || 0;
+  const row = state.lancamentos[rowIdx];
+  if (!row || num === row.valor) return;
+  row.valor = num;
+  renderFinKpis();
+  await api('updatePaymentValor', {rowIdx, valor: num});
+  toast('Valor atualizado.');
+}
+
+async function finAddAluno() {
+  const nome = prompt('Nome do novo aluno:');
+  if (!nome || !nome.trim()) return;
+  const valorStr = prompt('Valor mensal (ex: 900):');
+  const valor = parseFloat((valorStr||'0').replace(',','.')) || 0;
+  const novoAluno = {nome: nome.trim(), valor, meses: Array(12).fill('Null')};
+  state.lancamentos.push(novoAluno);
+  renderFin();
+  await api('addPaymentAluno', {nome: encodeURIComponent(novoAluno.nome), valor});
+  toast('Aluno adicionado: ' + novoAluno.nome.split(' ')[0]);
+}
+
+function recarregarFin() {
+  document.getElementById('fin-tbody').innerHTML = '<tr><td colspan="5"><div class="state-loading"><div class="spinner"></div>Conectando ao Sheets...</div></td></tr>';
+  safeApi('getPaymentControl', r => { state.lancamentos = r.data; renderFin(); toast('Financeiro atualizado ✓'); });
+}
+
+// ══════════════════════════════════════════════
+// METAS
+// ══════════════════════════════════════════════
+let metasFiltro = 'todas';
+let _metaCatSel = 'profissional';
+
+function getMetas() {
+  try { return JSON.parse(localStorage.getItem('ws_metas') || '[]'); } catch(e) { return []; }
+}
+function saveMetas(m) { localStorage.setItem('ws_metas', JSON.stringify(m)); }
+
+function metasTab(cat, btn) {
+  metasFiltro = cat;
+  document.querySelectorAll('.metas-cat-tabs .metas-cat-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMetas();
+}
+
+function selecionarCatMeta(cat) {
+  _metaCatSel = cat;
+  document.getElementById('meta-cat-prof').classList.toggle('active', cat === 'profissional');
+  document.getElementById('meta-cat-pes').classList.toggle('active', cat === 'pessoal');
+}
+
+function renderMetas() {
+  const grid = document.getElementById('metas-grid');
+  if (!grid) return;
+  let todas = getMetas();
+  if (metasFiltro !== 'todas') todas = todas.filter(m => m.cat === metasFiltro);
+  const ativas      = todas.filter(m => !m.concluida).sort((a,b) => b.id - a.id);
+  const conquistadas = todas.filter(m =>  m.concluida).sort((a,b) => b.id - a.id);
+
+  const addCard = `<div class="meta-card-add" onclick="openModal('modal-meta')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+    </svg><span>Nova Meta</span></div>`;
+
+  grid.innerHTML = ativas.map(m => metaCardHtml(m)).join('') + addCard;
+
+  const sec  = document.getElementById('conquistas-section');
+  const cgrid = document.getElementById('conquistas-grid');
+  if (!sec || !cgrid) return;
+  if (!conquistadas.length) { sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
+  cgrid.innerHTML = conquistadas.map(m => conquistaCardHtml(m)).join('');
+  requestAnimationFrame(() => conquistadas.forEach(m => buildConquistaOrbit('co-' + m.id, m.cat)));
+}
+
+function metaCardHtml(m) {
+  const cp = m.cat === 'pessoal';
+  return `<div class="meta-card ${cp?'cat-pessoal':''} ${m.concluida?'concluida':''}" id="mc-${m.id}">
+    <div class="meta-card-accent"></div>
+    <div class="meta-card-body">
+      <div class="meta-card-header">
+        <div class="meta-check" onclick="toggleMeta(${m.id},event)"
+          style="border-color:${cp?'#A78BFA':'var(--gold)'}">
+          <svg viewBox="0 0 14 14" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="2 7 5.5 10.5 12 3"/>
+          </svg>
+        </div>
+        <div>
+          <div class="meta-titulo">${m.titulo}</div>
+          <span class="meta-cat-badge ${cp?'badge-pessoal':'badge-profissional'}">${cp?'Pessoal':'Profissional'}</span>
+        </div>
+      </div>
+      ${m.desc ? `<div class="meta-desc">${m.desc}</div>` : ''}
+      <div class="meta-card-footer">
+        <button class="meta-delete" onclick="deleteMeta(${m.id},event)" title="Remover">×</button>
+        ${m.concluida ? `<span style="font-size:10px;font-weight:600;color:${cp?'#7C3AED':'#22C55E'}">✓ Conquistada</span>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function conquistaCardHtml(m) {
+  const cp = m.cat === 'pessoal';
+  return `<div class="conquista-card" id="cc-${m.id}">
+    <svg class="conquista-orbit-svg" id="co-${m.id}" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+    <div class="conquista-body">
+      <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;margin-bottom:10px;box-shadow:0 4px 12px rgba(196,164,90,.4)">
+        <svg viewBox="0 0 24 24" fill="var(--navy)" width="16" height="16"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </div>
+      <div class="conquista-titulo">${m.titulo}</div>
+      ${m.desc ? `<div class="conquista-desc">${m.desc}</div>` : ''}
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
+        <span style="font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);opacity:.7">${cp?'Pessoal':'Profissional'} · Conquistada</span>
+        <button onclick="deleteMeta(${m.id},event)" style="background:none;border:none;cursor:pointer;color:rgba(196,164,90,.4);font-size:16px;padding:2px 6px;border-radius:4px" onmouseover="this.style.color='rgba(255,100,100,.7)'" onmouseout="this.style.color='rgba(196,164,90,.4)'">×</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function buildConquistaOrbit(svgId, cat) {
+  const svg = document.getElementById(svgId);
+  if (!svg) return;
+  const ns = 'http://www.w3.org/2000/svg';
+  svg.innerHTML = '';
+  const W = svg.parentElement ? svg.parentElement.offsetWidth||300 : 300;
+  const H = svg.parentElement ? svg.parentElement.offsetHeight||150 : 150;
+  const vw = W+36, vh = H+36, cx = vw/2, cy = vh/2;
+  svg.setAttribute('viewBox', '0 0 '+vw+' '+vh);
+  const ip = cat==='pessoal';
+  const orbits = [
+    {rx:cx-4,ry:10,tilt:-8, dur:'6s', c:ip?'#A78BFA':'#C4A45A', n:3, r:2.5},
+    {rx:cx-2,ry:8, tilt:18, dur:'9s', c:ip?'#7C3AED':'#D4BA7A', n:2, r:2.0},
+    {rx:cx-6,ry:6, tilt:45, dur:'12s',c:ip?'#DDD6FE':'#E8D9B0', n:4, r:1.5},
+  ];
+  orbits.forEach(o => {
+    const g = document.createElementNS(ns,'g');
+    g.setAttribute('transform','rotate('+o.tilt+' '+cx+' '+cy+')');
+    for (let i=0;i<o.n;i++) {
+      const a=(360/o.n)*i, rad=a*Math.PI/180;
+      const px=cx+o.rx*Math.cos(rad), py=cy+o.ry*Math.sin(rad);
+      const ag=document.createElementNS(ns,'g');
+      const at=document.createElementNS(ns,'animateTransform');
+      at.setAttribute('attributeName','transform'); at.setAttribute('type','rotate');
+      at.setAttribute('from',a+' '+cx+' '+cy); at.setAttribute('to',(a+360)+' '+cx+' '+cy);
+      at.setAttribute('dur',o.dur); at.setAttribute('repeatCount','indefinite');
+      ag.appendChild(at);
+      const d=document.createElementNS(ns,'circle');
+      d.setAttribute('cx',px); d.setAttribute('cy',py); d.setAttribute('r',o.r); d.setAttribute('fill',o.c);
+      d.style.filter='drop-shadow(0 0 '+(o.r*1.5)+'px '+o.c+')';
+      const pa=document.createElementNS(ns,'animate');
+      pa.setAttribute('attributeName','opacity'); pa.setAttribute('values','0.4;1;0.4');
+      pa.setAttribute('dur',(1.5+i*0.4)+'s'); pa.setAttribute('repeatCount','indefinite');
+      d.appendChild(pa); ag.appendChild(d); g.appendChild(ag);
+    }
+    svg.appendChild(g);
+  });
+}
+
+function toggleMeta(id, event) {
+  event.stopPropagation();
+  const metas = getMetas();
+  const m = metas.find(x => x.id===id);
+  if (!m) return;
+  m.concluida = !m.concluida;
+  saveMetas(metas);
+  if (m.concluida) celebrarMeta('mc-'+id, m.cat);
+  renderMetas();
+  safeApi('updateMeta', ()=>{}, {id, concluida: m.concluida});
+  if (m.concluida) toast('🎯 Meta conquistada!');
+}
+
+function celebrarMeta(cardId, cat) {
+  const card = document.getElementById(cardId);
+  if (!card) return;
+  const rect = card.getBoundingClientRect();
+  const colors = cat==='pessoal' ? ['#7C3AED','#A78BFA','#DDD6FE'] : ['#C4A45A','#F6BF26','#34A853'];
+  for (let i=0;i<12;i++) {
+    const p = document.createElement('div');
+    p.className = 'meta-particle';
+    p.style.cssText = 'left:'+(rect.left+rect.width/2+(Math.random()-.5)*80)+'px;top:'+(rect.top+rect.height/2)+'px;background:'+colors[Math.floor(Math.random()*colors.length)]+';animation-delay:'+(Math.random()*.3)+'s;animation-duration:'+(0.6+Math.random()*.4)+'s';
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(), 1200);
+  }
+}
+
+function deleteMeta(id, event) {
+  event.stopPropagation();
+  let metas = getMetas().filter(m => m.id!==id);
+  saveMetas(metas);
+  renderMetas();
+  safeApi('deleteMeta', ()=>{}, {id});
+  toast('Meta removida.');
+}
+
+function resetarConquistas() {
+  if (!confirm('Remover todas as conquistas?')) return;
+  let metas = getMetas();
+  metas.filter(m=>m.concluida).forEach(m => safeApi('deleteMeta',()=>{},{id:m.id}));
+  saveMetas(metas.filter(m=>!m.concluida));
+  renderMetas();
+  toast('Conquistas removidas.');
+}
+
+function salvarNovaMeta() {
+  const titulo = document.getElementById('meta-titulo-inp').value.trim();
+  if (!titulo) return;
+  const meta = {id:Date.now(), titulo, desc:document.getElementById('meta-desc-inp').value.trim(), cat:_metaCatSel, concluida:false};
+  const metas = getMetas();
+  metas.unshift(meta);
+  saveMetas(metas);
+  closeModal('modal-meta');
+  document.getElementById('meta-titulo-inp').value = '';
+  document.getElementById('meta-desc-inp').value = '';
+  renderMetas();
+  safeApi('saveMeta', ()=>{}, {id:meta.id, titulo:encodeURIComponent(meta.titulo), desc:encodeURIComponent(meta.desc), cat:meta.cat, concluida:false});
+  toast('Meta criada! 🎯');
+}
 </script>
 </body>
 </html>
